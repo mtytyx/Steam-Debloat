@@ -11,7 +11,7 @@ Github: https://github.com/OptiJuegos
 TiberiumFusion <3
 Github: https://github.com/TiberiumFusion
 
-Jett: 
+Jett <3 
 Youtube: https://www.youtube.com/@Jett07
 
 Well starting the github the first thing to do is just download the bat file/batch file
