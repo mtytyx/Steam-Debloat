@@ -53,6 +53,10 @@ Copy and paste if you are interested in my configuration
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/2056157a-d341-425b-a5cc-90375f9e0d1e)
 
 Some things could disable common things you use so I recommend testing
+Results 
+![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/b8578355-a070-4e5a-8830-aed70ab6aecb)
+Results for antisocial
+
 I don't have a license and you won't be able to acquire it, so let this guide last as long as it has to <3
 
 Español
