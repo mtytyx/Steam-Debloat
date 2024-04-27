@@ -53,9 +53,12 @@ Copy and paste if you are interested in my configuration
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/2056157a-d341-425b-a5cc-90375f9e0d1e)
 
 Some things could disable common things you use so I recommend testing
-Results 
+
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/b8578355-a070-4e5a-8830-aed70ab6aecb)
-Results for antisocial
+Results 
+![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/6202931d-b31d-4c97-84c8-fa16bed9a06a)
+Results for antisocial (many functions are disabled)
+Why does this happen? Because *-cef-force-32bit* was added to the launch parameters, which disables *steamwebhelper* startup, which is used for the friends window (I think the workshop does not work without webhelper), among other things, it disables having it.
 
 I don't have a license and you won't be able to acquire it, so let this guide last as long as it has to <3
 
@@ -99,6 +102,11 @@ Debería aparecerles así
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/9829ecea-654c-4161-9378-ad1fdbebc8c8)
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/7c445cfa-44b7-4ea0-85d4-76b9f24a31b5)
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/2056157a-d341-425b-a5cc-90375f9e0d1e)
-
 Algunas cosas podrían desactivar cosas comunes que usas, por lo que recomiendo probar
+![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/b8578355-a070-4e5a-8830-aed70ab6aecb)
+Resultados normales 
+![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/6202931d-b31d-4c97-84c8-fa16bed9a06a)
+Resultados para antisociales(muchas funciones desabilitadas)
+¿Por que ocurre esto? por que a los parametros de lanzamiento se le agrego -cef-force-32bit que desabilita el arranque steamwebhelper el que sirve para la ventana como de amigos(creo que la workshop no funciona sin webhelper) entre cosas mas que desabilita tenerlo 
+
 No tengo licencia y no se como adquirirla, así que dejo que esta guía dure lo que tenga que durar <3
