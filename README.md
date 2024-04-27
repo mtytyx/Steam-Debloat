@@ -35,3 +35,5 @@ Press the patch button and wait for it to appear that it has been patched.
 6.5+ If it doesn't work for you, keep reading, close Steam from the taskbar and wait for the processes to close (also the Tiberium program will tell you that Steam is still in the background) After logging in and Steam has started, you can check if the friends list works, if it works, go to the next step 7+. If it doesn't work for you, keep reading, close Steam from the taskbar and wait for the processes to close (also the Tiberium program will tell you that Steam is still in the background) just patch it again and open Steam if, due to strange cases, it still doesn't work. The friends list works, patch it with version 2.0.2 and if for no rational reason it still works, patch it with 1.2.0 and if it still doesn't work, redo all the steps
 
 7+ This step is only to further optimize steam
+
+I don't have a license and you won't be able to acquire it, so let this guide last as long as it has to <3
