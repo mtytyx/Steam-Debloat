@@ -17,6 +17,8 @@ Jett <3
 Youtube: https://www.youtube.com/@Jett07
 
 If you are antisocial and have no friends either in life or on steam I made you a custom bat file <3
+Ignore this guide and download your steam for antisocial in release
+
 
 1+ Well starting the github the first thing to do is just download the bat file/batch file in release.
 
