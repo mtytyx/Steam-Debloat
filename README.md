@@ -45,12 +45,12 @@ Tutorial sobre cómo degradar Steam para PC de bajos recursos. Recomendado para 
 
 
 Si eres antisocial y no tienes amigos ni en la vida ni en Steam te hice un archivo bat personalizado <3
-Ignora esta guía y descarga tu Steam para antisocial en versión
+Ignora esta guía y descarga tu Steam para antisocial en release
 
 
 1+ Bueno al iniciar github, lo primero que debe hacer es descargar el archivo bat/archivo por lotes en el release.
 
-2+ El bate es automático por lo que no tendrás que hacer nada hasta el final.
+2+ El bat es automático por lo que no tendrás que hacer nada hasta el final.
 
 3+ Busque en el administrador de tareas ctrl+shift+esc en segundo plano si no hay procesos de Steam en ejecución
 
