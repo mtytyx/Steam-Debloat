@@ -3,7 +3,7 @@ Tutorial on how to downgrade steam for low-resource PC. Recommended for PCs with
 **WARNING** THIS IS A WINDOWS 7 INSTALLATION ON WINDOWS
 8.1/10/11 STEAM, SO IT IS A NEW STEAM WITHOUT THE GAMES OR SETTINGS MADE ALSO KNOW THAT GAMES LIKE CSGO CANNOT BE PLAYED SINCE THE LATEST VERSION OF STEAM IS REQUIRED IF OR IF (POSIBLY ALL VALVE GAMES WITH ITS VAC, less left 4 dead 2 (top game) that works
 
-Well starting the github I want to thank Optijuegos, TiberiumFusion and Jett for making this project possible. If something happens with a license or copyright I will talk about it <3
+Well starting the github I want to thank Optijuegos and TiberiumFusion for making this project possible. If something happens with a license or copyright I will talk about it <3
 
 Optijuegos <3
 Twitch: https://www.twitch.tv/optijuegos
@@ -12,9 +12,6 @@ Github: https://github.com/OptiJuegos
 
 TiberiumFusion <3
 Github: https://github.com/TiberiumFusion
-
-Jett <3 
-Youtube: https://www.youtube.com/@Jett07
 
 If you are antisocial and have no friends either in life or on steam I made you a custom bat file <3
 Ignore this guide and download your steam for antisocial in release
