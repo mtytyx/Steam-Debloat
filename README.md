@@ -1,5 +1,4 @@
 # Steam-Debloat
-Tutorial on how to downgrade steam for low-resource PC. Recommended for PCs with less than 4 GB of RAM
 
 # Well starting the github I want to thank Optijuegos and TiberiumFusion for making this project possible. If something happens with a license or copyright I will talk about it <3
 
