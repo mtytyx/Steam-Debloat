@@ -10,7 +10,7 @@ Only in spanish
 - Se subio el link el drive(lo siento opti era la unica forma)
 - Se renovo por completo todo el codigo bat
 - Fallos que antes se daban fueron corregidos
-- El proyecto solo recibira fix no actualizaciones por que no hay nada que mejorar
+- El proyecto solo recibira fix, no actualizaciones por que no hay nada que mejorar
 - En un futuro lo hare un ejecutable y no bat
 - Matenme
 
