@@ -98,9 +98,8 @@ Github: https://github.com/TiberiumFusion
 ## Some things could disable common things you use so I recommend testing
 
 > Results
-<p></p>
 ### 150-180 mb average
-<p></p>
+
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/b8578355-a070-4e5a-8830-aed70ab6aecb)
 > Results for antisocial (many functions are disabled) 
 ### 30-50 mb average
