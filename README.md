@@ -106,5 +106,3 @@ Github: https://github.com/TiberiumFusion
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/6202931d-b31d-4c97-84c8-fa16bed9a06a)
 
 ##### Why does this happen? Because ` -cef-force-32bit` was added to the launch parameters, which disables ` steamwebhelper` startup, which is used for the friends window (I think the workshop does not work without webhelper), among other things, it disables having it.
-
-# I don't have a license and you won't be able to acquire it, so let this guide last as long as it has to <3
