@@ -5,7 +5,7 @@ Only in spanish
 
 - El servidor de descarga de mediafire no funciona nose por que, si encuentro la forma actualizo github.
 
-30/04/2024(Madrugada)
+30/04/2024(Before)
 
 - Se subio el link el drive(lo siento opti era la unica forma).
 - Se renovo por completo todo el codigo bat.
@@ -14,7 +14,7 @@ Only in spanish
 - En un futuro lo hare un ejecutable y no bat.
 - Matenme.
 
-30/04/2024(Tarde)
+30/04/2024(After)
 
 - Solo se mejoro la visualizacion del readme que parecia trucho.
 
