@@ -23,8 +23,6 @@ Github: https://github.com/TiberiumFusion
 [Download Steam for people WITH FRIENDS😎](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.15/Steam-Github-mtytyx.bat)
 <p></p>
 
-![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/13313e98-ada6-4f55-8d78-3cbe25cb39f2)
-
 ### 2+ The bat is automatic so you won't have to do anything until the end.
 
 ### 3+ Then FixSteamFriendsUI Quick Patcher.exe will open.
