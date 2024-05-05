@@ -7,7 +7,7 @@ Only in spanish
 
 30/04/2024(Before)
 
-- Se subio el link el drive(lo siento opti era la unica forma).
+- Se subio el link el drive
 - Se renovo por completo todo el codigo bat.
 - Fallos que antes se daban fueron corregidos.
 - El proyecto solo recibira fix, no actualizaciones por que no hay nada que mejorar.
@@ -18,6 +18,12 @@ Only in spanish
 
 - Solo se mejoro la visualizacion del readme que parecia trucho.
 
-04/05/2024
+05/05/2024
 
-- Sacare el instalador de steam windows 7 para hacer mas rapido la instalacion.
+- Se limpio codigo basura y de mas.
+- Se elimino el instalador de windows 7.
+- Ahora se hara todo al steam original para no descargar juegos y realizar otra vez los ajustes de steam.
+- Se cambio el detector de tasklist por el de powershell para no errores.
+- Dije que recibira fix y termine haciendo muchos cambio.
+- Acorte los pasos de la guia.
+- El unico error que tiene es el de quickpatcher que espero solucionarlo....
