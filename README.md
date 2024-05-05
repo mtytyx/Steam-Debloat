@@ -45,6 +45,7 @@ Github: https://github.com/TiberiumFusion
 ### Copy and paste this into cmd
 > start "" "%temp%\QuickPatcher_Patch_v3.0.0+\FixedSteamFriendsUI QuickPatcher.exe"
 <p></p>
+
 ##### And press the patch button again. If it still doesn't work, patch again in a while and go directly to point 3.5+ of this guide.
 <p></p>
 
