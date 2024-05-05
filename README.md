@@ -2,6 +2,10 @@
 
 # Well starting the github I want to thank TiberiumFusion for making this project possible. If something happens about copyright I will talk about it <3
 
+### Tiberium Fusion <3
+<p></p>
+Github: https://github.com/TiberiumFusion
+
 # WARNING
 YOU CANNOT PLAY GAMES LIKE CSGO OR CSGO 2 SINCE THE LATEST VERSION OF STEAM IS REQUIRED YES OR YES (POSIBLY ALL VALVE GAMES WITH ITS VAC, try left 4 dead 2 and it works (top game)
 
@@ -9,10 +13,6 @@ YOU CANNOT PLAY GAMES LIKE CSGO OR CSGO 2 SINCE THE LATEST VERSION OF STEAM IS R
 
 - An old version of Steam is used that consumes less system resources by not having so many new things.
 - Many things are disabled to optimize resource consumption.
-
-### Tiberium Fusion <3
-<p></p>
-Github: https://github.com/TiberiumFusion
 
 #### If you are antisocial and have no friends in life or on Steam, click here to download your personalized Steam <3.
 [Download Steam for antisocials😒](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.15/Steam.for.Antisocials.bat)
