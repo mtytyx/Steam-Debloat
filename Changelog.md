@@ -7,14 +7,17 @@ Only in spanish
 
 30/04/2024(Madrugada)
 
-- Se subio el link el drive(lo siento opti era la unica forma)
-- Se renovo por completo todo el codigo bat
-- Fallos que antes se daban fueron corregidos
-- El proyecto solo recibira fix, no actualizaciones por que no hay nada que mejorar
-- En un futuro lo hare un ejecutable y no bat
-- Matenme
+- Se subio el link el drive(lo siento opti era la unica forma).
+- Se renovo por completo todo el codigo bat.
+- Fallos que antes se daban fueron corregidos.
+- El proyecto solo recibira fix, no actualizaciones por que no hay nada que mejorar.
+- En un futuro lo hare un ejecutable y no bat.
+- Matenme.
 
 30/04/2024(Tarde)
 
-- Solo se mejoro la visualizacion del readme que parecia trucho
+- Solo se mejoro la visualizacion del readme que parecia trucho.
 
+04/05/2024
+
+- Sacare el instalador de steam windows 7 para hacer mas rapido la instalacion.
