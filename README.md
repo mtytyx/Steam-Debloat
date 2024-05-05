@@ -46,13 +46,13 @@ YOU CANNOT PLAY GAMES LIKE CSGO OR CSGO 2 SINCE THE LATEST VERSION OF STEAM IS R
 > start "" "%temp%\QuickPatcher_Patch_v3.0.0+\FixedSteamFriendsUI QuickPatcher.exe"
 <p></p>
 
-##### And press the patch button again. If it still doesn't work, patch again in a while and go directly to point 3.5+ of this guide.
+#### And press the patch button again. If it still doesn't work, patch again in a while and go directly to point 3.5+ of this guide.
 <p></p>
 
 ### 4+ After Steam has started, you can check if the friends list is working. If it doesn't work go to step 3.5+.
 
-### 5+ This step is only to further optimize the vapor.
-##### Copy and paste if you are interested in my setup.
+### 5+ This step is only to further optimize steam.
+#### Copy and paste if you are interested in my setup.
 
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/5e67f706-4836-4f14-81d1-b1f3fc6914a7)
 <p>
