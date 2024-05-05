@@ -11,15 +11,6 @@ THIS IS A WINDOWS 7 INSTALLATION ON WINDOWS
 - An older version of Steam is used that consumes less system resources.
 - Many things are disabled to optimize resource consumption.
 
-### Optijuegos <3
-<p></p>
-Twitch: https://www.twitch.tv/optijuegos
-<p></p>
-Discord: https://discord.gg/u8xKvgJyGr
-<p></p>
-Github: https://github.com/OptiJuegos
-<p></p>
-
 ### TiberiumFusion <3
 <p></p>
 Github: https://github.com/TiberiumFusion
