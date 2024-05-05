@@ -15,12 +15,14 @@ YOU CANNOT PLAY GAMES LIKE CSGO OR CSGO 2 SINCE THE LATEST VERSION OF STEAM IS R
 Github: https://github.com/TiberiumFusion
 
 #### If you are antisocial and have no friends in life or on Steam, click here to download your personalized Steam <3.
-[link](https://github.com/mtytyx/Steam-Debloat/releases/download/release-fix/Steam.for.Antisocials.bat)
+[Download steam for antisocials😒](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.15/Steam.for.Antisocials.bat)
 
 <p></p>
 
 ### 1+ Well, starting with this guide, the first thing you should do is download the bat file here if you are a person WITH FRIENDS.
-[link](https://github.com/mtytyx/Steam-Debloat/releases/download/release-fix/Steam-Github.bat)
+[Download steam for people WITH FRIENDS😎](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.15/Steam-Github-mtytyx.bat)
+<p></p>
+
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/13313e98-ada6-4f55-8d78-3cbe25cb39f2)
 
 ### 2+ The bat is automatic so you won't have to do anything until the end.
