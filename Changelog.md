@@ -27,3 +27,8 @@ Only in spanish
 - Dije que recibira fix y termine haciendo muchos cambio.
 - Acorte los pasos de la guia.
 - El unico error que tiene es el de quickpatcher que espero solucionarlo....
+
+06/05/2024 
+
+- Se saco bitsadmin por que se necesita firewall y si no lo tienen activado el bat no funciona
+- Se saco el quickpatcher al final
