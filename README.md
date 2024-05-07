@@ -15,18 +15,18 @@ YOU CANNOT PLAY GAMES LIKE CSGO OR CSGO 2 SINCE THE LATEST VERSION OF STEAM IS R
 - Many things are disabled to optimize resource consumption.
 
 #### If you are antisocial and have no friends in life or on Steam, click here to download your personalized Steam <3.
-[Download Steam for antisocials😒](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.15/Steam.for.Antisocials.bat)
+[Download Steam for antisocials😒](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.20/Steam.for.Antisocials.bat)
 
 <p></p>
 
 ### 1+ Well, starting with this guide, the first thing you should do is download the bat file here if you are a person WITH FRIENDS.
-[Download Steam for people WITH FRIENDS😎](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.15/Steam-Github-mtytyx.bat)
+[Download Steam for people WITH FRIENDS😎](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.20/Steam-Github-mtytyx.bat)
 <p></p>
 
 ### 2+ The bat is automatic so you won't have to do anything until the end.
 
-### 3+ Then FixSteamFriendsUI Quick Patcher.exe will open.
-
+### 3+ In this step you have to download QuickPatch from Tiberium Fusion to make the friends list work.
+[Download QuickPatcher Patch](https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases/tag/Release-v3.0.1)
 ### Press the button below to patch Steam FriendUI and wait for it to appear that it has been patched.
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/90d55cae-556d-4101-ba45-bb3fd56c74e6)
 <p></p>
@@ -34,22 +34,7 @@ YOU CANNOT PLAY GAMES LIKE CSGO OR CSGO 2 SINCE THE LATEST VERSION OF STEAM IS R
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/af15e452-cd63-45f7-aa39-a5bca465d8ad)
 <p></p>
 
-### 3.5+ If for some reason the patch button does not appear, close FixSteamFriendsUI Quick Patcher.exe.
-<p></p>
-
-![image](https://github.com/mtytyx/Steam-Debloat/assets/168254237/51119fcc-e3a4-4d0a-8cf8-d24c1d74c64e)
-### Press win+r and type cmd
-![image](https://github.com/mtytyx/Steam-Debloat/assets/168254237/4313e158-a188-442d-a3e2-7b3bf812039b)
-![image](https://github.com/mtytyx/Steam-Debloat/assets/168254237/f1b092c9-adfe-42d9-808c-e365ab1b1a48)
-
-### Copy and paste this into cmd
-> start "" "%temp%\QuickPatcher_Patch_v3.0.0+\FixedSteamFriendsUI QuickPatcher.exe"
-<p></p>
-
-#### And press the patch button again. If it still doesn't work, patch again in a while and go directly to point 3.5+ of this guide.
-<p></p>
-
-### 4+ After Steam has started, you can check if the friends list is working. If it doesn't work go to step 3.5+.
+### 4+ Then open steam.bat from the desktop, you can check if the friends list is working.
 
 ### 5+ This step is only to further optimize steam.
 #### Copy and paste if you are interested in my setup.
