@@ -9,7 +9,7 @@ Github: https://github.com/TiberiumFusion
 # WARNING
 YOU CANNOT PLAY GAMES LIKE CSGO OR CSGO 2 SINCE THE LATEST VERSION OF STEAM IS REQUIRED YES OR YES (POSIBLY ALL VALVE GAMES WITH ITS VAC, try left 4 dead 2 and it works (top game)
 
-### Characteristics:
+### Features
 
 - An old version of Steam is used that consumes less system resources by not having so many new things.
 - Many things are disabled to optimize resource consumption.
