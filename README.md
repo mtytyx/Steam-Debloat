@@ -80,6 +80,17 @@ To further optimize Steam, use the setup provided below.
 
 - **Antisocial Setup**: Average memory usage of 30-50 MB
 
+## 📜 License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT). See the [LICENSE](LICENSE) file for details.
+
+## 📬 Contact
+
+For any questions or support, please contact the maintainer:
+
+- **Instagram**: [l1l.kid](https://www.instagram.com/l1l.kid/)
+
+
 ![Antisocial Setup](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/6202931d-b31d-4c97-84c8-fa16bed9a06a)
 
 **Note:** The significant reduction in memory usage is due to the addition of `-cef-force-32bit` to the startup parameters, which disables `steamwebhelper`. This may affect features like the friends window and the Steam Workshop.
