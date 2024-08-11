@@ -19,8 +19,8 @@ You **cannot** play games like **CSGO** or **CSGO 2** as the latest version of S
 
 ## 💾 Download Links
 
-- **For Antisocials**: [Download Steam for Antisocials 😒](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.20/Steam.for.Antisocials.bat)
-- **For People WITH FRIENDS**: [Download Steam for People WITH FRIENDS 😎](https://github.com/mtytyx/Steam-Debloat/releases/download/steamv1.20/Steam-Github-mtytyx.bat)
+- **For Antisocials**: [Download Steam for Antisocials 😒](https://github.com/mtytyx/Steam-Debloat/releases/download/steam-low.ram/Steam-Antisocial-Github-mtytyx)
+- **For People WITH FRIENDS**: [Download Steam for People WITH FRIENDS 😎](https://github.com/mtytyx/Steam-Debloat/releases/download/steam-low.ram/Steam-Github-mtytyx.bat)
 
 ---
 
