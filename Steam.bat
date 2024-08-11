@@ -19,7 +19,6 @@ start "" "C:\Program Files (x86)\Steam\steam.exe" ^
     -no-cef-sandbox ^
     -vrdisable ^
     -cef-disable-breakpad ^
-    -no-browser ^
     -disable-animations ^
     -disable-voice ^
     -disable-microphone ^
