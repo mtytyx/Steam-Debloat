@@ -21,7 +21,6 @@ start "" "C:\Program Files (x86)\Steam\steam.exe" ^
     -cef-disable-breakpad ^
     -no-browser ^
     -disable-animations ^
-    -disable-ui ^
     -disable-voice ^
     -disable-microphone ^
     -disable-overlay ^
