@@ -85,9 +85,16 @@ To further optimize Steam, use the setup provided below.
 
 ![Antisocial Setup](https://github.com/user-attachments/assets/91aa6573-d862-46a8-bfc6-292c4d49d193)
 
-**Note:** The significant reduction in memory usage is due to the addition of `-cef-force-32bit` to the startup parameters, which disables `steamwebhelper`. This may affect features like the friends window and the Steam Workshop.
+**Note:** Steam with -cef-force-32bit does not work as it normally should, if you have problems see below
 
---- 
+<details>
+<summary>🎮 Click to solve most problems</summary>
+
+
+https://github.com/user-attachments/assets/7b59c1ef-8a76-4a3c-97f7-bbd668ff6097
+
+
+</details>
 
 ## 📜 License
 
