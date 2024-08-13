@@ -83,6 +83,8 @@ To further optimize Steam, use the setup provided below.
 
 - **Antisocial Setup**: Average memory usage of 30-50 MB
 
+![Antisocial Setup](https://github.com/user-attachments/assets/91aa6573-d862-46a8-bfc6-292c4d49d193)
+
 **Note:** The significant reduction in memory usage is due to the addition of `-cef-force-32bit` to the startup parameters, which disables `steamwebhelper`. This may affect features like the friends window and the Steam Workshop.
 
 --- 
@@ -99,8 +101,7 @@ For any questions or support, please contact the maintainer:
 
 ---
 
-:feelsgood:
-## Credits
+## 🌱 Credits
 
 - **Github**: [TiberiumFusion](https://github.com/TiberiumFusion)
 
