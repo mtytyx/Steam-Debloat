@@ -34,9 +34,11 @@ Choose the appropriate BAT file based on your social status 😅.
 
 The BAT file will handle everything automatically. Just run it and wait for the process to complete.
 
-### 3. Install QuickPatch
+### 3. Install QuickPatch to make the friends list work.
 
-Download and install QuickPatch from TiberiumFusion to make the friends list work.
+<details>
+<summary>👫 Click to have friends on Steam.</summary>
+
 [Download QuickPatcher Patch](https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases/tag/Release-v3.0.1)
 
 **Wait for the patch confirmation screen to appear.**
@@ -47,6 +49,7 @@ Download and install QuickPatch from TiberiumFusion to make the friends list wor
 ![image](https://github.com/mtytyx/Steam-Debloat-/assets/168254237/af15e452-cd63-45f7-aa39-a5bca465d8ad)
 <p></p>
 
+</details>
 ### 4. Launch Steam
 
 Open `steam.bat` from your desktop to check if the friends list is working correctly.
