@@ -9,6 +9,12 @@
 
 [Caractéristiques](#-caractéristiques-clés) • [Installation](#-démarrage-rapide) • [Feuille de route](#-feuille-de-route-du-projet) • [Contribuer](#-contribuer) • [Support](#-support-et-contact)
 
+  [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • 
+  [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • 
+  [README in French](https://github.com/mtytyx/Steam-Debloat/blob/main/README.fr.md) • 
+  [README in Portuguese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.pt.md) • 
+  [README in Chinese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md) • 
+  [README in हिन्दी](https://github.com/mtytyx/Steam-Debloat/blob/main/README.hi.md)
 </div>
 
 ---
@@ -42,8 +48,6 @@ Steam-Debloat est une solution open-source conçue pour optimiser le client Stea
 
 2. Exécutez le fichier BAT téléchargé avec des privilèges administratifs.
 3. Suivez les instructions à l'écran pour terminer l'installation.
-
-Pour des instructions détaillées et le dépannage, consultez notre [Wiki](https://github.com/mtytyx/Steam-Debloat/wiki).
 
 ## 📊 Indicateurs de Performance
 
