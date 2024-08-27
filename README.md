@@ -7,9 +7,18 @@
   [![GitHub forks](https://img.shields.io/github/forks/mtytyx/Steam-Debloat.svg?style=social&label=Fork)](https://github.com/mtytyx/Steam-Debloat/fork)
   [![GitHub watchers](https://img.shields.io/github/watchers/mtytyx/Steam-Debloat.svg?style=social&label=Watch)](https://github.com/mtytyx/Steam-Debloat)
 
-[Features](#-key-features) • [Installation](#-quick-start) • [Roadmap](#-project-roadmap) • [Contributing](#-contributing) • [Support](#-support-and-contact)
-
+  [Features](#-key-features) • [Installation](#-quick-start) • [Roadmap](#-project-roadmap) • [Contributing](#-contributing) • [Support](#-support-and-contact)
+  
+  <div align="center">
+    [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • 
+    [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • 
+    [README in French](https://github.com/mtytyx/Steam-Debloat/blob/main/README.fr.md) • 
+    [README in Portuguese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.pt.md) • 
+    [README in Chinese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md) • 
+    [README in हिन्दी](https://github.com/mtytyx/Steam-Debloat/blob/main/README.hi.md)
+  </div>
 </div>
+
 
 ---
 
