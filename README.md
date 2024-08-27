@@ -49,8 +49,6 @@ Steam-Debloat is an open-source solution designed to optimize the Steam client f
 2. Run the downloaded BAT file with administrator privileges.
 3. Follow the on-screen prompts to complete the installation.
 
-For detailed instructions and troubleshooting, visit our [Wiki](https://github.com/mtytyx/Steam-Debloat/wiki).
-
 ## 📊 Performance Metrics
 
 | Configuration                   | Memory Usage | Startup Time  | Feature Support |
