@@ -49,8 +49,6 @@ Steam-Debloat es una solución de código abierto diseñada para optimizar el cl
 2. Ejecuta el archivo BAT descargado con privilegios de administrador.
 3. Sigue las instrucciones en pantalla para completar la instalación.
 
-Para instrucciones detalladas y resolución de problemas, visita nuestra [Wiki](https://github.com/mtytyx/Steam-Debloat/wiki).
-
 ## 📊 Métricas de Rendimiento
 
 | Configuración                             | Uso de Memoria | Tiempo de Inicio | Soporte de Funciones |
