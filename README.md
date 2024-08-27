@@ -9,16 +9,13 @@
 
   [Features](#-key-features) • [Installation](#-quick-start) • [Roadmap](#-project-roadmap) • [Contributing](#-contributing) • [Support](#-support-and-contact)
   
-  <div align="center">
-    [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • 
-    [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • 
-    [README in French](https://github.com/mtytyx/Steam-Debloat/blob/main/README.fr.md) • 
-    [README in Portuguese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.pt.md) • 
-    [README in Chinese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md) • 
-    [README in हिन्दी](https://github.com/mtytyx/Steam-Debloat/blob/main/README.hi.md)
-  </div>
+  [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • 
+  [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • 
+  [README in French](https://github.com/mtytyx/Steam-Debloat/blob/main/README.fr.md) • 
+  [README in Portuguese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.pt.md) • 
+  [README in Chinese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md) • 
+  [README in हिन्दी](https://github.com/mtytyx/Steam-Debloat/blob/main/README.hi.md)
 </div>
-
 
 ---
 
@@ -58,9 +55,9 @@ For detailed instructions and troubleshooting, visit our [Wiki](https://github.c
 
 | Configuration                   | Memory Usage | Startup Time  | Feature Support |
 | ------------------------------- | ------------ | ------------- | --------------- |
-| Standard Steam                  | 300-400 MB   | 15-20 seconds | 100%            |
-| Steam-Debloat (Full featured)   | 100-150 MB   | 5-8 seconds   | 90%             |
-| Steam-Debloat (Privacy-focused) | 30-50 MB     | 3-5 seconds   | 75%             |
+| Standard Steam                  | 300-400 MB    | 15-20 seconds | 100%            |
+| Steam-Debloat (Full featured)   | 100-150 MB    | 5-8 seconds   | 90%             |
+| Steam-Debloat (Privacy-focused) | 30-50 MB      | 3-5 seconds   | 75%             |
 
 ## ⚠️ Compatibility Notice
 
