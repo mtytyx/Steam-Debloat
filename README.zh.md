@@ -9,6 +9,12 @@
 
 [功能特点](#-主要功能) • [安装](#-快速开始) • [路线图](#-项目路线图) • [贡献](#-贡献) • [支持](#-支持与联系)
 
+  [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • 
+  [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • 
+  [README in French](https://github.com/mtytyx/Steam-Debloat/blob/main/README.fr.md) • 
+  [README in Portuguese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.pt.md) • 
+  [README in Chinese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md) • 
+  [README in हिन्दी](https://github.com/mtytyx/Steam-Debloat/blob/main/README.hi.md)
 </div>
 
 ---
@@ -42,8 +48,6 @@ Steam-Debloat 是一个开源解决方案，旨在为低资源 PC 优化 Steam �
 
 2. 使用管理员权限运行下载的 BAT 文件。
 3. 按屏幕提示完成安装。
-
-有关详细说明和故障排除，请访问我们的[Wiki](https://github.com/mtytyx/Steam-Debloat/wiki)。
 
 ## 📊 性能指标
 
