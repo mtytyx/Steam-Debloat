@@ -74,7 +74,6 @@ This project is under the [MIT License](LICENSE).
 ## 📬 Support and Contact
 
 - [GitHub Issues](https://github.com/mtytyx/Steam-Debloat/issues)
-- [Documentation](https://github.com/mtytyx/Steam-Debloat/wiki)
 
 ## 🙏 Acknowledgements
 
