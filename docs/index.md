@@ -1,5 +1,12 @@
+---
+layout: default
+title: Steam-Debloat
+description: Optimize Steam for Low-Resource PCs
+logo: /assets/logo.webp
+---
+
 <div align="center">
-  <img src="Steam-Debloat/assets/logo.webp" alt="Steam-Debloat Logo" width="200"/>
+  <img src="{{ site.logo }}" alt="Steam-Debloat Logo" width="200"/>
   <h1>Steam-Debloat</h1>
   <p><em>Optimize Steam for Low-Resource PCs</em></p>
   
@@ -88,4 +95,3 @@ Thanks to all contributors and [TiberiumFusion](https://github.com/TiberiumFusio
 <div align="center">
   <sub>Built with ❤️ by the Steam-Debloat Team.</sub>
 </div>
-
