@@ -41,13 +41,21 @@ O Steam-Debloat é uma solução de código aberto projetada para otimizar o cli
 
 ## 🚦 Início Rápido
 
-1. Escolha a versão que você preferir:
-
+1. Escolha sua versão preferida:
    - [🛡️ Edição Focada na Privacidade](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Privacy-Edition.bat)
-   - [🌐 Edição Social Gamer](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Social-Edition.bat)
+   - [🌐 Edição Gamer Social](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Social-Edition.bat)
 
 2. Execute o arquivo BAT baixado com privilégios de administrador.
 3. Siga as instruções na tela para concluir a instalação.
+
+<details>
+<summary><small>Para fazer a lista de amigos funcionar, siga estes passos:</small></summary>
+
+1. Baixe o Quickpatcher [neste link](https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases).
+2. Clique no botão "Instalar Quickpatcher":
+   ![image](https://github.com/user-attachments/assets/22811b3c-2db1-4716-9682-b77c61ef3486)
+
+</details>
 
 ## 📊 Métricas de Desempenho
 
