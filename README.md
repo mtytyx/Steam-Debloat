@@ -2,13 +2,13 @@
   <img src="assets/logo.webp" alt="Steam-Debloat Logo" width="200"/>
   <h1>Steam-Debloat</h1>
   <p><em>Optimize Steam for Low-Resource PCs</em></p>
-  
+
   [![GitHub stars](https://img.shields.io/github/stars/mtytyx/Steam-Debloat.svg?style=social&label=Star)](https://github.com/mtytyx/Steam-Debloat)
   [![GitHub forks](https://img.shields.io/github/forks/mtytyx/Steam-Debloat.svg?style=social&label=Fork)](https://github.com/mtytyx/Steam-Debloat/fork)
   [![GitHub watchers](https://img.shields.io/github/watchers/mtytyx/Steam-Debloat.svg?style=social&label=Watch)](https://github.com/mtytyx/Steam-Debloat)
 
   [Features](#-key-features) • [Installation](#-quick-start) • [Roadmap](#-project-roadmap) • [Contributing](#-contributing) • [Support](#-support-and-contact)
-  
+
   [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • 
   [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • 
   [README in French](https://github.com/mtytyx/Steam-Debloat/blob/main/README.fr.md) • 
@@ -42,12 +42,20 @@ Steam-Debloat is an open-source solution designed to optimize the Steam client f
 ## 🚦 Quick Start
 
 1. Choose your preferred version:
-
    - [🛡️ Privacy-Focused Edition](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Privacy-Edition.bat)
    - [🌐 Social Gamer Edition](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Social-Edition.bat)
 
 2. Run the downloaded BAT file with administrator privileges.
 3. Follow the on-screen prompts to complete the installation.
+
+<details>
+<summary><small>To make the friends list work, follow these steps:</small></summary>
+
+1. Download Quickpatcher from [this link](https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases).
+2. Click the "Install Quickpatcher" button:
+   ![image](https://github.com/user-attachments/assets/22811b3c-2db1-4716-9682-b77c61ef3486)
+
+</details>
 
 ## 📊 Performance Metrics
 
@@ -85,6 +93,4 @@ Thanks to all contributors and [TiberiumFusion](https://github.com/TiberiumFusio
 
 ---
 
-<div align="center">
-  <sub>Built with ❤️ by the Steam-Debloat Team.</sub>
-</div>
+*Built with ❤️ by the Steam-Debloat Team.*
