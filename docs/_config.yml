@@ -2,7 +2,7 @@
 title: Steam-Debloat
 description: Optimize Steam for Low-Resource PCs
 baseurl: ""
-url: "https://mtytyx.github.io/Steam-Debloat/" # Cambia esto por la URL de tu repositorio de GitHub Pages
+url: "https://mtytyx.github.io/Steam-Debloat/"
 logo: /assets/logo.webp
 
 nav:
