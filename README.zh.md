@@ -41,13 +41,21 @@ Steam-Debloat 是一个开源解决方案，旨在为低资源 PC 优化 Steam �
 
 ## 🚦 快速开始
 
-1. 选择您喜欢的版本：
-
-   - [🛡️ 隐私专注版](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Privacy-Edition.bat)
+1. 选择你喜欢的版本：
+   - [🛡️ 注重隐私版](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Privacy-Edition.bat)
    - [🌐 社交游戏版](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Social-Edition.bat)
 
-2. 使用管理员权限运行下载的 BAT 文件。
-3. 按屏幕提示完成安装。
+2. 以管理员权限运行下载的BAT文件。
+3. 按照屏幕上的提示完成安装。
+
+<details>
+<summary><small>要使好友列表正常工作，请按照以下步骤操作：</small></summary>
+
+1. 从[此链接](https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases)下载Quickpatcher。
+2. 点击“安装Quickpatcher”按钮：
+   ![image](https://github.com/user-attachments/assets/22811b3c-2db1-4716-9682-b77c61ef3486)
+
+</details>
 
 ## 📊 性能指标
 
