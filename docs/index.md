@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo.webp" alt="Steam-Debloat Logo" width="200"/>
+  <img src="Steam-Debloat/assets/logo.webp" alt="Steam-Debloat Logo" width="200"/>
   <h1>Steam-Debloat</h1>
   <p><em>Optimize Steam for Low-Resource PCs</em></p>
   
