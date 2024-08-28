@@ -1,1 +1,62 @@
+# Configuración básica de Jekyll
+title: Steam-Debloat
+description: Optimize Steam for Low-Resource PCs
+baseurl: ""
+url: "https://username.github.io/Steam-Debloat" # Cambia esto por la URL de tu repositorio de GitHub Pages
+logo: /assets/logo.webp
+
+# Configuración del menú
+nav:
+  - title: Home
+    url: /
+  - title: Features
+    url: /#-key-features
+  - title: Installation
+    url: /#-quick-start
+  - title: Roadmap
+    url: /#-project-roadmap
+  - title: Contributing
+    url: /#-contributing
+  - title: Support
+    url: /#-support-and-contact
+
+# Configuración de idiomas
+languages:
+  - en
+  - es
+  - fr
+  - pt
+  - zh
+  - hi
+
+# Configuración del tema (si estás usando un tema Jekyll)
+theme: jekyll-theme-cayman
+
+# Configuración de los elementos de navegación en el sitio
+navbar:
+  - title: README in English
+    url: https://github.com/mtytyx/Steam-Debloat/blob/main/README.md
+  - title: README in Spanish
+    url: https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md
+  - title: README in French
+    url: https://github.com/mtytyx/Steam-Debloat/blob/main/README.fr.md
+  - title: README in Portuguese
+    url: https://github.com/mtytyx/Steam-Debloat/blob/main/README.pt.md
+  - title: README in Chinese
+    url: https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md
+  - title: README in हिन्दी
+    url: https://github.com/mtytyx/Steam-Debloat/blob/main/README.hi.md
+
+# Opciones de configuración de Markdown
+markdown: kramdown
+
+# Configuración de plugins (si los necesitas)
+plugins:
+  - jekyll-feed
+
+# Configuración de la ruta de los archivos de contenido
+collections:
+  posts:
+    output: true
+    permalink: /:year/:month/:day/:title/
 
