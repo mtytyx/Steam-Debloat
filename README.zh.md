@@ -1,96 +1,69 @@
 <div align="center">
   <img src="assets/logo.webp" alt="Steam-Debloat Logo" width="200"/>
-  <h1>Steam-Debloat</h1>
-  <p><em>为低资源PC优化Steam</em></p>
-  
+  <h1>欢迎来到 Steam-Debloat!</h1>
+  <p><em>让你的 Steam 体验大幅提升—无需繁琐操作。</em></p>
+
   [![GitHub stars](https://img.shields.io/github/stars/mtytyx/Steam-Debloat.svg?style=social&label=Star)](https://github.com/mtytyx/Steam-Debloat)
   [![GitHub forks](https://img.shields.io/github/forks/mtytyx/Steam-Debloat.svg?style=social&label=Fork)](https://github.com/mtytyx/Steam-Debloat/fork)
   [![GitHub watchers](https://img.shields.io/github/watchers/mtytyx/Steam-Debloat.svg?style=social&label=Watch)](https://github.com/mtytyx/Steam-Debloat)
 
-[功能特点](#-主要功能) • [安装](#-快速开始) • [路线图](#-项目路线图) • [贡献](#-贡献) • [支持](#-支持与联系)
+  [🌟 发现功能](#-发现功能) • [🚀 快速开始](#-快速开始) • [🗺 未来规划](#-未来规划) • [🤝 参与贡献](#-参与贡献) • [📬 联系我们](#-联系我们)
 
-  [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md)
+  [English README](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • [Spanish README](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md)
 </div>
 
 ---
 
-## 🌟 关于 Steam-Debloat
+## 🌟 发现功能
 
-Steam-Debloat 是一个开源解决方案，旨在为低资源 PC 优化 Steam 客户端。通过智能降级和精简 Steam，我们让拥有较旧或性能较弱硬件的玩家能够享受流畅、响应迅速的游戏体验。
+你好，欢迎来到 **Steam-Debloat**！我们知道，当你的电脑配置较低时，使用 Steam 可能会让你感到沮丧。慢慢的加载时间、资源占用过高，这些问题都是我们希望解决的。我们的目标是让你的游戏体验更加顺畅。
 
-### 适合以下情况：
+**让我们来看看 **Steam-Debloat** 的独特之处：**
+- 💨 **极速提升**：我们能将 Steam 的内存使用量降低高达 80%。让你摆脱等待的烦恼，立即享受游戏乐趣。
+- 🚀 **即刻启动**：你的游戏将迅速加载，无需再等待数分钟。
+- 🛠 **完美适配旧配置**：特别为 4GB 内存或更少的 PC 设计，让你的硬件焕发新生。
+- 🎯 **简单易用**：一键安装，不需要任何技术知识，只需几步即可完成。
+- 🔒 **隐私优先**：管理你的数据，确保你的游戏环境更加安全。
+- 🌟 **持续更新**：我们不断进行优化，确保支持最新的游戏和硬件。
 
-- 内存小于 4GB 的 PC
-- 较旧的笔记本和台式机
-- 使用最新 Steam 客户端有困难的系统
-- 希望在任何硬件上最大化性能的玩家
+## 🚀 快速开始
 
-## 🚀 主要功能
+准备好提升你的 Steam 体验了吗？按照以下步骤操作即可：
 
-- **极致性能优化**：将 Steam 的内存使用减少高达 80%
-- **闪电般的启动速度**：几秒内进入游戏，而不是几分钟
-- **资源友好设计**：适合 4GB 内存或更少的 PC
-- **简单一键安装**：无需技术知识
-- **隐私专注选项**：控制您的数据并增强安全性
-- **定期更新**：不断优化以支持最新的游戏和硬件
-
-## 🚦 快速开始
-
-1. 选择你喜欢的版本：
-   - [🛡️ 注重隐私版](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Privacy-Edition.bat)
+1. **选择你的版本：**
+   - [🛡️ 隐私专注版](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Privacy-Edition.bat)
    - [🌐 社交游戏版](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Social-Edition.bat)
 
-2. 以管理员权限运行下载的BAT文件。
-3. 按照屏幕上的提示完成安装。
+2. **运行文件**：右键点击下载的文件，选择“以管理员身份运行”。
+
+3. **跟随简单步骤**：按照提示操作，安装过程简单明了。
 
 <details>
-<summary><small>要使好友列表正常工作，请按照以下步骤操作：</small></summary>
+<summary><small>好友列表无法显示？解决方法如下：</small></summary>
 
-1. 从[此链接](https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases)下载Quickpatcher。
-2. 点击“安装Quickpatcher”按钮：
+1. 从[此链接](https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases)下载 Quickpatcher。
+2. 点击“安装 Quickpatcher”按钮，恢复你的好友列表：
    ![image](https://github.com/user-attachments/assets/22811b3c-2db1-4716-9682-b77c61ef3486)
 
 </details>
 
-## 📊 性能指标
+## 🗺 未来规划
 
-| 配置                        | 内存使用量 | 启动时间 | 功能支持 |
-| --------------------------- | ---------- | -------- | -------- |
-| 标准 Steam                  | 300-400 MB | 15-20 秒 | 100%     |
-| Steam-Debloat（完整版）     | 100-150 MB | 5-8 秒   | 90%      |
-| Steam-Debloat（隐私专注版） | 30-50 MB   | 3-5 秒   | 75%      |
+我们对未来充满期待，并希望你也一样！以下是即将推出的新功能：
 
-## ⚠️ 兼容性通知
+- **2024 年 Q3**：推出图形界面安装程序，支持 macOS Beta。
+- **2024 年 Q4**：优化 Steam Deck，开始支持 Linux Alpha。
 
-尽管 Steam-Debloat 显著提升了性能，但可能会影响某些游戏的兼容性，特别是那些需要最新 Steam 版本或 Valve Anti-Cheat (VAC) 的游戏。值得注意的例外包括 CSGO 和 CSGO 2。
+## 🤝 参与贡献
 
-## 🗓 项目路线图
+我们非常欢迎你的参与！如果你想加入我们的团队，可以查看我们的[贡献指南](CONTRIBUTING.md)，了解如何贡献代码和想法。
 
-- **2024 年 Q3**：图形界面安装程序，macOS Beta 支持
-- **2024 年 Q4**：Steam Deck 优化，Linux Alpha 支持
-- **2025 年 Q1**：AI 驱动的性能调整，浏览器扩展
+## 📬 联系我们
 
-## 🤝 贡献
-
-我们欢迎贡献！请参阅我们的[贡献指南](CONTRIBUTING.md)以了解详细信息。
-
-## 📜 许可证
-
-本项目遵循[MIT 许可证](LICENSE)。
-
-## 📬 支持与联系
-
-- [GitHub Issues](https://github.com/mtytyx/Steam-Debloat/issues)
+有问题或建议？我们随时欢迎你的反馈！[在 GitHub 上提交问题](https://github.com/mtytyx/Steam-Debloat/issues)，我们会尽快回复你。
 
 ## 🙏 致谢
 
-感谢所有贡献者和[TiberiumFusion](https://github.com/TiberiumFusion)的宝贵意见。
+感谢所有贡献者以及 [TiberiumFusion](https://github.com/TiberiumFusion) 的宝贵支持和贡献。
 
 ---
-
-<div align="center">
-  <sub>由Steam-Debloat团队用❤️构建。</sub>
-</div>
-
-<div align="center">
-</div>
