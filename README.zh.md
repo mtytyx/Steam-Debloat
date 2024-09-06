@@ -9,12 +9,7 @@
 
 [功能特点](#-主要功能) • [安装](#-快速开始) • [路线图](#-项目路线图) • [贡献](#-贡献) • [支持](#-支持与联系)
 
-  [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • 
-  [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • 
-  [README in French](https://github.com/mtytyx/Steam-Debloat/blob/main/README.fr.md) • 
-  [README in Portuguese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.pt.md) • 
-  [README in Chinese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md) • 
-  [README in हिन्दी](https://github.com/mtytyx/Steam-Debloat/blob/main/README.hi.md)
+  [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md)
 </div>
 
 ---
