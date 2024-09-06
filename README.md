@@ -9,12 +9,7 @@
 
   [Features](#-key-features) • [Installation](#-quick-start) • [Roadmap](#-project-roadmap) • [Contributing](#-contributing) • [Support](#-support-and-contact)
 
-  [README in English](https://github.com/mtytyx/Steam-Debloat/blob/main/README.md) • 
-  [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • 
-  [README in French](https://github.com/mtytyx/Steam-Debloat/blob/main/README.fr.md) • 
-  [README in Portuguese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.pt.md) • 
-  [README in Chinese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md) • 
-  [README in हिन्दी](https://github.com/mtytyx/Steam-Debloat/blob/main/README.hi.md)
+  [README in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • [README in Chinese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md)
 </div>
 
 ---
