@@ -26,7 +26,7 @@
 <h1>Downloads</h1>
 
 <details>
-<summary><small>Steam 150mb/180mb</small></summary>
+<summary><small>Steam 150mb ram</small></summary>
 
   <p>This version includes moderate optimization features to streamline Steam's performance and remove unnecessary elements:</p>
   <ul>
@@ -49,7 +49,7 @@
 </details>
 
 <details>
-<summary><small>Steam 30mb</small></summary>
+<summary><small>Steam 30mb ram</small></summary>
 
   <p>This version offers more aggressive optimization for users seeking a minimalistic setup. It removes additional components and features for a leaner client:</p>
   <ul>
