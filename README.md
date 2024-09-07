@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/mtytyx/Steam-Debloat/tags">
-    <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.webp" alt="Steam Debloat Logo"/>
+    <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.webp" alt="Steam Debloat Logo" width="450"/>
   </a>
 </p>
 
