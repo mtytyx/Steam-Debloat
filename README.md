@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/mtytyx/Steam-Debloat/tags">
+  <a href="https://github.com/mtytyx/Steam-Debloat/releases">
     <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.webp" alt="Steam Debloat Logo" width="450"/>
   </a>
 </p>
@@ -46,7 +46,7 @@
       </ul>
     </li>
   </ul>
-  <p>Just download and run <a href="https://github.com/mtytyx/Steam-Debloat/raw/main/Installer.bat">Installer.bat</a></p>
+  <p>Just download and run <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.0/Installer.bat">Installer.bat</a></p>
 </details>
 
 <details>
@@ -70,7 +70,7 @@
       </ul>
     </li>
   </ul>
-  <p>Just download and run <a href="https://github.com/mtytyx/Steam-Debloat/raw/main/Installer-Lite.bat">Installer-Lite.bat</a></p>
+  <p>Just download and run <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.0/Installer-Lite.bat">Installer-Lite.bat</a></p>
 </details>
 
 <h1>Contributing</h1>
