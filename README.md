@@ -77,4 +77,4 @@
 
 <h1>Credits</h1>
 
-<p>We are deeply grateful to all our contributors who make this project possible. Special thanks to <a href="https://github.com/TiberiumFusion">TiberiumFusion</a> for their exceptional support and invaluable contributions.</p>
+<p> thanks to <a href="https://github.com/TiberiumFusion">TiberiumFusion</a> this is possible</p>
