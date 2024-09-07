@@ -46,7 +46,7 @@
       </ul>
     </li>
   </ul>
-  <p>Just download and run <a href="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/Installer.bat">Installer.bat</a></p>
+  <p>Just download and run <a href="https://github.com/mtytyx/Steam-Debloat/blob/main/Installer.bat">Installer.bat</a></p>
 </details>
 
 <details>
@@ -70,26 +70,7 @@
       </ul>
     </li>
   </ul>
-  <p>Just download and run <a href="@echo off
-setlocal enabledelayedexpansion
-
-set "PS_SCRIPT_URL=https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/app.ps1"
-set "PS_SCRIPT_FILE=app.ps1"
-
-powershell -Command "Invoke-WebRequest -Uri '%PS_SCRIPT_URL%' -OutFile '%TEMP%\%PS_SCRIPT_FILE%'"
-if %errorlevel% neq 0 (
-    echo [ERROR] Could not download %PS_SCRIPT_FILE%.
-    exit /b 1
-)
-
-powershell -ExecutionPolicy Bypass -File "%TEMP%\%PS_SCRIPT_FILE%" -Mode "Lite"
-if %errorlevel% neq 0 (
-    echo [ERROR] PowerShell script execution failed.
-    exit /b 1
-)
-
-del "%TEMP%\%PS_SCRIPT_FILE%"
-exit /b">Installer-Lite.bat</a></p>
+  <p>Just download and run <a href="https://github.com/mtytyx/Steam-Debloat/blob/main/Installer-Lite.bat">Installer-Lite.bat</a></p>
 </details>
 
 <h1>Contributing</h1>
