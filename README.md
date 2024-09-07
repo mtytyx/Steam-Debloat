@@ -41,7 +41,6 @@
     <li><strong>Disadvantages:</strong>
       <ul>
         <li>May not remove all bloatware.</li>
-        <li>Some user confirmations required during installation.</li>
         <li>Possible residual components may still impact performance.</li>
       </ul>
     </li>
@@ -65,7 +64,6 @@
     <li><strong>Disadvantages:</strong>
       <ul>
         <li>Higher likelihood of impacting some features or functionalities of Steam.</li>
-        <li>Installation requires multiple user confirmations.</li>
         <li>Potential loss of some functionalities or features that some users may find useful.</li>
       </ul>
     </li>
