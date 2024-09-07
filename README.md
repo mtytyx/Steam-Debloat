@@ -1,69 +1,82 @@
-<div align="center">
-  <img src="assets/logo.webp" alt="Steam-Debloat Logo" width="200"/>
-  <h1>Welcome to Steam-Debloat!</h1>
-  <p><em>Where Your Steam Experience Gets a Major Upgrade—Without the Hassle.</em></p>
+<p align="center">
+  <a href="https://github.com/mtytyx/Steam-Debloat/tags">
+    <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.webp" alt="Steam Debloat Logo"/>
+  </a>
+</p>
 
-  [![GitHub stars](https://img.shields.io/github/stars/mtytyx/Steam-Debloat.svg?style=social&label=Star)](https://github.com/mtytyx/Steam-Debloat)
-  [![GitHub forks](https://img.shields.io/github/forks/mtytyx/Steam-Debloat.svg?style=social&label=Fork)](https://github.com/mtytyx/Steam-Debloat/fork)
-  [![GitHub watchers](https://img.shields.io/github/watchers/mtytyx/Steam-Debloat.svg?style=social&label=Watch)](https://github.com/mtytyx/Steam-Debloat)
+<p align="center">
+  <a href="https://github.com/mtytyx/Steam-Debloat/issues">
+    <img src="https://img.shields.io/github/issues/mtytyx/Steam-Debloat" alt="Issues"/>
+  </a>
+  <a href="https://github.com/mtytyx/Steam-Debloat/tags">
+    <img src="https://img.shields.io/github/v/tag/mtytyx/Steam-Debloat" alt="Release"/>
+  </a>
+  <a href="https://github.com/mtytyx/Steam-Debloat/blob/main/CONTRIBUTING.md">
+    <img src="https://img.shields.io/github/contributors/mtytyx/Steam-Debloat" alt="Contributors"/>
+  </a>
+</p>
 
-  [🌟 Discover Features](#-discover-features) • [🚀 Get Started](#-get-started) • [🗺 What’s Coming](#-whats-coming) • [🤝 Get Involved](#-get-involved) • [📬 Contact Us](#-contact-us)
+<h2 align="center"><b>Steam Debloat for Windows</b></h2>
 
-  [Read in Spanish](https://github.com/mtytyx/Steam-Debloat/blob/main/README.es.md) • [Read in Chinese](https://github.com/mtytyx/Steam-Debloat/blob/main/README.zh.md)
-</div>
+<h1>System Requirements</h1>
+<ul>
+  <li><strong>OS:</strong> Windows 7-11</li>
+</ul>
 
----
-
-## 🌟 Discover Features
-
-Hey there! We're thrilled to have you here. **Steam-Debloat** is designed to give your Steam client the boost it needs, especially if you're working with an older or less powerful PC. We know how frustrating it can be to deal with slow load times and heavy resource usage, so we've crafted this tool with you in mind.
-
-**Here’s What Makes Us Different:**
-- 💨 **Blazing Speed**: Imagine cutting Steam’s memory usage by up to 80%! We’ve made it possible, so you can enjoy your games without waiting around.
-- 🚀 **Instant Launch**: Your games will start faster than ever. No more twiddling your thumbs while waiting for Steam to load.
-- 🛠 **Perfect for Older PCs**: If you’re running with 4GB of RAM or less, this tool is your new best friend.
-- 🎯 **One-Click Simplicity**: Installation is a breeze. Just one click and you’re on your way to a better gaming experience.
-- 🔒 **Privacy-First**: Take control of your data. We’ve got options to help you stay secure while you game.
-- 🌟 **Ever-Improving**: We’re constantly updating to make sure you get the best performance possible.
-
-## 🚀 Get Started
-
-Ready to enhance your Steam experience? Here’s how to dive in:
-
-1. **Choose Your Edition:**
-   - [🛡️ Privacy-Focused Edition](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Privacy-Edition.bat)
-   - [🌐 Social Gamer Edition](https://github.com/mtytyx/Steam-Debloat/releases/latest/download/Steam-Social-Edition.bat)
-
-2. **Run the File**: Right-click on the downloaded file and select "Run as administrator."
-
-3. **Follow the Simple Steps**: Just follow the prompts—our setup is designed to be user-friendly.
+<h1>Downloads</h1>
 
 <details>
-<summary><small>Friends List Issues? Here’s How to Fix It!</small></summary>
+<summary><small>Steam 150mb/180mb</small></summary>
 
-1. Download Quickpatcher from [this link](https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases).
-2. Click "Install Quickpatcher" and get your friends list back on track:
-   ![image](https://github.com/user-attachments/assets/22811b3c-2db1-4716-9682-b77c61ef3486)
-
+  <p>This version includes moderate optimization features to streamline Steam's performance and remove unnecessary elements:</p>
+  <ul>
+    <li><strong>Functionality:</strong> Optimizes startup time, reduces background resource usage, and removes non-essential components.</li>
+    <li><strong>Advantages:</strong>
+      <ul>
+        <li>Improved performance and reduced system load.</li>
+        <li>Balanced approach to optimization with minimal impact on Steam's functionality.</li>
+        <li>Less frequent user prompts during installation compared to more aggressive options.</li>
+      </ul>
+    </li>
+    <li><strong>Disadvantages:</strong>
+      <ul>
+        <li>May not remove all bloatware.</li>
+        <li>Some user confirmations required during installation.</li>
+        <li>Possible residual components may still impact performance.</li>
+      </ul>
+    </li>
+  </ul>
+  <p>Just download and run <a href="https://github.com/mtytyx/Steam-Debloat/raw/main/Steam-150mb.bat">Steam-150mb.bat</a></p>
 </details>
 
-## 🗺 What’s Coming
+<details>
+<summary><small>Steam 30mb</small></summary>
 
-We’re excited about the future, and we want you to be too! Here’s a sneak peek at what’s next:
+  <p>This version offers more aggressive optimization for users seeking a minimalistic setup. It removes additional components and features for a leaner client:</p>
+  <ul>
+    <li><strong>Functionality:</strong> Provides enhanced performance by removing more non-essential features and background services. Aims for a lightweight and efficient Steam experience.</li>
+    <li><strong>Advantages:</strong>
+      <ul>
+        <li>Significant reduction in system resource usage.</li>
+        <li>Faster startup and operation.</li>
+        <li>More aggressive removal of unnecessary components results in a cleaner installation.</li>
+      </ul>
+    </li>
+    <li><strong>Disadvantages:</strong>
+      <ul>
+        <li>Higher likelihood of impacting some features or functionalities of Steam.</li>
+        <li>Installation requires multiple user confirmations.</li>
+        <li>Potential loss of some functionalities or features that some users may find useful.</li>
+      </ul>
+    </li>
+  </ul>
+  <p>Just download and run <a href="https://github.com/mtytyx/Steam-Debloat/raw/main/Steam-30mb.bat">Steam-30mb.bat</a></p>
+</details>
 
-- **Q3 2024**: We’re working on a new graphical installer and beta support for macOS.
-- **Q4 2024**: We’ll be optimizing for the Steam Deck and starting alpha support for Linux.
+<h1>Contributing</h1>
 
-## 🤝 Get Involved
+<p>We welcome contributions from the community! If you'd like to help out, please check out our <a href="https://github.com/mtytyx/Steam-Debloat/blob/main/CONTRIBUTING.md">Contributing Guide</a> to see how you can get involved.</p>
 
-We’d love for you to be part of our journey. If you’re interested in contributing, check out our [Contribution Guidelines](CONTRIBUTING.md) and see how you can help.
+<h1>Credits</h1>
 
-## 📬 Contact Us
-
-Questions? Suggestions? We’re here for you! [Open an issue on GitHub](https://github.com/mtytyx/Steam-Debloat/issues) and we’ll get back to you as soon as possible.
-
-## 🙌 Special Thanks
-
-A big thank you to all our contributors and [TiberiumFusion](https://github.com/TiberiumFusion) for their incredible support and contributions.
-
----
+<p>We are deeply grateful to all our contributors who make this project possible. Special thanks to <a href="https://github.com/TiberiumFusion">TiberiumFusion</a> for their exceptional support and invaluable contributions.</p>
