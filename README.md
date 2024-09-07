@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/mtytyx/Steam-Debloat/releases">
-    <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.webp" alt="Steam Debloat Logo" width="450"/>
+    <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.webp" alt="Steam Debloat Logo" width="250"/>
   </a>
 </p>
 
@@ -26,7 +26,7 @@
 <h1>Downloads</h1>
 
 <details>
-<summary><small>Steam 150mb ram</small></summary>
+<summary><small>Steam Lite</small></summary>
 
   <p>This version includes moderate optimization features to streamline Steam's performance and remove unnecessary elements:</p>
   <ul>
@@ -49,7 +49,7 @@
 </details>
 
 <details>
-<summary><small>Steam 30mb ram</small></summary>
+<summary><small>Steam focused on privacy</small></summary>
 
   <p>This version offers more aggressive optimization for users seeking a minimalistic setup. It removes additional components and features for a leaner client:</p>
   <ul>
