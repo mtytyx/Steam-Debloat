@@ -9,7 +9,7 @@ $errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
 
 $urls = @{
     "Normal" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/scrip/Steam.bat"
+        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/Steam.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
     "Lite" = @{
@@ -54,41 +54,22 @@ function Download-Files {
     try {
         Write-Host "[INFO] Downloading files..." -ForegroundColor $color
 
-        # Create the progress bar
-        $total = 2
-        $current = 0
-
-        # Download SteamBat
+        # File paths
         $batFile = "$tempPath\$fileSteamBat"
         $cfgFile = "$tempPath\$fileSteamCfg"
-        
-        $batDownload = Start-Job -ScriptBlock {
-            param($url, $outFile)
-            Invoke-WebRequest -Uri $url -OutFile $outFile
-        } -ArgumentList $urlSteamBat, $batFile
 
-        $cfgDownload = Start-Job -ScriptBlock {
-            param($url, $outFile)
-            Invoke-WebRequest -Uri $url -OutFile $outFile
-        } -ArgumentList $urlSteamCfg, $cfgFile
+        # Download SteamBat
+        Write-Progress -PercentComplete 0 -Status "Downloading files" -CurrentOperation "Downloading $fileSteamBat"
+        Invoke-WebRequest -Uri $urlSteamBat -OutFile $batFile
+        Write-Progress -PercentComplete 50 -Status "Downloading files" -CurrentOperation "Downloading $fileSteamCfg"
 
-        while ($batDownload.State -ne 'Completed' -or $cfgDownload.State -ne 'Completed') {
-            Start-Sleep -Seconds 1
-            $current = [System.Linq.Enumerable]::Count([System.Linq.Enumerable]::Where($batDownload.State, {$batDownload.State -eq 'Completed'})) +
-                       [System.Linq.Enumerable]::Count([System.Linq.Enumerable]::Where($cfgDownload.State, {$cfgDownload.State -eq 'Completed'}))
-            Write-Progress -PercentComplete (($current / $total) * 100) -Status "Downloading files" -CurrentOperation "Downloading $fileSteamBat and $fileSteamCfg"
-        }
-
-        # Ensure all jobs are completed
-        $batDownload | Wait-Job | Receive-Job
-        $cfgDownload | Wait-Job | Receive-Job
+        # Download SteamCfg
+        Invoke-WebRequest -Uri $urlSteamCfg -OutFile $cfgFile
+        Write-Progress -PercentComplete 100 -Status "Downloading files" -CurrentOperation "Download complete"
 
         Write-Host "[INFO] Files downloaded successfully." -ForegroundColor $color
     } catch {
         Handle-Error "Failed to download files."
-    } finally {
-        # Clean up jobs
-        Get-Job | Remove-Job
     }
 }
 
