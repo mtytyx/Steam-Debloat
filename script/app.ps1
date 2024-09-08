@@ -1,7 +1,8 @@
 param (
     [string]$Mode = "Normal"
 )
-// each function has its description (//) in case you want to know what it does
+
+# each function has its description (#) in case you want to know what it does
 $title = "Steam Optimization"
 $github = "Github.com/mtytyx"
 $color = "Green"
@@ -28,7 +29,7 @@ $verificationFilePath = "C:\Program Files (x86)\Steam\verification.txt"
 $urlSteamBat = $urls[$Mode]["SteamBat"]
 $urlSteamCfg = $urls[$Mode]["SteamCfg"]
 
-// Main function to execute all steps
+# Main function to execute all steps
 function Main {
     Set-ConsoleProperties
     Kill-SteamProcesses
@@ -46,18 +47,18 @@ function Main {
     Finish
 }
 
-// Set console properties and display the start message
+# Set console properties and display the start message
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
     Write-Host "[INFO] Starting $title in $Mode mode" -ForegroundColor $color
 }
 
-// Kill any running Steam processes
+# Kill any running Steam processes
 function Kill-SteamProcesses {
     Stop-Process -Name "steam" -Force -ErrorAction SilentlyContinue
 }
 
-// Download necessary files
+# Download necessary files
 function Download-Files {
     Write-Host "[INFO] Downloading files..." -ForegroundColor $color
     try {
@@ -71,7 +72,7 @@ function Download-Files {
     }
 }
 
-// Verify if the update process should be skipped
+# Verify if the update process should be skipped
 function Verify-Update {
     if (-not (Test-Path $verificationFilePath)) {
         Write-Host "[INFO] Verification file not found. Proceeding with update..." -ForegroundColor $color
@@ -83,14 +84,14 @@ function Verify-Update {
     }
 }
 
-// Start Steam for updates if needed
+# Start Steam for updates if needed
 function Start-Steam {
     Write-Host "[INFO] Starting Steam for updates..." -ForegroundColor $color
     Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
     Start-Sleep -Seconds 5
 }
 
-// Wait for Steam to close before continuing
+# Wait for Steam to close before continuing
 function Wait-For-SteamClosure {
     Write-Host "[INFO] Waiting for Steam to close..." -ForegroundColor $color
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
@@ -98,7 +99,7 @@ function Wait-For-SteamClosure {
     }
 }
 
-// Move the configuration file to the Steam directory
+# Move the configuration file to the Steam directory
 function Move-ConfigFile {
     if (Test-Path "$tempPath\$fileSteamCfg") {
         Move-Item -Path "$tempPath\$fileSteamCfg" -Destination "C:\Program Files (x86)\Steam\steam.cfg" -Force
@@ -108,7 +109,7 @@ function Move-ConfigFile {
     }
 }
 
-// Move the Steam batch file to the desktop if requested
+# Move the Steam batch file to the desktop if requested
 function Move-SteamBatToDesktop {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Move-Item -Path "$tempPath\$fileSteamBat" -Destination $desktopPath -Force
@@ -116,7 +117,7 @@ function Move-SteamBatToDesktop {
     }
 }
 
-// Remove temporary files from the TEMP directory
+# Remove temporary files from the TEMP directory
 function Remove-TempFiles {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Remove-Item -Path "$tempPath\$fileSteamBat" -Force
@@ -124,13 +125,13 @@ function Remove-TempFiles {
     }
 }
 
-// Prompt the user to move the Steam batch file to the desktop
+# Prompt the user to move the Steam batch file to the desktop
 function Prompt-MoveToDesktop {
     $response = Read-Host "Do you want to move $fileSteamBat to the desktop? (y/n)"
     return $response -eq "y" -or $response -eq "Y"
 }
 
-// Handle errors and prompt the user to report the issue
+# Handle errors and prompt the user to report the issue
 function Handle-Error {
     param (
         [string]$message
@@ -143,10 +144,10 @@ function Handle-Error {
     exit 1
 }
 
-// Finalize the script execution and display success message
+# Finalize the script execution and display success message
 function Finish {
     Write-Host "[SUCCESS] Steam configured and updated." -ForegroundColor $color
 }
 
-// Start the main function
+# Start the main function
 Main
