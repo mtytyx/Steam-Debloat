@@ -52,23 +52,15 @@ function Kill-SteamProcesses {
 
 function Download-Files {
     try {
-        Write-Host "[INFO] Downloading files..." -ForegroundColor $color
-
         # File paths
         $batFile = "$tempPath\$fileSteamBat"
         $cfgFile = "$tempPath\$fileSteamCfg"
 
         # Download SteamBat
-        Write-Host "[INFO] Downloading $fileSteamBat..."
         Invoke-WebRequest -Uri $urlSteamBat -OutFile $batFile
-        Write-Host "[INFO] Downloaded $fileSteamBat."
 
         # Download SteamCfg
-        Write-Host "[INFO] Downloading $fileSteamCfg..."
         Invoke-WebRequest -Uri $urlSteamCfg -OutFile $cfgFile
-        Write-Host "[INFO] Downloaded $fileSteamCfg."
-
-        Write-Host "[INFO] Files downloaded successfully." -ForegroundColor $color
     } catch {
         Handle-Error "Failed to download files."
     }
