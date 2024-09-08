@@ -9,7 +9,7 @@ $errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
 
 $urls = @{
     "Normal" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/Steam.bat"
+        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
     "Lite" = @{
@@ -59,13 +59,14 @@ function Download-Files {
         $cfgFile = "$tempPath\$fileSteamCfg"
 
         # Download SteamBat
-        Write-Progress -PercentComplete 0 -Status "Downloading files" -CurrentOperation "Downloading $fileSteamBat"
+        Write-Host "[INFO] Downloading $fileSteamBat..."
         Invoke-WebRequest -Uri $urlSteamBat -OutFile $batFile
-        Write-Progress -PercentComplete 50 -Status "Downloading files" -CurrentOperation "Downloading $fileSteamCfg"
+        Write-Host "[INFO] Downloaded $fileSteamBat."
 
         # Download SteamCfg
+        Write-Host "[INFO] Downloading $fileSteamCfg..."
         Invoke-WebRequest -Uri $urlSteamCfg -OutFile $cfgFile
-        Write-Progress -PercentComplete 100 -Status "Downloading files" -CurrentOperation "Download complete"
+        Write-Host "[INFO] Downloaded $fileSteamCfg."
 
         Write-Host "[INFO] Files downloaded successfully." -ForegroundColor $color
     } catch {
