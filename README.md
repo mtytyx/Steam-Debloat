@@ -50,7 +50,7 @@
     </li>
   </ul>
   
-  <p>To get started, download and run the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.0/Installer.bat">Installer.bat</a> 🛠️</p>
+  <p>To get started, download and run the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.2/Installer.bat">Installer.bat</a> 🛠️</p>
 </details>
 
 <details>
@@ -75,7 +75,7 @@
     </li>
   </ul>
   
-  <p>To get started, download and run the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.0/Installer-Lite.bat">Installer-Lite.bat</a> 🛠️</p>
+  <p>To get started, download and run the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.2/Installer-Lite.bat">Installer-Lite.bat</a> 🛠️</p>
 </details>
 
 ## Usage 🚀
