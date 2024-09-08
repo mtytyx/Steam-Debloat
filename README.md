@@ -19,6 +19,10 @@
 <h2 align="center"><b>Steam Debloat for Windows</b> 🎮</h2>
 
 <p align="center">
+  
+  <h2 align="center"><b>  🌟 Coming Soon: Steam Debloat for macOS & Linux 🌟</b> 🎮</h2>
+
+<p align="center">
   Streamline your Steam experience with our customizable debloat solutions. 🚀
 </p>
 
