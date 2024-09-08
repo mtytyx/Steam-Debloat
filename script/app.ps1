@@ -5,6 +5,7 @@ param (
 $title = "Steam Optimization"
 $github = "Github.com/mtytyx"
 $color = "Green"
+$errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
 
 $urls = @{
     "Normal" = @{
@@ -50,20 +51,38 @@ function Kill-SteamProcesses {
 }
 
 function Download-Files {
-    try {
-        Invoke-WebRequest -Uri $urlSteamBat -OutFile "$tempPath\$fileSteamBat"
-    } catch {
-        Write-Host "[ERROR] Failed to download $urlSteamBat" -ForegroundColor Red
-        Write-Host "Error details: $_"
-        exit 1
-    }
+    $progress = [System.Diagnostics.Stopwatch]::StartNew()
     
     try {
-        Invoke-WebRequest -Uri $urlSteamCfg -OutFile "$tempPath\$fileSteamCfg"
+        $batFile = "$tempPath\$fileSteamBat"
+        $cfgFile = "$tempPath\$fileSteamCfg"
+        
+        Write-Host "[INFO] Downloading files..." -ForegroundColor $color
+
+        # Start download of SteamBat
+        $jobBat = Start-Job -ScriptBlock {
+            param($url, $outFile)
+            Invoke-WebRequest -Uri $url -OutFile $outFile
+        } -ArgumentList $urlSteamBat, $batFile
+
+        # Start download of SteamCfg
+        $jobCfg = Start-Job -ScriptBlock {
+            param($url, $outFile)
+            Invoke-WebRequest -Uri $url -OutFile $outFile
+        } -ArgumentList $urlSteamCfg, $cfgFile
+
+        # Wait for both jobs to complete
+        $jobs = @($jobBat, $jobCfg)
+        foreach ($job in $jobs) {
+            $job | Wait-Job | Receive-Job
+        }
+
+        Write-Host "[INFO] Files downloaded successfully." -ForegroundColor $color
     } catch {
-        Write-Host "[ERROR] Failed to download $urlSteamCfg" -ForegroundColor Red
-        Write-Host "Error details: $_"
-        exit 1
+        Handle-Error "Failed to download files."
+    } finally {
+        # Clean up jobs
+        $jobs | Remove-Job
     }
 }
 
@@ -85,6 +104,7 @@ function Move-ConfigFile {
         Move-Item -Path "$tempPath\$fileSteamCfg" -Destination "C:\Program Files (x86)\Steam\steam.cfg" -Force
     } else {
         Write-Host "[ERROR] File $tempPath\$fileSteamCfg not found" -ForegroundColor Red
+        Handle-Error "File $tempPath\$fileSteamCfg not found."
     }
 }
 
@@ -105,6 +125,18 @@ function Remove-TempFiles {
 function Prompt-MoveToDesktop {
     $response = Read-Host "Do you want to move $fileSteamBat to the desktop? (y/n)"
     return $response -eq "y" -or $response -eq "Y"
+}
+
+function Handle-Error {
+    param (
+        [string]$message
+    )
+    Write-Host "[ERROR] $message" -ForegroundColor Red
+    Write-Host "Please report the issue at $errorPage" -ForegroundColor Red
+    Write-Host "Press Enter to open the issue page..."
+    Read-Host
+    Start-Process $errorPage
+    exit 1
 }
 
 function Finish {
