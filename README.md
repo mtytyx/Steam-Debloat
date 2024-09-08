@@ -8,8 +8,8 @@
   <a href="https://github.com/mtytyx/Steam-Debloat/issues">
     <img src="https://img.shields.io/github/issues/mtytyx/Steam-Debloat" alt="Issues"/>
   </a>
-  <a href="https://github.com/mtytyx/Steam-Debloat/tags">
-    <img src="https://img.shields.io/github/v/tag/mtytyx/Steam-Debloat" alt="Release"/>
+  <a href="https://github.com/mtytyx/Steam-Debloat/release">
+    <img src="https://img.shields.io/github/v/release/mtytyx/Steam-Debloat" alt="Release"/>
   </a>
   <a href="https://github.com/mtytyx/Steam-Debloat/blob/main/CONTRIBUTING.md">
     <img src="https://img.shields.io/github/contributors/mtytyx/Steam-Debloat" alt="Contributors"/>
