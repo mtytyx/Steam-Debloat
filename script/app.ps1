@@ -52,14 +52,10 @@ function Kill-SteamProcesses {
 
 function Download-Files {
     try {
-        # File paths
         $batFile = "$tempPath\$fileSteamBat"
         $cfgFile = "$tempPath\$fileSteamCfg"
-
-        # Download SteamBat
+        
         Invoke-WebRequest -Uri $urlSteamBat -OutFile $batFile
-
-        # Download SteamCfg
         Invoke-WebRequest -Uri $urlSteamCfg -OutFile $cfgFile
     } catch {
         Handle-Error "Failed to download files."
