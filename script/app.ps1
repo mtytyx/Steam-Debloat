@@ -3,7 +3,7 @@ param (
 )
 
 $title = "Steam Optimization"
-$githubRepo = "GitHub.com/mtytyx"
+$github = "Github.com/mtytyx"
 $color = "Green"
 
 $urls = @{
@@ -36,7 +36,7 @@ function Main {
 }
 
 function Set-ConsoleProperties {
-    $host.UI.RawUI.WindowTitle = "$title - $githubRepo"
+    $host.UI.RawUI.WindowTitle = "$title - $github"
     Write-Host "[INFO] Starting $title" -ForegroundColor $color
 }
 
