@@ -51,6 +51,7 @@ function Kill-SteamProcesses {
 }
 
 function Download-Files {
+    Write-Host "[INFO] Downloading files..." -ForegroundColor $color
     try {
         $batFile = "$tempPath\$fileSteamBat"
         $cfgFile = "$tempPath\$fileSteamCfg"
