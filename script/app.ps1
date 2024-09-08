@@ -65,7 +65,7 @@ function Download-Files {
 
 function Start-Steam {
     Write-Host "[INFO] Starting Steam for updates..." -ForegroundColor $color
-    Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -exitsteam"
+    Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
     Start-Sleep -Seconds 5
 }
 
