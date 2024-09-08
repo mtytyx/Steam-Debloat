@@ -37,7 +37,7 @@ function Main {
 
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $githubRepo"
-    Write-Host "[INFO] Starting $title in $Mode mode" -ForegroundColor $color
+    Write-Host "[INFO] Starting $title" -ForegroundColor $color
 }
 
 function Kill-SteamProcesses {
@@ -45,8 +45,21 @@ function Kill-SteamProcesses {
 }
 
 function Download-Files {
-    Invoke-WebRequest -Uri $urlSteamBat -OutFile "$tempPath\$fileSteamBat"
-    Invoke-WebRequest -Uri $urlSteamCfg -OutFile "$tempPath\$fileSteamCfg"
+    try {
+        Invoke-WebRequest -Uri $urlSteamBat -OutFile "$tempPath\$fileSteamBat"
+    } catch {
+        Write-Host "[ERROR] Failed to download $urlSteamBat" -ForegroundColor Red
+        Write-Host "Error details: $_"
+        exit 1
+    }
+    
+    try {
+        Invoke-WebRequest -Uri $urlSteamCfg -OutFile "$tempPath\$fileSteamCfg"
+    } catch {
+        Write-Host "[ERROR] Failed to download $urlSteamCfg" -ForegroundColor Red
+        Write-Host "Error details: $_"
+        exit 1
+    }
 }
 
 function Start-Steam {
@@ -63,7 +76,11 @@ function Wait-For-SteamClosure {
 }
 
 function Move-ConfigFile {
-    Move-Item -Path "$tempPath\$fileSteamCfg" -Destination "C:\Program Files (x86)\Steam\steam.cfg" -Force
+    if (Test-Path "$tempPath\$fileSteamCfg") {
+        Move-Item -Path "$tempPath\$fileSteamCfg" -Destination "C:\Program Files (x86)\Steam\steam.cfg" -Force
+    } else {
+        Write-Host "[ERROR] File $tempPath\$fileSteamCfg not found" -ForegroundColor Red
+    }
 }
 
 function Finish {
