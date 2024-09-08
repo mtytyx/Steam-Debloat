@@ -43,7 +43,7 @@ function Main {
 
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
-    Write-Host "[INFO] Starting $title" -ForegroundColor $color
+    Write-Host "[INFO] Starting $title in $Mode mode" -ForegroundColor $color
 }
 
 function Kill-SteamProcesses {
