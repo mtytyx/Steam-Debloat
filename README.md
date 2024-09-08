@@ -100,8 +100,11 @@ We welcome contributions from the community! If you'd like to help out, please c
 
 A big thanks to [TiberiumFusion](https://github.com/TiberiumFusion) for their valuable contributions and support that made this project possible.
 
----
+##  Support Channel 📬
 
+For technical inquiries or assistance, please contact with me:
+- **Instagram**: [@l1l.kid](https://www.instagram.com/l1l.kid/)
+---
 <p align="center">
   <a href="#top">Back to top 🔝</a>
 </p>
