@@ -93,7 +93,7 @@
 
 ## Contributing 🤝
 
-We welcome contributions from the community! If you'd like to help out, please check out our [Contributing Guide](https://github.com/mtytyx/Steam-Debloat/blob/main/CONTRIBUTING.md) to see how you can get involved.
+We welcome contributions from the community! If you'd like to help out, please check out our [Contributing Guide](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/CONTRIBUTING.md) to see how you can get involved.
 
 ## Credits 🙏
 
