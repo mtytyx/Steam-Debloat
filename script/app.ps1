@@ -21,6 +21,7 @@ $fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } else { "Steam.bat" }
 $fileSteamCfg = "steam.cfg"
 $tempPath = $env:TEMP
 $steamPath = "C:\Program Files (x86)\Steam\steam.exe"
+$desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), $fileSteamBat)
 
 $urlSteamBat = $urls[$Mode]["SteamBat"]
 $urlSteamCfg = $urls[$Mode]["SteamCfg"]
@@ -32,6 +33,10 @@ function Main {
     Start-Steam
     Wait-For-SteamClosure
     Move-ConfigFile
+    if (Prompt-MoveToDesktop) {
+        Move-SteamBatToDesktop
+    }
+    Remove-TempFiles
     Finish
 }
 
@@ -63,13 +68,13 @@ function Download-Files {
 }
 
 function Start-Steam {
-    Write-Host "[INFO] Starting Steam for updates..."
+    Write-Host "[INFO] Starting Steam for updates..." -ForegroundColor $color
     Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -exitsteam"
     Start-Sleep -Seconds 5
 }
 
 function Wait-For-SteamClosure {
-    Write-Host "[INFO] Waiting for Steam to close..."
+    Write-Host "[INFO] Waiting for Steam to close..." -ForegroundColor $color
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
         Start-Sleep -Seconds 5
     }
@@ -83,8 +88,27 @@ function Move-ConfigFile {
     }
 }
 
+function Move-SteamBatToDesktop {
+    if (Test-Path "$tempPath\$fileSteamBat") {
+        Move-Item -Path "$tempPath\$fileSteamBat" -Destination $desktopPath -Force
+        Write-Host "[INFO] Moved $fileSteamBat to desktop" -ForegroundColor $color
+    }
+}
+
+function Remove-TempFiles {
+    if (Test-Path "$tempPath\$fileSteamBat") {
+        Remove-Item -Path "$tempPath\$fileSteamBat" -Force
+        Write-Host "[INFO] Removed $fileSteamBat from TEMP" -ForegroundColor $color
+    }
+}
+
+function Prompt-MoveToDesktop {
+    $response = Read-Host "Do you want to move $fileSteamBat to the desktop? (y/n)"
+    return $response -eq "y" -or $response -eq "Y"
+}
+
 function Finish {
-    Write-Host "[SUCCESS] Steam configured and updated."
+    Write-Host "[SUCCESS] Steam configured and updated." -ForegroundColor $color
 }
 
 Main
