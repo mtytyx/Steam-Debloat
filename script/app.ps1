@@ -8,12 +8,12 @@ $color = "Green"
 
 $urls = @{
     "Normal" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/Steam.bat"
-        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/steam.cfg"
+        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat"
+        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
     "Lite" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/Steam-Lite.bat"
-        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/steam.cfg"
+        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam-Lite.bat"
+        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
 }
 
