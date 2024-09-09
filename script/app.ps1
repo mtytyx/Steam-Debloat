@@ -17,9 +17,17 @@ $urls = @{
         "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam-Lite.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
+    "TEST" = @{
+        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
+        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
+    }
+    "Lite-TEST" = @{
+        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat"
+        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
+    }
 }
 
-$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } else { "Steam.bat" }
+$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "Test") { "Steam-Test.bat" } else { "Steam.bat" }
 $fileSteamCfg = "steam.cfg"
 $tempPath = $env:TEMP
 $steamPath = "C:\Program Files (x86)\Steam\steam.exe"
@@ -77,9 +85,8 @@ function Set-ConsoleProperties {
     Write-WithEffect "[INFO] Starting $title in $Mode mode" -ForegroundColor $color
 }
 
-# Kill any running Steam processes
+# Kill any running Steam processes (without typing effect)
 function Kill-SteamProcesses {
-    Write-WithEffect "[INFO] Killing Steam processes..." -ForegroundColor $color
     Stop-Process -Name "steam" -Force -ErrorAction SilentlyContinue
 }
 
@@ -100,11 +107,11 @@ function Download-Files {
 # Verify if the update process should be skipped
 function Verify-Update {
     if (-not (Test-Path $verificationFilePath)) {
-        Write-WithEffect "[INFO] Verification file not found. Proceeding with update..." -ForegroundColor $color
+        Write-WithEffect "[INFO] Verification file not found..." -ForegroundColor $color
         $verificationContent = "This file is used as a verification to determine whether to proceed with Steam's downgrade or not."
         Set-Content -Path $verificationFilePath -Value $verificationContent
     } else {
-        Write-WithEffect "[INFO] Verification file found. Skipping update process." -ForegroundColor $color
+        Write-WithEffect "[INFO] Verification file found..." -ForegroundColor $color
         $global:skipStartSteam = $true
     }
 }
