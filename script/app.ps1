@@ -73,8 +73,6 @@ function Main {
         Start-Steam
         Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
         Wait-For-SteamClosure
-    } else {
-        Write-WithEffect "[INFO] Skipping Steam start and closure wait due to verification file present..." -ForegroundColor $color
     }
     
     Move-ConfigFile
