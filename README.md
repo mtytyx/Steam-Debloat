@@ -81,7 +81,7 @@
     <li><strong>Functionality:</strong> Fixes bugs with the Steam friends list UI.</li>
     <li><strong>Steps:</strong>
       <ul>
-        <li>Download the <a href="https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases/download/v1.1/QuickPatcher_Patch.zip">QuickPatcher_Patch.zip</a> file from GitHub. 📥</li>
+        <li>Download the <a href="https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases">QuickPatcher_Patch.zip</a> file from GitHub. 📥</li>
         <li>Extract the ZIP file to a folder on your PC. 📂</li>
         <li>Run the <code>FixedSteamFriendsUI.exe</code> file. 🖱️</li>
         <li>Click the <strong>Install Patch</strong> button. ✔️</li>
