@@ -1,4 +1,4 @@
-:param (
+param (
     [string]$Mode = "Normal",
     [string]$Date = ""  # Variable para el modo TEST-VERSION
 )
