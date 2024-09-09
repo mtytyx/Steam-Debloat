@@ -3,7 +3,7 @@ param (
 )
 
 # each function has its description (#) in case you want to know what it does
-$title = "Steam Debloat"
+$title = "Steam"
 $github = "Github.com/mtytyx"
 $color = "Green"
 $errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
