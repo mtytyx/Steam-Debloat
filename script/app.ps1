@@ -1,10 +1,10 @@
 param (
     [string]$Mode = "Normal",
-    [string]$Data = ""
+    [string]$Data = ""  # Variable para el modo TEST-VERSION
 )
 
 if ($Mode -eq "TEST-VERSION" -and -not $Data) {
-    $Data = Read-Host ""
+    $Data = Read-Host "Enter the data (e.g., 2024-09-09) for the TEST-VERSION"
 }
 
 $title = "Steam Debloat"
@@ -65,7 +65,7 @@ function Main {
     Kill-SteamProcesses
     Download-Files
     Verify-Update
-    if (-not $global:skipStartSteam) {
+    if (-not $global:skipStartSteam -or $Mode -eq "TEST-VERSION") {
         Start-Steam
     }
     Wait-For-SteamClosure
