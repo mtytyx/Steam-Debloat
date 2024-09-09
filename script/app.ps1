@@ -67,10 +67,16 @@ function Main {
     Kill-SteamProcesses
     Download-Files
     Verify-Update
+    
     if (-not $global:skipStartSteam) {
+        Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
         Start-Steam
+        Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
         Wait-For-SteamClosure
+    } else {
+        Write-WithEffect "[INFO] Skipping Steam start and closure wait due to verification file present..." -ForegroundColor $color
     }
+    
     Move-ConfigFile
     if (Prompt-MoveToDesktop) {
         Move-SteamBatToDesktop
@@ -118,14 +124,12 @@ function Verify-Update {
 
 # Start Steam for updates if needed
 function Start-Steam {
-    Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
     Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
     Start-Sleep -Seconds 5
 }
 
 # Wait for Steam to close before continuing
 function Wait-For-SteamClosure {
-    Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
         Start-Sleep -Seconds 5
     }
