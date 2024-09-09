@@ -1,17 +1,14 @@
 param (
     [string]$Mode = "Normal",
-    [string]$Data = ""  # Variable para el modo TEST-VERSION
 )
 
-if ($Mode -eq "TEST-VERSION" -and -not $Data) {
-    $Data = Read-Host "Enter the data (e.g., 2024-09-09) for the TEST-VERSION"
-}
-
+# Title and GitHub information
 $title = "Steam Debloat"
 $github = "Github.com/mtytyx"
 $color = "Green"
 $errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
 
+# URL mappings based on mode
 $urls = @{
     "Normal" = @{
         "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat"
@@ -25,13 +22,10 @@ $urls = @{
         "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
-    "TEST-VERSION" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat"
-        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
-    }
 }
 
-$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "TEST-VERSION") { "Steam-test-version.bat" } elseif ($Mode -eq "TEST") { "Steam-TEST.bat" } else { "Steam.bat" }
+# Determine file names based on mode
+$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "TEST") { "Steam-TEST.bat" } else { "Steam.bat" }
 $fileSteamCfg = "steam.cfg"
 $tempPath = $env:TEMP
 $steamPath = "C:\Program Files (x86)\Steam\steam.exe"
@@ -41,6 +35,7 @@ $verificationFilePath = "C:\Program Files (x86)\Steam\verification.txt"
 $urlSteamBat = $urls[$Mode]["SteamBat"]
 $urlSteamCfg = $urls[$Mode]["SteamCfg"]
 
+# Function to write messages to the console with optional color and delay
 function Write-WithEffect {
     param (
         [string]$Text,
@@ -60,14 +55,13 @@ function Write-WithEffect {
     }
 }
 
+# Main function to coordinate all steps
 function Main {
     Set-ConsoleProperties
     Kill-SteamProcesses
     Download-Files
     Verify-Update
-    if (-not $global:skipStartSteam -or $Mode -eq "TEST-VERSION") {
-        Start-Steam
-    }
+    Start-Steam
     Wait-For-SteamClosure
     Move-ConfigFile
     Move-SteamBatToDesktop  # Directly move to desktop without asking
@@ -76,15 +70,18 @@ function Main {
     Start-Process $desktopPath  # Execute steam.bat from desktop at the end
 }
 
+# Set console properties like title and display initial message
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
     Write-WithEffect "[INFO] Starting $title in $Mode mode" -ForegroundColor $color
 }
 
+# Terminate any running Steam processes
 function Kill-SteamProcesses {
     Stop-Process -Name "steam" -Force -ErrorAction SilentlyContinue
 }
 
+# Download necessary files from URLs
 function Download-Files {
     Write-WithEffect "[INFO] Downloading files..." -ForegroundColor $color
     try {
@@ -98,6 +95,7 @@ function Download-Files {
     }
 }
 
+# Verify if the update should proceed based on the presence of a verification file
 function Verify-Update {
     if (-not (Test-Path $verificationFilePath)) {
         Write-WithEffect "[INFO] Verification file not found..." -ForegroundColor $color
@@ -109,17 +107,14 @@ function Verify-Update {
     }
 }
 
+# Start Steam with update parameters
 function Start-Steam {
-    if ($Mode -eq "TEST-VERSION" -and $Data) {
-        Write-WithEffect "[INFO] Starting Steam for specific version update..." -ForegroundColor $color
-        Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl http://web.archive.org/web/$Data/media.steampowered.com/client/steam_client_win32 -exitsteam"
-    } else {
-        Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
-        Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
-    }
+    Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
+    Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
     Start-Sleep -Seconds 3  # Reduce sleep time for faster execution
 }
 
+# Wait for Steam to close before proceeding
 function Wait-For-SteamClosure {
     Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
@@ -127,6 +122,7 @@ function Wait-For-SteamClosure {
     }
 }
 
+# Move the configuration file to the Steam directory
 function Move-ConfigFile {
     if (Test-Path "$tempPath\$fileSteamCfg") {
         Move-Item -Path "$tempPath\$fileSteamCfg" -Destination "C:\Program Files (x86)\Steam\steam.cfg" -Force
@@ -137,6 +133,7 @@ function Move-ConfigFile {
     }
 }
 
+# Move the Steam batch file to the desktop
 function Move-SteamBatToDesktop {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Move-Item -Path "$tempPath\$fileSteamBat" -Destination $desktopPath -Force
@@ -144,6 +141,7 @@ function Move-SteamBatToDesktop {
     }
 }
 
+# Remove temporary files after processing
 function Remove-TempFiles {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Remove-Item -Path "$tempPath\$fileSteamBat" -Force
@@ -151,6 +149,7 @@ function Remove-TempFiles {
     }
 }
 
+# Handle errors by logging the message and redirecting to the issue page
 function Handle-Error {
     param (
         [string]$message
@@ -163,8 +162,10 @@ function Handle-Error {
     exit 1
 }
 
+# Final message indicating successful completion
 function Finish {
     Write-WithEffect "[SUCCESS] Steam configured and updated." -ForegroundColor $color
 }
 
+# Start the script
 Main
