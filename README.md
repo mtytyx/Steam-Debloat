@@ -98,7 +98,7 @@
     <li><strong>Functionality:</strong> Forces Steam to update to the latest version and restores any files altered by debloat modifications.</li>
     <li><strong>Steps:</strong>
       <ul>
-        <li>Download the <a href="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Unistall%20Steam%20Legacy.bat">Unistall Steam Legacy</a> file from GitHub. 📥</li>
+        <li>Download the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.4/Unistall-Steam-Legacy.bat">Unistall Steam Legacy</a> file from GitHub. 📥</li>
         <li>Run the <code>Unistall Steam Legacy</code> as an administrator. 🖱️</li>
         <li>This will force Steam to update and revert any debloat modifications. ✔️</li>
       </ul>
