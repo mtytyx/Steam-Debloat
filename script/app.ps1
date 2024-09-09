@@ -83,7 +83,7 @@ function Main {
 # Set console properties and display the start message
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
-    Write-WithEffect "[INFO] Starting $title Optimization in $Mode mode $version" -ForegroundColor $color
+    Write-WithEffect "[INFO] Starting $title Optimization in $Mode mode v$version" -ForegroundColor $color
 }
 
 # Kill any running Steam processes (without typing effect)
