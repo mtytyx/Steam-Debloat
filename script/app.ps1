@@ -61,7 +61,7 @@ function Main {
     Kill-SteamProcesses
     Download-Files
     Verify-Update
-    if (-not $skipStartSteam) {
+    if (-not $global:skipStartSteam) {
         Start-Steam
     }
     Wait-For-SteamClosure
