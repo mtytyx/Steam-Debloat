@@ -1,7 +1,11 @@
 param (
     [string]$Mode = "Normal",
-    [string]$Date = ""
+    [string]$Data = ""
 )
+
+if ($Mode -eq "TEST-VERSION" -and -not $Data) {
+    $Data = Read-Host ""
+}
 
 $title = "Steam Debloat"
 $github = "Github.com/mtytyx"
@@ -106,9 +110,9 @@ function Verify-Update {
 }
 
 function Start-Steam {
-    if ($Mode -eq "TEST-VERSION" -and $Date) {
+    if ($Mode -eq "TEST-VERSION" -and $Data) {
         Write-WithEffect "[INFO] Starting Steam for specific version update..." -ForegroundColor $color
-        Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl http://web.archive.org/web/$Date/media.steampowered.com/client/steam_client_win32 -exitsteam"
+        Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl http://web.archive.org/web/$Data/media.steampowered.com/client/steam_client_win32 -exitsteam"
     } else {
         Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
         Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
