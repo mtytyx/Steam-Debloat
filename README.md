@@ -30,7 +30,7 @@
 ## Downloads 📥
 
 <details>
-  <summary><small><b>Steam Lite</b> 🌟</small></summary>
+  <summary><small><b>Steam Legacy</b> 🌟</small></summary>
   <p>This version provides a balanced approach to optimizing Steam. It improves performance by reducing background resource usage and removing non-essential components, while maintaining a good level of functionality.</p>
 
   <ul>
@@ -54,7 +54,7 @@
 </details>
 
 <details>
-  <summary><small><b>Steam Focused on Privacy</b> 🔒</small></summary>
+  <summary><small><b>Steam Legacy Lite</b> 🔒</small></summary>
   <p>This version offers a more aggressive optimization approach, focusing on privacy and minimalism. It removes additional components and features for a leaner Steam client.</p>
 
   <ul>
