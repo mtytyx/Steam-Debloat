@@ -1,5 +1,5 @@
 param (
-    [string]$Mode = "Normal",
+    [string]$Mode = "Normal"
 )
 
 # Title and GitHub information
