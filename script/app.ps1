@@ -5,6 +5,7 @@ param (
 # each function has its description (#) in case you want to know what it does
 $title = "Steam"
 $github = "Github.com/mtytyx"
+$version = 2.5
 $color = "Green"
 $errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
 
@@ -82,7 +83,7 @@ function Main {
 # Set console properties and display the start message
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
-    Write-WithEffect "[INFO] Starting $title in $Mode mode" -ForegroundColor $color
+    Write-WithEffect "[INFO] Starting $title Optimization in $Mode mode $version" -ForegroundColor $color
 }
 
 # Kill any running Steam processes (without typing effect)
