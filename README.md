@@ -8,16 +8,19 @@
   <a href="https://github.com/mtytyx/Steam-Debloat/issues">
     <img src="https://img.shields.io/github/issues/mtytyx/Steam-Debloat" alt="Issues"/>
   </a>
-  <a>
+  <a href="https://github.com/mtytyx/Steam-Debloat/releases">
     <img src="https://img.shields.io/github/v/release/mtytyx/Steam-Debloat" alt="Release"/>
+  </a>
+  <a href="https://visitor-badge.laobi.icu/badge?page_id=mtytyx.Steam-Debloat">
+    <img src="https://visitor-badge.laobi.icu/badge?page_id=mtytyx.Steam-Debloat" alt="Visitor Badge"/>
   </a>
 </p>
 
 <h2 align="center"><b>Steam Debloat for Windows</b> 🎮</h2>
 
 <p align="center">
-  
-  <h2 align="center"><b>  🌟 Coming Soon: Steam Debloat for macOS & Linux 🌟</b> 🎮</h2>
+  <h2 align="center"><b>🌟 Coming Soon: Steam Debloat for macOS & Linux 🌟</b> 🎮</h2>
+</p>
 
 <p align="center">
   Streamline your Steam experience with our customizable debloat solutions. 🚀
@@ -30,8 +33,7 @@
 ## Downloads 📥
 
 <details>
-<summary><small><b>Steam Lite</b> 🌟</small></summary>
-
+  <summary><small><b>Steam Lite</b> 🌟</small></summary>
   <p>This version provides a balanced approach to optimizing Steam. It improves performance by reducing background resource usage and removing non-essential components, while maintaining a good level of functionality.</p>
 
   <ul>
@@ -55,8 +57,7 @@
 </details>
 
 <details>
-<summary><small><b>Steam Focused on Privacy</b> 🔒</small></summary>
-
+  <summary><small><b>Steam Focused on Privacy</b> 🔒</small></summary>
   <p>This version offers a more aggressive optimization approach, focusing on privacy and minimalism. It removes additional components and features for a leaner Steam client.</p>
 
   <ul>
@@ -100,9 +101,9 @@ We welcome contributions from the community! If you'd like to help out, please c
 
 A big thanks to [TiberiumFusion](https://github.com/TiberiumFusion) for their valuable contributions and support that made this project possible.
 
-##  Support Channel 📬
+## Support Channel 📬
 
-For technical inquiries or assistance, please contact with me:
+For technical inquiries or assistance, please contact me:
 - **Instagram**: [@l1l.kid](https://www.instagram.com/l1l.kid/)
 ---
 <p align="center">
