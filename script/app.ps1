@@ -29,6 +29,30 @@ $verificationFilePath = "C:\Program Files (x86)\Steam\verification.txt"
 $urlSteamBat = $urls[$Mode]["SteamBat"]
 $urlSteamCfg = $urls[$Mode]["SteamCfg"]
 
+# Function to print text with typing effect
+function Write-WithEffect {
+    param (
+        [string]$Text,
+        [ConsoleColor]$ForegroundColor = $null,
+        [int]$Delay = 50
+    )
+
+    if ($ForegroundColor) {
+        $oldColor = $host.UI.RawUI.ForegroundColor
+        $host.UI.RawUI.ForegroundColor = $ForegroundColor
+    }
+
+    foreach ($char in $Text.ToCharArray()) {
+        Write-Host -NoNewline $char
+        Start-Sleep -Milliseconds $Delay
+    }
+    Write-Host ""  # New line
+
+    if ($ForegroundColor) {
+        $host.UI.RawUI.ForegroundColor = $oldColor
+    }
+}
+
 # Main function to execute all steps
 function Main {
     Set-ConsoleProperties
@@ -50,17 +74,18 @@ function Main {
 # Set console properties and display the start message
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
-    Write-Host "[INFO] Starting $title in $Mode mode" -ForegroundColor $color
+    Write-WithEffect "[INFO] Starting $title in $Mode mode" -ForegroundColor $color
 }
 
 # Kill any running Steam processes
 function Kill-SteamProcesses {
+    Write-WithEffect "[INFO] Killing Steam processes..." -ForegroundColor $color
     Stop-Process -Name "steam" -Force -ErrorAction SilentlyContinue
 }
 
 # Download necessary files
 function Download-Files {
-    Write-Host "[INFO] Downloading files..." -ForegroundColor $color
+    Write-WithEffect "[INFO] Downloading files..." -ForegroundColor $color
     try {
         $batFile = "$tempPath\$fileSteamBat"
         $cfgFile = "$tempPath\$fileSteamCfg"
@@ -75,25 +100,25 @@ function Download-Files {
 # Verify if the update process should be skipped
 function Verify-Update {
     if (-not (Test-Path $verificationFilePath)) {
-        Write-Host "[INFO] Verification file not found. Proceeding with update..." -ForegroundColor $color
+        Write-WithEffect "[INFO] Verification file not found. Proceeding with update..." -ForegroundColor $color
         $verificationContent = "This file is used as a verification to determine whether to proceed with Steam's downgrade or not."
         Set-Content -Path $verificationFilePath -Value $verificationContent
     } else {
-        Write-Host "[INFO] Verification file found. Skipping update process." -ForegroundColor $color
+        Write-WithEffect "[INFO] Verification file found. Skipping update process." -ForegroundColor $color
         $global:skipStartSteam = $true
     }
 }
 
 # Start Steam for updates if needed
 function Start-Steam {
-    Write-Host "[INFO] Starting Steam for updates..." -ForegroundColor $color
+    Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
     Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
     Start-Sleep -Seconds 5
 }
 
 # Wait for Steam to close before continuing
 function Wait-For-SteamClosure {
-    Write-Host "[INFO] Waiting for Steam to close..." -ForegroundColor $color
+    Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
         Start-Sleep -Seconds 5
     }
@@ -103,8 +128,9 @@ function Wait-For-SteamClosure {
 function Move-ConfigFile {
     if (Test-Path "$tempPath\$fileSteamCfg") {
         Move-Item -Path "$tempPath\$fileSteamCfg" -Destination "C:\Program Files (x86)\Steam\steam.cfg" -Force
+        Write-WithEffect "[INFO] Moved $fileSteamCfg to Steam directory" -ForegroundColor $color
     } else {
-        Write-Host "[ERROR] File $tempPath\$fileSteamCfg not found" -ForegroundColor Red
+        Write-WithEffect "[ERROR] File $tempPath\$fileSteamCfg not found" -ForegroundColor Red
         Handle-Error "File $tempPath\$fileSteamCfg not found."
     }
 }
@@ -113,7 +139,7 @@ function Move-ConfigFile {
 function Move-SteamBatToDesktop {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Move-Item -Path "$tempPath\$fileSteamBat" -Destination $desktopPath -Force
-        Write-Host "[INFO] Moved $fileSteamBat to desktop" -ForegroundColor $color
+        Write-WithEffect "[INFO] Moved $fileSteamBat to desktop" -ForegroundColor $color
     }
 }
 
@@ -121,7 +147,7 @@ function Move-SteamBatToDesktop {
 function Remove-TempFiles {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Remove-Item -Path "$tempPath\$fileSteamBat" -Force
-        Write-Host "[INFO] Removed $fileSteamBat from TEMP" -ForegroundColor $color
+        Write-WithEffect "[INFO] Removed $fileSteamBat from TEMP" -ForegroundColor $color
     }
 }
 
@@ -136,9 +162,9 @@ function Handle-Error {
     param (
         [string]$message
     )
-    Write-Host "[ERROR] $message" -ForegroundColor Red
-    Write-Host "Please report the issue at $errorPage" -ForegroundColor Red
-    Write-Host "Press Enter to open the issue page..."
+    Write-WithEffect "[ERROR] $message" -ForegroundColor Red
+    Write-WithEffect "Please report the issue at $errorPage" -ForegroundColor Red
+    Write-WithEffect "Press Enter to open the issue page..."
     Read-Host
     Start-Process $errorPage
     exit 1
@@ -146,7 +172,7 @@ function Handle-Error {
 
 # Finalize the script execution and display success message
 function Finish {
-    Write-Host "[SUCCESS] Steam configured and updated." -ForegroundColor $color
+    Write-WithEffect "[SUCCESS] Steam configured and updated." -ForegroundColor $color
 }
 
 # Start the main function
