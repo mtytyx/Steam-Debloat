@@ -46,7 +46,7 @@
     </li>
   </ul>
   
-  <p>To get started, download and run the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.4/Installer.bat">Installer.bat</a> 🛠️</p>
+  <p>To get started, download and run the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.5/Installer.bat">Installer.bat</a> 🛠️</p>
 </details>
 
 <details>
@@ -70,7 +70,7 @@
     </li>
   </ul>
   
-  <p>To get started, download and run the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.4/Installer-Lite.bat">Installer-Lite.bat</a> 🛠️</p>
+  <p>To get started, download and run the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.5/Installer-Lite.bat">Installer-Lite.bat</a> 🛠️</p>
 </details>
 
 <details>
@@ -98,7 +98,7 @@
     <li><strong>Functionality:</strong> Forces Steam to update to the latest version and restores any files altered by debloat modifications.</li>
     <li><strong>Steps:</strong>
       <ul>
-        <li>Download the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.4/Unistall-Steam-Legacy.bat">Unistall Steam Legacy</a> file from GitHub. 📥</li>
+        <li>Download the <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v2.5/Unistall-Steam-Legacy.bat">Unistall Steam Legacy</a> file from GitHub. 📥</li>
         <li>Run the <code>Unistall Steam Legacy</code> as an administrator. 🖱️</li>
         <li>This will force Steam to update and revert any debloat modifications. ✔️</li>
       </ul>
