@@ -1,5 +1,6 @@
-param (
-    [string]$Mode = "Normal"
+:param (
+    [string]$Mode = "Normal",
+    [string]$Date = ""  # Variable para el modo TEST-VERSION
 )
 
 $title = "Steam Debloat"
@@ -20,13 +21,13 @@ $urls = @{
         "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
-    "Lite-TEST" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat"
+    "TEST-VERSION" = @{
+        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
 }
 
-$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "Test") { "Steam-Test.bat" } else { "Steam.bat" }
+$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "TEST-VERSION") { "Steam-test-version.bat" } elseif ($Mode -eq "TEST") { "Steam-TEST.bat" } else { "Steam.bat" }
 $fileSteamCfg = "steam.cfg"
 $tempPath = $env:TEMP
 $steamPath = "C:\Program Files (x86)\Steam\steam.exe"
@@ -105,8 +106,13 @@ function Verify-Update {
 }
 
 function Start-Steam {
-    Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
-    Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
+    if ($Mode -eq "TEST-VERSION" -and $Date) {
+        Write-WithEffect "[INFO] Starting Steam for specific version update..." -ForegroundColor $color
+        Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl http://web.archive.org/web/$Date/media.steampowered.com/client/steam_client_win32 -exitsteam"
+    } else {
+        Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
+        Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
+    }
     Start-Sleep -Seconds 3  # Reduce sleep time for faster execution
 }
 
