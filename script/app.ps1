@@ -67,7 +67,7 @@ function Main {
     Kill-SteamProcesses
     Download-Files
     Verify-Update
-    
+
     if (-not $global:skipStartSteam) {
         Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
         Start-Steam
