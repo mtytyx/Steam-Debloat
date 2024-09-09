@@ -2,13 +2,12 @@ param (
     [string]$Mode = "Normal"
 )
 
-# Title and GitHub information
+# each function has its description (#) in case you want to know what it does
 $title = "Steam Debloat"
 $github = "Github.com/mtytyx"
 $color = "Green"
 $errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
 
-# URL mappings based on mode
 $urls = @{
     "Normal" = @{
         "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat"
@@ -22,10 +21,13 @@ $urls = @{
         "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
+    "Lite-TEST" = @{
+        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat"
+        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
+    }
 }
 
-# Determine file names based on mode
-$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "TEST") { "Steam-TEST.bat" } else { "Steam.bat" }
+$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "Test") { "Steam-Test.bat" } else { "Steam.bat" }
 $fileSteamCfg = "steam.cfg"
 $tempPath = $env:TEMP
 $steamPath = "C:\Program Files (x86)\Steam\steam.exe"
@@ -35,12 +37,12 @@ $verificationFilePath = "C:\Program Files (x86)\Steam\verification.txt"
 $urlSteamBat = $urls[$Mode]["SteamBat"]
 $urlSteamCfg = $urls[$Mode]["SteamCfg"]
 
-# Function to write messages to the console with optional color and delay
+# Function to print text with typing effect
 function Write-WithEffect {
     param (
         [string]$Text,
         [ConsoleColor]$ForegroundColor = $null,
-        [int]$Delay = 10  # Reduce delay for faster feedback
+        [int]$Delay = 50
     )
 
     if ($ForegroundColor) {
@@ -48,40 +50,47 @@ function Write-WithEffect {
         $host.UI.RawUI.ForegroundColor = $ForegroundColor
     }
 
-    Write-Host $Text
+    foreach ($char in $Text.ToCharArray()) {
+        Write-Host -NoNewline $char
+        Start-Sleep -Milliseconds $Delay
+    }
+    Write-Host ""  # New line
 
     if ($ForegroundColor) {
         $host.UI.RawUI.ForegroundColor = $oldColor
     }
 }
 
-# Main function to coordinate all steps
+# Main function to execute all steps
 function Main {
     Set-ConsoleProperties
     Kill-SteamProcesses
     Download-Files
     Verify-Update
-    Start-Steam
+    if (-not $skipStartSteam) {
+        Start-Steam
+    }
     Wait-For-SteamClosure
     Move-ConfigFile
-    Move-SteamBatToDesktop  # Directly move to desktop without asking
+    if (Prompt-MoveToDesktop) {
+        Move-SteamBatToDesktop
+    }
     Remove-TempFiles
     Finish
-    Start-Process $desktopPath  # Execute steam.bat from desktop at the end
 }
 
-# Set console properties like title and display initial message
+# Set console properties and display the start message
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
     Write-WithEffect "[INFO] Starting $title in $Mode mode" -ForegroundColor $color
 }
 
-# Terminate any running Steam processes
+# Kill any running Steam processes (without typing effect)
 function Kill-SteamProcesses {
     Stop-Process -Name "steam" -Force -ErrorAction SilentlyContinue
 }
 
-# Download necessary files from URLs
+# Download necessary files
 function Download-Files {
     Write-WithEffect "[INFO] Downloading files..." -ForegroundColor $color
     try {
@@ -95,7 +104,7 @@ function Download-Files {
     }
 }
 
-# Verify if the update should proceed based on the presence of a verification file
+# Verify if the update process should be skipped
 function Verify-Update {
     if (-not (Test-Path $verificationFilePath)) {
         Write-WithEffect "[INFO] Verification file not found..." -ForegroundColor $color
@@ -107,18 +116,18 @@ function Verify-Update {
     }
 }
 
-# Start Steam with update parameters
+# Start Steam for updates if needed
 function Start-Steam {
     Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
     Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
-    Start-Sleep -Seconds 3  # Reduce sleep time for faster execution
+    Start-Sleep -Seconds 5
 }
 
-# Wait for Steam to close before proceeding
+# Wait for Steam to close before continuing
 function Wait-For-SteamClosure {
     Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
-        Start-Sleep -Seconds 2  # Faster loop for checking process closure
+        Start-Sleep -Seconds 5
     }
 }
 
@@ -133,7 +142,7 @@ function Move-ConfigFile {
     }
 }
 
-# Move the Steam batch file to the desktop
+# Move the Steam batch file to the desktop if requested
 function Move-SteamBatToDesktop {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Move-Item -Path "$tempPath\$fileSteamBat" -Destination $desktopPath -Force
@@ -141,7 +150,7 @@ function Move-SteamBatToDesktop {
     }
 }
 
-# Remove temporary files after processing
+# Remove temporary files from the TEMP directory
 function Remove-TempFiles {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Remove-Item -Path "$tempPath\$fileSteamBat" -Force
@@ -149,7 +158,13 @@ function Remove-TempFiles {
     }
 }
 
-# Handle errors by logging the message and redirecting to the issue page
+# Prompt the user to move the Steam batch file to the desktop
+function Prompt-MoveToDesktop {
+    $response = Read-Host "Do you want to move $fileSteamBat to the desktop? (y/n)"
+    return $response -eq "y" -or $response -eq "Y"
+}
+
+# Handle errors and prompt the user to report the issue
 function Handle-Error {
     param (
         [string]$message
@@ -162,10 +177,10 @@ function Handle-Error {
     exit 1
 }
 
-# Final message indicating successful completion
+# Finalize the script execution and display success message
 function Finish {
     Write-WithEffect "[SUCCESS] Steam configured and updated." -ForegroundColor $color
 }
 
-# Start the script
+# Start the main function
 Main
