@@ -16,7 +16,7 @@
 <h2 align="center"><b>Steam Debloat for Windows</b> 🎮</h2>
 
 <p align="center">
-  <h2 align="center"><b></b> 🎮</h2>
+  <h2 align="center"><b></b></h2>
 </p>
 
 <p align="center">
