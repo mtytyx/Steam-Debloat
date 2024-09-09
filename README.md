@@ -11,9 +11,6 @@
   <a href="https://github.com/mtytyx/Steam-Debloat/releases">
     <img src="https://img.shields.io/github/v/release/mtytyx/Steam-Debloat" alt="Release"/>
   </a>
-<a href="https://visitor-badge.laobi.icu/badge?page_id=mtytyx.Steam-Debloat">
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=mtytyx.Steam-Debloat" alt="Visitor Badge"/>
-</a>
 </p>
 
 <h2 align="center"><b>Steam Debloat for Windows</b> 🎮</h2>
