@@ -2,10 +2,9 @@ param (
     [string]$Mode = "Normal"
 )
 
-# each function has its description (#) in case you want to know what it does
 $title = "Steam"
 $github = "Github.com/mtytyx"
-$version = 2.5
+$version = "v2.5"
 $color = "Green"
 $errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
 
@@ -68,10 +67,10 @@ function Main {
     Kill-SteamProcesses
     Download-Files
     Verify-Update
-    if (-not $skipStartSteam) {
+    if (-not $global:skipStartSteam) {
         Start-Steam
+        Wait-For-SteamClosure
     }
-    Wait-For-SteamClosure
     Move-ConfigFile
     if (Prompt-MoveToDesktop) {
         Move-SteamBatToDesktop
@@ -83,7 +82,7 @@ function Main {
 # Set console properties and display the start message
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
-    Write-WithEffect "[INFO] Starting $title Optimization in $Mode mode v$version" -ForegroundColor $color
+    Write-WithEffect "[INFO] Starting $title Optimization in $Mode mode $version" -ForegroundColor $color
 }
 
 # Kill any running Steam processes (without typing effect)
