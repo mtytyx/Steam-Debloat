@@ -21,13 +21,13 @@ $urls = @{
         "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
-    "Lite-TEST" = @{
+    "TEST-Version" = @{
         "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
 }
 
-$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "Test") { "Steam-Test.bat" } else { "Steam.bat" }
+$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "Test") { "Steam-Test.bat" } elseif ($Mode -eq "TEST-Version") { "Steam-Lite-TEST.bat" } else { "Steam.bat" }
 $fileSteamCfg = "steam.cfg"
 $tempPath = $env:TEMP
 $steamPath = "C:\Program Files (x86)\Steam\steam.exe"
@@ -66,15 +66,21 @@ function Main {
     Set-ConsoleProperties
     Kill-SteamProcesses
     Download-Files
-    Verify-Update
 
-    if (-not $global:skipStartSteam) {
-        Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
+    if ($Mode -eq "TEST-Version") {
+        # Skip Verify-Update and go directly to Start-Steam
+        Write-WithEffect "[INFO] Skipping Verify-Update in TEST-Version mode..." -ForegroundColor $color
         Start-Steam
-        Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
-        Wait-For-SteamClosure
+    } else {
+        Verify-Update
+        if (-not $global:skipStartSteam) {
+            Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
+            Start-Steam
+            Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
+            Wait-For-SteamClosure
+        }
     }
-    
+
     Move-ConfigFile
     if (Prompt-MoveToDesktop) {
         Move-SteamBatToDesktop
@@ -122,7 +128,14 @@ function Verify-Update {
 
 # Start Steam for updates if needed
 function Start-Steam {
-    Start-Process -FilePath $steamPath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
+    if ($Mode -eq "TEST-Version") {
+        $version = Read-Host "Ingresa los números de la versión"
+        $url = "http://web.archive.org/web/$version_/media.steampowered.com/client"
+        $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $url -exitsteam"
+    } else {
+        $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
+    }
+    Start-Process -FilePath $steamPath -ArgumentList $arguments
     Start-Sleep -Seconds 5
 }
 
