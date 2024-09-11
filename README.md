@@ -125,7 +125,7 @@ A big thanks to [TiberiumFusion](https://github.com/TiberiumFusion) for their va
 ## Support Channel 📬
 
 For technical inquiries or assistance, please contact me:
-- **Instagram**: [@l1l.kid](https://www.instagram.com/l1l.kid/)
+- **Support**: [Issues](https://github.com/mtytyx/Steam-Debloat/issues/)
 ---
 <p align="center">
   <a href="#top">Back to top 🔝</a>
