@@ -118,8 +118,8 @@ function Verify-Update {
 
 function Start-Steam {
     if ($Mode -eq "TEST-Version") {
-        $date = Read-Host "Version?"
-        $url = "http://web.archive.org/web/$dateif_/media.steampowered.com/client"
+        $version = Read-Host "Version?"
+        $url = "http://web.archive.org/web/$versionif_/media.steampowered.com/client"
         $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $url -exitsteam"
     } else {
         $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
