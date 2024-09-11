@@ -4,35 +4,23 @@ param (
 
 # the comments are made to help you understand the code
 
+# General Info
 $title = "Steam"
 $github = "Github.com/mtytyx"
 $version = "v2.5"
 $color = "Green"
 $errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
 
-# URLs for each mode
 $urls = @{
-    "Normal" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat"
-    }
-    "Lite" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam-Lite.bat"
-    }
-    "TEST" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
-    }
-    "TEST-Lite" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat"
-    }
-    "TEST-Version" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
-    }
+    "Normal" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat" }
+    "Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam-Lite.bat" }
+    "TEST" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
+    "TEST-Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat" }
+    "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
 }
 
-# Path for the steam.cfg file used by all modes
 $steamCfgUrl = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
 
-# Determine the correct .bat file to download based on the mode
 $fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "TEST") { "Steam-TEST.bat" } elseif ($Mode -eq "TEST-Lite") { "Steam-Lite-TEST.bat" } elseif ($Mode -eq "TEST-Version") { "Steam-Lite-TEST.bat" } else { "Steam.bat" }
 $fileSteamCfg = "steam.cfg"
 $tempPath = $env:TEMP
@@ -40,11 +28,9 @@ $steamPath = "C:\Program Files (x86)\Steam\steam.exe"
 $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), $fileSteamBat)
 $verificationFilePath = "C:\Program Files (x86)\Steam\verification.txt"
 
-# URLs for .bat and steam.cfg files
 $urlSteamBat = $urls[$Mode]["SteamBat"]
 $urlSteamCfg = $steamCfgUrl
 
-# Function to write text with a typing effect in the console
 function Write-WithEffect {
     param (
         [string]$Text,
@@ -68,47 +54,44 @@ function Write-WithEffect {
     }
 }
 
-# Main function to orchestrate the script
 function Main {
     Set-ConsoleProperties
-    Kill-SteamProcesses
-    Download-Files
+    try {
+        Kill-SteamProcesses
+        Download-Files
 
-    # Skip verification if using test modes
-    if ($Mode -eq "TEST-Version") {
-        Start-Steam
-    } else {
-        Verify-Update
-        if (-not $global:skipStartSteam) {
-            Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
+        if ($Mode -eq "TEST-Version") {
             Start-Steam
-            Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
-            Wait-For-SteamClosure
+        } else {
+            Verify-Update
+            if (-not $global:skipStartSteam) {
+                Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
+                Start-Steam
+                Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
+                Wait-For-SteamClosure
+            }
         }
-    }
+        Move-ConfigFile
 
-    Move-ConfigFile
-
-    # Auto-move .bat file for test modes, prompt in normal/lite modes
-    if ($Mode -in @("TEST", "TEST-Lite", "TEST-Version") -or (Prompt-MoveToDesktop)) {
-        Move-SteamBatToDesktop
+        if ($Mode -in @("TEST", "TEST-Lite", "TEST-Version") -or (Prompt-MoveToDesktop)) {
+            Move-SteamBatToDesktop
+        }
+        Remove-TempFiles
+        Finish
+    } catch {
+        Handle-Error "An unexpected error occurred during execution."
     }
-    Remove-TempFiles
-    Finish
 }
 
-# Set console title and initial properties
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
     Write-WithEffect "[INFO] Starting $title Optimization in $Mode mode $version" -ForegroundColor $color
 }
 
-# Terminate all running Steam processes
 function Kill-SteamProcesses {
     Stop-Process -Name "steam" -Force -ErrorAction SilentlyContinue
 }
 
-# Download the required .bat and steam.cfg files
 function Download-Files {
     Write-WithEffect "[INFO] Downloading files..." -ForegroundColor $color
     try {
@@ -122,7 +105,6 @@ function Download-Files {
     }
 }
 
-# Check if a verification file exists to determine if Steam updates should be skipped
 function Verify-Update {
     if (-not (Test-Path $verificationFilePath)) {
         Write-WithEffect "[INFO] Verification file not found..." -ForegroundColor $color
@@ -134,7 +116,6 @@ function Verify-Update {
     }
 }
 
-# Start Steam with the appropriate update arguments
 function Start-Steam {
     if ($Mode -eq "TEST-Version") {
         $version = Read-Host "Version?"
@@ -147,25 +128,21 @@ function Start-Steam {
     Start-Sleep -Seconds 5
 }
 
-# Wait for Steam to close before proceeding
 function Wait-For-SteamClosure {
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
         Start-Sleep -Seconds 5
     }
 }
 
-# Move the steam.cfg file to the Steam installation directory
 function Move-ConfigFile {
     if (Test-Path "$tempPath\$fileSteamCfg") {
         Move-Item -Path "$tempPath\$fileSteamCfg" -Destination "C:\Program Files (x86)\Steam\steam.cfg" -Force
         Write-WithEffect "[INFO] Moved $fileSteamCfg to Steam directory" -ForegroundColor $color
     } else {
-        Write-WithEffect "[ERROR] File $tempPath\$fileSteamCfg not found" -ForegroundColor Red
         Handle-Error "File $tempPath\$fileSteamCfg not found."
     }
 }
 
-# Move the Steam .bat file to the desktop
 function Move-SteamBatToDesktop {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Move-Item -Path "$tempPath\$fileSteamBat" -Destination $desktopPath -Force
@@ -173,7 +150,6 @@ function Move-SteamBatToDesktop {
     }
 }
 
-# Remove the temporary files
 function Remove-TempFiles {
     if (Test-Path "$tempPath\$fileSteamBat") {
         Remove-Item -Path "$tempPath\$fileSteamBat" -Force
@@ -181,13 +157,11 @@ function Remove-TempFiles {
     }
 }
 
-# Prompt the user to move the .bat file to the desktop, skipping this in test modes
 function Prompt-MoveToDesktop {
     $response = Read-Host "Do you want to move $fileSteamBat to the desktop? (y/n)"
     return $response -eq "y" -or $response -eq "Y"
 }
 
-# Handle any errors that occur during execution
 function Handle-Error {
     param (
         [string]$message
@@ -200,10 +174,8 @@ function Handle-Error {
     exit 1
 }
 
-# Final message indicating the script has completed successfully
 function Finish {
     Write-WithEffect "[SUCCESS] Steam configured and updated." -ForegroundColor $color
 }
 
-# Start the main function
 Main
