@@ -91,7 +91,7 @@ function Main {
 
     # Auto-move .bat file for test modes, prompt in normal/lite modes
     if ($Mode -in @("TEST", "TEST-Lite", "TEST-Version") -or (Prompt-MoveToDesktop)) {
-    Move-SteamBatToDesktop
+        Move-SteamBatToDesktop
     }
     Remove-TempFiles
     Finish
