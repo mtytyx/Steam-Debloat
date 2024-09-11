@@ -2,6 +2,8 @@ param (
     [string]$Mode = "Normal"
 )
 
+# the comments are made to help you understand the code
+
 $title = "Steam"
 $github = "Github.com/mtytyx"
 $version = "v2.5"
@@ -23,7 +25,7 @@ $urls = @{
         "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat"
     }
     "TEST-Version" = @{
-        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat"
+        "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
     }
 }
 
