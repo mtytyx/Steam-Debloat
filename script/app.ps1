@@ -69,7 +69,6 @@ function Main {
 
     if ($Mode -eq "TEST-Version") {
         # Skip Verify-Update and go directly to Start-Steam
-        Write-WithEffect "[INFO] Skipping Verify-Update in TEST-Version mode..." -ForegroundColor $color
         Start-Steam
     } else {
         Verify-Update
@@ -129,7 +128,7 @@ function Verify-Update {
 # Start Steam for updates if needed
 function Start-Steam {
     if ($Mode -eq "TEST-Version") {
-        $version = Read-Host "Ingresa los números de la versión"
+        $version = Read-Host "Version?"
         $url = "http://web.archive.org/web/$version_/media.steampowered.com/client"
         $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $url -exitsteam"
     } else {
