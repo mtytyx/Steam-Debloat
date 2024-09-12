@@ -28,24 +28,6 @@ $config = @{
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
 }
 
-# File and path variables
-$files = @{
-    SteamBat = switch ($Mode) {
-        "Lite" { "Steam-Lite.bat" }
-        "TEST" { "Steam-TEST.bat" }
-        "TEST-Lite" { "Steam-Lite-TEST.bat" }
-        "TEST-Version" { "Steam-TEST.bat" }
-        default { "Steam.bat" }
-    }
-    SteamCfg = "steam.cfg"
-}
-
-$paths = @{
-    Temp = $env:TEMP
-    Steam = "C:\Program Files (x86)\Steam\steam.exe"
-    Desktop = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), $files.SteamBat)
-}
-
 # Helper Functions
 function Write-ColoredMessage {
     param (
@@ -109,15 +91,15 @@ function Get-UserSelection {
         $choice = Read-Host "Please choose an option (1 or 2)"
         switch ($choice) {
             1 {
-                $script:Mode = Read-Host "Choose mode: Normal or Lite"
-                if ($script:Mode -notin @("Normal", "Lite")) {
+                $mode = Read-Host "Choose mode: Normal or Lite"
+                if ($mode -notin @("Normal", "Lite")) {
                     Write-ColoredMessage "Invalid choice. Please try again." "Error"
                     continue
                 }
             }
             2 {
-                $script:Mode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
-                if ($script:Mode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
+                $mode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
+                if ($mode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
                     Write-ColoredMessage "Invalid choice. Please try again." "Error"
                     continue
                 }
@@ -127,7 +109,7 @@ function Get-UserSelection {
                 continue
             }
         }
-        return $true
+        return $mode
     } while ($true)
 }
 
@@ -155,11 +137,18 @@ function Get-Files {
     $steamCfgUrl = $config.Urls.SteamCfg
     
     try {
-        Invoke-SafeWebRequest -Uri $steamBatUrl -OutFile (Join-Path $paths.Temp $files.SteamBat)
-        Write-ColoredMessage "Successfully downloaded $($files.SteamBat)" "Success"
+        $steamBatPath = Join-Path $env:TEMP "Steam-$Mode.bat"
+        Invoke-SafeWebRequest -Uri $steamBatUrl -OutFile $steamBatPath
+        Write-ColoredMessage "Successfully downloaded Steam-$Mode.bat" "Success"
         
-        Invoke-SafeWebRequest -Uri $steamCfgUrl -OutFile (Join-Path $paths.Temp $files.SteamCfg)
-        Write-ColoredMessage "Successfully downloaded $($files.SteamCfg)" "Success"
+        $steamCfgPath = Join-Path $env:TEMP "steam.cfg"
+        Invoke-SafeWebRequest -Uri $steamCfgUrl -OutFile $steamCfgPath
+        Write-ColoredMessage "Successfully downloaded steam.cfg" "Success"
+        
+        return @{
+            SteamBat = $steamBatPath
+            SteamCfg = $steamCfgPath
+        }
     }
     catch {
         throw "Failed to download files. Error: $_"
@@ -173,7 +162,7 @@ function Invoke-SteamUpdate {
     
     Write-ColoredMessage "Starting Steam update process..." "Info"
     $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $Url -exitsteam"
-    Start-Process -FilePath $paths.Steam -ArgumentList $arguments
+    Start-Process -FilePath "C:\Program Files (x86)\Steam\steam.exe" -ArgumentList $arguments
     
     Write-ColoredMessage "Waiting for Steam to close..." "Info"
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
@@ -182,30 +171,35 @@ function Invoke-SteamUpdate {
 }
 
 function Move-ConfigFile {
-    $source = Join-Path $paths.Temp $files.SteamCfg
+    param (
+        [string]$SourcePath
+    )
     $destination = "C:\Program Files (x86)\Steam\steam.cfg"
     
-    if (Test-Path $source) {
-        Move-Item -Path $source -Destination $destination -Force
-        Write-ColoredMessage "Moved $($files.SteamCfg) to Steam directory" "Success"
+    if (Test-Path $SourcePath) {
+        Move-Item -Path $SourcePath -Destination $destination -Force
+        Write-ColoredMessage "Moved steam.cfg to Steam directory" "Success"
     }
     else {
-        throw "File $source not found."
+        throw "File $SourcePath not found."
     }
 }
 
 function Move-SteamBatToDesktop {
-    if ($Mode -like "TEST*" -or (Read-Host "Do you want to move $($files.SteamBat) to the desktop? (y/n)") -eq 'y') {
-        $source = Join-Path $paths.Temp $files.SteamBat
-        if (Test-Path $source) {
-            Move-Item -Path $source -Destination $paths.Desktop -Force
-            Write-ColoredMessage "Moved $($files.SteamBat) to desktop" "Success"
+    param (
+        [string]$SourcePath
+    )
+    if ($Mode -like "TEST*" -or (Read-Host "Do you want to move Steam-$Mode.bat to the desktop? (y/n)") -eq 'y') {
+        if (Test-Path $SourcePath) {
+            $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam-$Mode.bat")
+            Move-Item -Path $SourcePath -Destination $desktopPath -Force
+            Write-ColoredMessage "Moved Steam-$Mode.bat to desktop" "Success"
         }
     }
 }
 
 function Remove-TempFiles {
-    Get-ChildItem $paths.Temp -Filter "Steam*.bat" | Remove-Item -Force
+    Get-ChildItem $env:TEMP -Filter "Steam*.bat" | Remove-Item -Force
     Write-ColoredMessage "Removed temporary files" "Success"
 }
 
@@ -219,11 +213,12 @@ function Show-Completion {
 # Main execution
 try {
     Show-Introduction
-    if (-not (Get-UserSelection)) { exit }
+    $Mode = Get-UserSelection
+    if (-not $Mode) { exit }
     
     Initialize-Environment
     Stop-SteamProcesses
-    Get-Files
+    $files = Get-Files
     
     if ($Mode -eq "TEST-Version") {
         $version = Read-Host "Enter the desired Steam version"
@@ -236,8 +231,8 @@ try {
         }
     }
     
-    Move-ConfigFile
-    Move-SteamBatToDesktop
+    Move-ConfigFile -SourcePath $files.SteamCfg
+    Move-SteamBatToDesktop -SourcePath $files.SteamBat
     Remove-TempFiles
     Show-Completion
 }
