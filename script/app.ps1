@@ -7,8 +7,8 @@ $config = @{
     Title = "Steam Debloat"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        Stable = "v2.8"
-        Beta = "v1.1"
+        Stable = "v2.9"
+        Beta = "v1.2"
     }
     Color = @{
         Info = "Cyan"
@@ -25,6 +25,7 @@ $config = @{
         "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
+    DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
 }
 
 # File and path variables
@@ -165,23 +166,18 @@ function Get-Files {
     }
 }
 
-function Invoke-SteamDowngrade {
-    if ($Mode -eq "TEST-Version" -or (Read-Host "Do you want to downgrade Steam? (y/n)") -eq 'y') {
-        $version = if ($Mode -eq "TEST-Version") { Read-Host "Enter the desired Steam version" } else { "dec2022steam" }
-        $url = if ($Mode -eq "TEST-Version") { 
-            "http://web.archive.org/web/$($version)if_/media.steampowered.com/client"
-        } else {
-            "https://archive.org/download/$version"
-        }
-        
-        $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $url -exitsteam"
-        Write-ColoredMessage "Starting Steam downgrade process..." "Info"
-        Start-Process -FilePath $paths.Steam -ArgumentList $arguments
-        
-        Write-ColoredMessage "Waiting for Steam to close..." "Info"
-        while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
-            Start-Sleep -Seconds 5
-        }
+function Invoke-SteamUpdate {
+    param (
+        [string]$Url
+    )
+    
+    Write-ColoredMessage "Starting Steam update process..." "Info"
+    $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $Url -exitsteam"
+    Start-Process -FilePath $paths.Steam -ArgumentList $arguments
+    
+    Write-ColoredMessage "Waiting for Steam to close..." "Info"
+    while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
+        Start-Sleep -Seconds 5
     }
 }
 
@@ -228,7 +224,18 @@ try {
     Initialize-Environment
     Stop-SteamProcesses
     Get-Files
-    Invoke-SteamDowngrade
+    
+    if ($Mode -eq "TEST-Version") {
+        $version = Read-Host "Enter the desired Steam version"
+        $url = "http://web.archive.org/web/$($version)if_/media.steampowered.com/client"
+        Invoke-SteamUpdate -Url $url
+    } else {
+        $downgrade = Read-Host "Do you want to downgrade Steam to December 2022 version? (y/n)"
+        if ($downgrade -eq 'y') {
+            Invoke-SteamUpdate -Url $config.DefaultDowngradeUrl
+        }
+    }
+    
     Move-ConfigFile
     Move-SteamBatToDesktop
     Remove-TempFiles
