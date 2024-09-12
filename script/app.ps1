@@ -26,7 +26,6 @@ $fileSteamCfg = "steam.cfg"
 $tempPath = $env:TEMP
 $steamPath = "C:\Program Files (x86)\Steam\steam.exe"
 $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), $fileSteamBat)
-$verificationFilePath = "C:\Program Files (x86)\Steam\verification.txt"
 
 $urlSteamBat = $urls[$Mode]["SteamBat"]
 $urlSteamCfg = $steamCfgUrl
@@ -60,22 +59,18 @@ function Main {
         Kill-SteamProcesses
         Download-Files
 
-        if ($Mode -eq "TEST-Version") {
+        if (Prompt-DowngradeSteam) {
             Start-Steam
-        } else {
-            Verify-Update
-            if (-not $global:skipStartSteam) {
-                Write-WithEffect "[INFO] Starting Steam for updates..." -ForegroundColor $color
-                Start-Steam
-                Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
-                Wait-For-SteamClosure
-            }
+            Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
+            Wait-For-SteamClosure
         }
+
         Move-ConfigFile
 
         if ($Mode -in @("TEST", "TEST-Lite", "TEST-Version") -or (Prompt-MoveToDesktop)) {
             Move-SteamBatToDesktop
         }
+
         Remove-TempFiles
         Finish
     } catch {
@@ -105,15 +100,9 @@ function Download-Files {
     }
 }
 
-function Verify-Update {
-    if (-not (Test-Path $verificationFilePath)) {
-        Write-WithEffect "[INFO] Verification file not found..." -ForegroundColor $color
-        $verificationContent = "This file is used as a verification to determine whether to proceed with Steam's downgrade or not."
-        Set-Content -Path $verificationFilePath -Value $verificationContent
-    } else {
-        Write-WithEffect "[INFO] Verification file found..." -ForegroundColor $color
-        $global:skipStartSteam = $true
-    }
+function Prompt-DowngradeSteam {
+    $response = Read-Host "Do you want to downgrade Steam? (y/n)"
+    return $response -eq "y" -or $response -eq "Y"
 }
 
 function Start-Steam {
