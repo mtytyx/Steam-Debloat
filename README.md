@@ -41,9 +41,7 @@ Steam Debloat provides a range of tools for optimizing and customizing your Stea
     1. **Download** the [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.5/Installer.bat).
     2. **Run** the installer as an administrator. 🖱️
     3. Alternatively, use PowerShell for a recommended advanced approach:
-       <pre><code>ps1
-iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/script/app.ps1') }"
-       </code></pre>
+       <pre><code class="language-powershell">iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/script/app.ps1') }"</code></pre>
 </details>
 
 <details>
