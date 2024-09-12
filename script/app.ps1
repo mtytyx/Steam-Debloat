@@ -216,4 +216,8 @@ function Handle-Error {
 }
 
 function Finish {
-    Write-WithEffect "[SUCCESS] Steam configured and updated." -
+    Write-WithEffect "[SUCCESS] Steam configured and updated." -ForegroundColor Green
+}
+
+# Execute the main function
+Main
