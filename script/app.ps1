@@ -7,7 +7,7 @@ $config = @{
     Title = "Steam Debloat"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        Stable = "v2.7"
+        Stable = "v2.8"
         Beta = "v1.1"
     }
     Color = @{
@@ -150,17 +150,18 @@ function Stop-SteamProcesses {
 function Get-Files {
     Write-ColoredMessage "Downloading required files..." "Info"
     
-    $files.GetEnumerator() | ForEach-Object {
-        $url = if ($_.Key -eq "SteamCfg") { $config.Urls.SteamCfg } else { $config.Urls[$Mode].SteamBat }
-        $outFile = Join-Path $paths.Temp $_.Value
+    $steamBatUrl = $config.Urls[$Mode].SteamBat
+    $steamCfgUrl = $config.Urls.SteamCfg
+    
+    try {
+        Invoke-SafeWebRequest -Uri $steamBatUrl -OutFile (Join-Path $paths.Temp $files.SteamBat)
+        Write-ColoredMessage "Successfully downloaded $($files.SteamBat)" "Success"
         
-        try {
-            Invoke-SafeWebRequest -Uri $url -OutFile $outFile
-            Write-ColoredMessage "Successfully downloaded $($_.Value)" "Success"
-        }
-        catch {
-            throw "Failed to download $($_.Value). Error: $_"
-        }
+        Invoke-SafeWebRequest -Uri $steamCfgUrl -OutFile (Join-Path $paths.Temp $files.SteamCfg)
+        Write-ColoredMessage "Successfully downloaded $($files.SteamCfg)" "Success"
+    }
+    catch {
+        throw "Failed to download files. Error: $_"
     }
 }
 
