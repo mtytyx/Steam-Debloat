@@ -2,9 +2,6 @@ param (
     [string]$Mode = "Normal"
 )
 
-# the comments are made to help you understand the code
-
-# General Info
 $title = "Steam"
 $github = "Github.com/mtytyx"
 $version_stable = "v2.6"
@@ -47,7 +44,7 @@ function Write-WithEffect {
         Write-Host -NoNewline $char
         Start-Sleep -Milliseconds $Delay
     }
-    Write-Host ""  # Add a new line
+    Write-Host ""
 
     if ($ForegroundColor) {
         $host.UI.RawUI.ForegroundColor = $oldColor
@@ -96,8 +93,8 @@ function Show-Introduction {
     Write-Host "Visit my GitHub: https://github.com/mtytyx/Steam-Debloat"
     Write-Host ""
     Write-Host "------------------------------------------------"
-    Write-Host "1. Steam Debloat Stable -"
-    Write-Host "2. Steam Debloat Beta -"
+    Write-Host "1. Steam Debloat Stable "
+    Write-Host "2. Steam Debloat Beta "
     Write-Host "------------------------------------------------"
 }
 
@@ -109,7 +106,6 @@ function Prompt-Selection {
             if ($Mode -notin @("Normal", "Lite")) {
                 Write-WithEffect "[ERROR] Invalid choice. Please try again." -ForegroundColor Red
                 return $false
-                Clear-Host
             }
             $Mode = $Mode
         }
@@ -220,5 +216,4 @@ function Finish {
     Write-WithEffect "[SUCCESS] Steam configured and updated." -ForegroundColor Green
 }
 
-# Execute the main function
 Main
