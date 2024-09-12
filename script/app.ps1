@@ -109,6 +109,7 @@ function Prompt-Selection {
             if ($Mode -notin @("Normal", "Lite")) {
                 Write-WithEffect "[ERROR] Invalid choice. Please try again." -ForegroundColor Red
                 return $false
+                Clear-Host
             }
             $Mode = $Mode
         }
