@@ -7,7 +7,8 @@ param (
 # General Info
 $title = "Steam"
 $github = "Github.com/mtytyx"
-$version = "v2.5"
+$version_stable = "v2.6"
+$version_beta = "v1.0"
 $color = "Green"
 $errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
 
@@ -54,12 +55,22 @@ function Write-WithEffect {
 }
 
 function Main {
+    Show-Introduction
+    if (-not (Prompt-Selection)) { exit }
+    
     Set-ConsoleProperties
     try {
         Kill-SteamProcesses
         Download-Files
 
-        if (Prompt-DowngradeSteam) {
+        if ($Mode -in @("TEST", "TEST-Lite", "TEST-Version")) {
+            Write-WithEffect "[WARNING] You are using a Beta version. This is experimental and not tested thoroughly. Use at your own risk. No error reporting available." -ForegroundColor Red
+            if ($Mode -ne "TEST-Version") {
+                Start-Steam
+                Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
+                Wait-For-SteamClosure
+            }
+        } elseif (Prompt-DowngradeSteam) {
             Start-Steam
             Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
             Wait-For-SteamClosure
@@ -78,8 +89,48 @@ function Main {
     }
 }
 
+function Show-Introduction {
+    Write-Host ""
+    Write-Host "Hi!"
+    Write-Host "This script is made in PowerShell because it offers more advanced features and better error handling compared to batch scripts."
+    Write-Host "Visit my GitHub: https://github.com/mtytyx/Steam-Debloat"
+    Write-Host ""
+    Write-Host "------------------------------------------------"
+    Write-Host "1. Steam Debloat Stable -"
+    Write-Host "2. Steam Debloat Beta -"
+    Write-Host "------------------------------------------------"
+}
+
+function Prompt-Selection {
+    $choice = Read-Host "Please choose an option (1 or 2)"
+    switch ($choice) {
+        1 {
+            $Mode = Read-Host "Choose mode: Normal or Lite"
+            if ($Mode -notin @("Normal", "Lite")) {
+                Write-WithEffect "[ERROR] Invalid choice. Please try again." -ForegroundColor Red
+                return $false
+            }
+            $Mode = $Mode
+        }
+        2 {
+            $Mode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
+            if ($Mode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
+                Write-WithEffect "[ERROR] Invalid choice. Please try again." -ForegroundColor Red
+                return $false
+            }
+            $Mode = $Mode
+        }
+        default {
+            Write-WithEffect "[ERROR] Invalid choice. Please try again." -ForegroundColor Red
+            return $false
+        }
+    }
+    return $true
+}
+
 function Set-ConsoleProperties {
     $host.UI.RawUI.WindowTitle = "$title - $github"
+    $version = if ($Mode -in @("TEST", "TEST-Lite", "TEST-Version")) { $version_beta } else { $version_stable }
     Write-WithEffect "[INFO] Starting $title Optimization in $Mode mode $version" -ForegroundColor $color
 }
 
@@ -101,6 +152,7 @@ function Download-Files {
 }
 
 function Prompt-DowngradeSteam {
+    if ($Mode -eq "TEST-Version") { return $true }
     $response = Read-Host "Do you want to downgrade Steam? (y/n)"
     return $response -eq "y" -or $response -eq "Y"
 }
@@ -164,7 +216,4 @@ function Handle-Error {
 }
 
 function Finish {
-    Write-WithEffect "[SUCCESS] Steam configured and updated." -ForegroundColor $color
-}
-
-Main
+    Write-WithEffect "[SUCCESS] Steam configured and updated." -
