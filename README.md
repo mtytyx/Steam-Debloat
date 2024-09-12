@@ -67,7 +67,7 @@ Steam Debloat provides a range of tools for optimizing and customizing your Stea
     - Restores any files altered by debloat modifications.
 
   - **Steps to Apply:**
-    1. Download the [Uninstall Steam Legacy](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.5/Uninstall-Steam-Legacy.bat) file.
+    1. Download the [Uninstall Steam Legacy](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.9/Uninstall-Steam-Legacy.bat) file.
     2. Run the `Uninstall Steam Legacy` file as an administrator. 🖱️
     3. This will update Steam and revert debloat modifications. ✔️
 </details>
