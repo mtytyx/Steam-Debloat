@@ -2,218 +2,241 @@ param (
     [string]$Mode = "Normal"
 )
 
-$title = "Steam"
-$github = "Github.com/mtytyx"
-$version_stable = "v2.6"
-$version_beta = "v1.0"
-$color = "Green"
-$errorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
-
-$urls = @{
-    "Normal" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat" }
-    "Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam-Lite.bat" }
-    "TEST" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
-    "TEST-Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat" }
-    "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
+# Configuration
+$config = @{
+    Title = "Steam Debloat"
+    GitHub = "Github.com/mtytyx"
+    Version = @{
+        Stable = "v2.7"
+        Beta = "v1.1"
+    }
+    Color = @{
+        Info = "Cyan"
+        Success = "Green"
+        Warning = "Yellow"
+        Error = "Red"
+    }
+    ErrorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
+    Urls = @{
+        "Normal" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat" }
+        "Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam-Lite.bat" }
+        "TEST" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
+        "TEST-Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat" }
+        "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
+        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
+    }
 }
 
-$steamCfgUrl = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
-
-$fileSteamBat = if ($Mode -eq "Lite") { "Steam-Lite.bat" } elseif ($Mode -eq "TEST") { "Steam-TEST.bat" } elseif ($Mode -eq "TEST-Lite") { "Steam-Lite-TEST.bat" } elseif ($Mode -eq "TEST-Version") { "Steam-Lite-TEST.bat" } else { "Steam.bat" }
-$fileSteamCfg = "steam.cfg"
-$tempPath = $env:TEMP
-$steamPath = "C:\Program Files (x86)\Steam\steam.exe"
-$desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), $fileSteamBat)
-
-$urlSteamBat = $urls[$Mode]["SteamBat"]
-$urlSteamCfg = $steamCfgUrl
-
-function Write-WithEffect {
-    param (
-        [string]$Text,
-        [ConsoleColor]$ForegroundColor = $null,
-        [int]$Delay = 50
-    )
-
-    if ($ForegroundColor) {
-        $oldColor = $host.UI.RawUI.ForegroundColor
-        $host.UI.RawUI.ForegroundColor = $ForegroundColor
+# File and path variables
+$files = @{
+    SteamBat = switch ($Mode) {
+        "Lite" { "Steam-Lite.bat" }
+        "TEST" { "Steam-TEST.bat" }
+        "TEST-Lite" { "Steam-Lite-TEST.bat" }
+        "TEST-Version" { "Steam-TEST.bat" }
+        default { "Steam.bat" }
     }
+    SteamCfg = "steam.cfg"
+}
 
-    foreach ($char in $Text.ToCharArray()) {
+$paths = @{
+    Temp = $env:TEMP
+    Steam = "C:\Program Files (x86)\Steam\steam.exe"
+    Desktop = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), $files.SteamBat)
+}
+
+# Helper Functions
+function Write-ColoredMessage {
+    param (
+        [string]$Message,
+        [string]$ColorName,
+        [int]$Delay = 10
+    )
+    
+    $color = $config.Color[$ColorName]
+    Write-Host -NoNewline "["
+    Write-Host -NoNewline $ColorName.ToUpper() -ForegroundColor $color
+    Write-Host -NoNewline "] "
+    
+    foreach ($char in $Message.ToCharArray()) {
         Write-Host -NoNewline $char
         Start-Sleep -Milliseconds $Delay
     }
     Write-Host ""
-
-    if ($ForegroundColor) {
-        $host.UI.RawUI.ForegroundColor = $oldColor
-    }
 }
 
-function Main {
-    Show-Introduction
-    if (-not (Prompt-Selection)) { exit }
+function Invoke-SafeWebRequest {
+    param (
+        [string]$Uri,
+        [string]$OutFile
+    )
     
-    Set-ConsoleProperties
     try {
-        Kill-SteamProcesses
-        Download-Files
-
-        if ($Mode -in @("TEST", "TEST-Lite", "TEST-Version")) {
-            Write-WithEffect "[WARNING] You are using a Beta version. This is experimental and not tested thoroughly. Use at your own risk. No error reporting available." -ForegroundColor Red
-            if ($Mode -ne "TEST-Version") {
-                Start-Steam
-                Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
-                Wait-For-SteamClosure
-            }
-        } elseif (Prompt-DowngradeSteam) {
-            Start-Steam
-            Write-WithEffect "[INFO] Waiting for Steam to close..." -ForegroundColor $color
-            Wait-For-SteamClosure
-        }
-
-        Move-ConfigFile
-
-        if ($Mode -in @("TEST", "TEST-Lite", "TEST-Version") -or (Prompt-MoveToDesktop)) {
-            Move-SteamBatToDesktop
-        }
-
-        Remove-TempFiles
-        Finish
-    } catch {
-        Handle-Error "An unexpected error occurred during execution."
+        Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing -ErrorAction Stop
+    }
+    catch {
+        throw "Failed to download file from $Uri. Error: $_"
     }
 }
 
+function Test-AdminPrivileges {
+    return ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+function Start-ProcessAsAdmin {
+    param (
+        [string]$FilePath,
+        [string]$ArgumentList
+    )
+    
+    Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -Verb RunAs
+}
+
+# Main Functions
 function Show-Introduction {
-    Write-Host ""
-    Write-Host "Hi!"
-    Write-Host "This script is made in PowerShell because it offers more advanced features and better error handling compared to batch scripts."
-    Write-Host "Visit my GitHub: https://github.com/mtytyx/Steam-Debloat"
-    Write-Host ""
+    Clear-Host
+    Write-Host "`nWelcome to $($config.Title) - $($config.GitHub)`n"
+    Write-Host "This script optimizes and debloats Steam for better performance."
     Write-Host "------------------------------------------------"
-    Write-Host "1. Steam Debloat Stable "
-    Write-Host "2. Steam Debloat Beta "
-    Write-Host "------------------------------------------------"
+    Write-Host "1. Steam Debloat Stable (Version $($config.Version.Stable))"
+    Write-Host "2. Steam Debloat Beta (Version $($config.Version.Beta))"
+    Write-Host "------------------------------------------------`n"
 }
 
-function Prompt-Selection {
-    $choice = Read-Host "Please choose an option (1 or 2)"
-    switch ($choice) {
-        1 {
-            $Mode = Read-Host "Choose mode: Normal or Lite"
-            if ($Mode -notin @("Normal", "Lite")) {
-                Write-WithEffect "[ERROR] Invalid choice. Please try again." -ForegroundColor Red
-                return $false
+function Get-UserSelection {
+    do {
+        $choice = Read-Host "Please choose an option (1 or 2)"
+        switch ($choice) {
+            1 {
+                $script:Mode = Read-Host "Choose mode: Normal or Lite"
+                if ($script:Mode -notin @("Normal", "Lite")) {
+                    Write-ColoredMessage "Invalid choice. Please try again." "Error"
+                    continue
+                }
             }
-            $Mode = $Mode
-        }
-        2 {
-            $Mode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
-            if ($Mode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
-                Write-WithEffect "[ERROR] Invalid choice. Please try again." -ForegroundColor Red
-                return $false
+            2 {
+                $script:Mode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
+                if ($script:Mode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
+                    Write-ColoredMessage "Invalid choice. Please try again." "Error"
+                    continue
+                }
             }
-            $Mode = $Mode
+            default {
+                Write-ColoredMessage "Invalid choice. Please try again." "Error"
+                continue
+            }
         }
-        default {
-            Write-WithEffect "[ERROR] Invalid choice. Please try again." -ForegroundColor Red
-            return $false
-        }
+        return $true
+    } while ($true)
+}
+
+function Initialize-Environment {
+    $host.UI.RawUI.WindowTitle = "$($config.Title) - $($config.GitHub)"
+    $version = if ($Mode -like "TEST*") { $config.Version.Beta } else { $config.Version.Stable }
+    Write-ColoredMessage "Starting $($config.Title) Optimization in $Mode mode $version" "Info"
+    
+    if (-not (Test-AdminPrivileges)) {
+        Write-ColoredMessage "Requesting administrator privileges..." "Warning"
+        Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList "-File `"$PSCommandPath`" -Mode `"$Mode`""
+        exit
     }
-    return $true
 }
 
-function Set-ConsoleProperties {
-    $host.UI.RawUI.WindowTitle = "$title - $github"
-    $version = if ($Mode -in @("TEST", "TEST-Lite", "TEST-Version")) { $version_beta } else { $version_stable }
-    Write-WithEffect "[INFO] Starting $title Optimization in $Mode mode $version" -ForegroundColor $color
+function Stop-SteamProcesses {
+    Write-ColoredMessage "Stopping Steam processes..." "Info"
+    Get-Process | Where-Object { $_.Name -like "*steam*" } | Stop-Process -Force -ErrorAction SilentlyContinue
 }
 
-function Kill-SteamProcesses {
-    Stop-Process -Name "steam" -Force -ErrorAction SilentlyContinue
-}
-
-function Download-Files {
-    Write-WithEffect "[INFO] Downloading files..." -ForegroundColor $color
-    try {
-        $batFile = "$tempPath\$fileSteamBat"
-        $cfgFile = "$tempPath\$fileSteamCfg"
+function Get-Files {
+    Write-ColoredMessage "Downloading required files..." "Info"
+    
+    $files.GetEnumerator() | ForEach-Object {
+        $url = if ($_.Key -eq "SteamCfg") { $config.Urls.SteamCfg } else { $config.Urls[$Mode].SteamBat }
+        $outFile = Join-Path $paths.Temp $_.Value
         
-        Invoke-WebRequest -Uri $urlSteamBat -OutFile $batFile
-        Invoke-WebRequest -Uri $urlSteamCfg -OutFile $cfgFile
-    } catch {
-        Handle-Error "Failed to download files."
+        try {
+            Invoke-SafeWebRequest -Uri $url -OutFile $outFile
+            Write-ColoredMessage "Successfully downloaded $($_.Value)" "Success"
+        }
+        catch {
+            throw "Failed to download $($_.Value). Error: $_"
+        }
     }
 }
 
-function Prompt-DowngradeSteam {
-    if ($Mode -eq "TEST-Version") { return $true }
-    $response = Read-Host "Do you want to downgrade Steam? (y/n)"
-    return $response -eq "y" -or $response -eq "Y"
-}
-
-function Start-Steam {
-    if ($Mode -eq "TEST-Version") {
-        $version = Read-Host "Version?"
-        $url = "http://web.archive.org/web/$versionif_/media.steampowered.com/client"
+function Invoke-SteamDowngrade {
+    if ($Mode -eq "TEST-Version" -or (Read-Host "Do you want to downgrade Steam? (y/n)") -eq 'y') {
+        $version = if ($Mode -eq "TEST-Version") { Read-Host "Enter the desired Steam version" } else { "dec2022steam" }
+        $url = if ($Mode -eq "TEST-Version") { 
+            "http://web.archive.org/web/$($version)if_/media.steampowered.com/client"
+        } else {
+            "https://archive.org/download/$version"
+        }
+        
         $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $url -exitsteam"
-    } else {
-        $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
-    }
-    Start-Process -FilePath $steamPath -ArgumentList $arguments
-    Start-Sleep -Seconds 5
-}
-
-function Wait-For-SteamClosure {
-    while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
-        Start-Sleep -Seconds 5
+        Write-ColoredMessage "Starting Steam downgrade process..." "Info"
+        Start-Process -FilePath $paths.Steam -ArgumentList $arguments
+        
+        Write-ColoredMessage "Waiting for Steam to close..." "Info"
+        while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
+            Start-Sleep -Seconds 5
+        }
     }
 }
 
 function Move-ConfigFile {
-    if (Test-Path "$tempPath\$fileSteamCfg") {
-        Move-Item -Path "$tempPath\$fileSteamCfg" -Destination "C:\Program Files (x86)\Steam\steam.cfg" -Force
-        Write-WithEffect "[INFO] Moved $fileSteamCfg to Steam directory" -ForegroundColor $color
-    } else {
-        Handle-Error "File $tempPath\$fileSteamCfg not found."
+    $source = Join-Path $paths.Temp $files.SteamCfg
+    $destination = "C:\Program Files (x86)\Steam\steam.cfg"
+    
+    if (Test-Path $source) {
+        Move-Item -Path $source -Destination $destination -Force
+        Write-ColoredMessage "Moved $($files.SteamCfg) to Steam directory" "Success"
+    }
+    else {
+        throw "File $source not found."
     }
 }
 
 function Move-SteamBatToDesktop {
-    if (Test-Path "$tempPath\$fileSteamBat") {
-        Move-Item -Path "$tempPath\$fileSteamBat" -Destination $desktopPath -Force
-        Write-WithEffect "[INFO] Moved $fileSteamBat to desktop" -ForegroundColor $color
+    if ($Mode -like "TEST*" -or (Read-Host "Do you want to move $($files.SteamBat) to the desktop? (y/n)") -eq 'y') {
+        $source = Join-Path $paths.Temp $files.SteamBat
+        if (Test-Path $source) {
+            Move-Item -Path $source -Destination $paths.Desktop -Force
+            Write-ColoredMessage "Moved $($files.SteamBat) to desktop" "Success"
+        }
     }
 }
 
 function Remove-TempFiles {
-    if (Test-Path "$tempPath\$fileSteamBat") {
-        Remove-Item -Path "$tempPath\$fileSteamBat" -Force
-        Write-WithEffect "[INFO] Removed $fileSteamBat from TEMP" -ForegroundColor $color
-    }
+    Get-ChildItem $paths.Temp -Filter "Steam*.bat" | Remove-Item -Force
+    Write-ColoredMessage "Removed temporary files" "Success"
 }
 
-function Prompt-MoveToDesktop {
-    $response = Read-Host "Do you want to move $fileSteamBat to the desktop? (y/n)"
-    return $response -eq "y" -or $response -eq "Y"
+function Show-Completion {
+    Write-ColoredMessage "Steam configured and updated successfully." "Success"
+    Write-Host "`nThank you for using $($config.Title)!"
+    Write-Host "If you encounter any issues, please report them at: $($config.ErrorPage)"
+    Read-Host "`nPress Enter to exit"
 }
 
-function Handle-Error {
-    param (
-        [string]$message
-    )
-    Write-WithEffect "[ERROR] $message" -ForegroundColor Red
-    Write-WithEffect "Please report the issue at $errorPage" -ForegroundColor Red
-    Write-WithEffect "Press Enter to open the issue page..."
-    Read-Host
-    Start-Process $errorPage
+# Main execution
+try {
+    Show-Introduction
+    if (-not (Get-UserSelection)) { exit }
+    
+    Initialize-Environment
+    Stop-SteamProcesses
+    Get-Files
+    Invoke-SteamDowngrade
+    Move-ConfigFile
+    Move-SteamBatToDesktop
+    Remove-TempFiles
+    Show-Completion
+}
+catch {
+    Write-ColoredMessage "An error occurred: $_" "Error"
+    Write-ColoredMessage "Please report this issue at $($config.ErrorPage)" "Error"
+    Read-Host "Press Enter to open the issue page..."
+    Start-Process $config.ErrorPage
     exit 1
 }
-
-function Finish {
-    Write-WithEffect "[SUCCESS] Steam configured and updated." -ForegroundColor Green
-}
-
-Main
