@@ -23,8 +23,9 @@ $script:config = @{
     Title = "Steam"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        Stable = "v3.0"
-        Beta = "v2.0"
+        Script = "v3.2"
+        Stable = "v2.2"
+        Beta = "v1.2"
     }
     Color = @{
         Info = "Cyan"
@@ -159,7 +160,7 @@ function Start-ProcessAsAdmin {
 
 function Show-Introduction {
     Clear-Host
-    Write-Log "`nWelcome to $($script:config.Title) - $($script:config.GitHub)`n" -Level Info
+    Write-Log "`nWelcome to $($script:config.Title) - $($script:config.GitHub) - $(script:config.Version.Script)`n" -Level Info
     Write-Log "This script optimizes and debloats Steam for better performance." -Level Info
     Write-Log "------------------------------------------------" -Level Info
     Write-Log "1. Steam Debloat Stable (Version $($script:config.Version.Stable))" -Level Info
@@ -317,7 +318,7 @@ function Move-SteamBatToDesktop {
         [string]$SelectedMode
     )
     
-    $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam-$SelectedMode.bat")
+    $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam.bat")
     if (Test-Path $SourcePath) {
         Move-Item -Path $SourcePath -Destination $desktopPath -Force
         Write-Log "Moved Steam-$SelectedMode.bat to desktop" -Level Success
