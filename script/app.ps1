@@ -1,4 +1,3 @@
-[CmdletBinding()]
 param (
     [Parameter(Position = 0)]
     [ValidateSet("Normal", "Lite", "TEST", "TEST-Lite", "TEST-Version")]
