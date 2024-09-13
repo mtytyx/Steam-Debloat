@@ -70,7 +70,7 @@ Steam Debloat is a comprehensive toolkit designed to optimize and customize your
   - ❌ Possible residual components that could still affect performance
 
   ### Installation:
-  1. **Download** the [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.2/Installer.bat)
+  1. **Download** the [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.5/Installer.bat)
   2. **Run** the installer as an administrator
   3. **Advanced Method** (PowerShell):
      ```powershell
@@ -96,7 +96,7 @@ Steam Debloat is a comprehensive toolkit designed to optimize and customize your
   Use this method to force Steam to update to the latest version and revert any changes made by the debloat process.
 
   ### Steps:
-  1. Download [Uninstall Steam Legacy](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.2/Uninstall-Steam-Legacy.bat)
+  1. Download [Uninstall Steam Legacy](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.5/Uninstall-Steam-Legacy.bat)
   2. Run the file as an administrator
   3. Follow the on-screen instructions to complete the process
 </details>
