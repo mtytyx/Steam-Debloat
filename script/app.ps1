@@ -20,7 +20,7 @@ Import-Module Microsoft.PowerShell.Management
 
 # Configuration
 $script:config = @{
-    Title = "Steam Debloat"
+    Title = "Steam"
     GitHub = "Github.com/mtytyx"
     Version = @{
         Stable = "v3.0"
@@ -203,7 +203,7 @@ function Initialize-Environment {
     
     $host.UI.RawUI.WindowTitle = "$($script:config.Title) - $($script:config.GitHub)"
     $version = if ($SelectedMode -like "TEST*") { $script:config.Version.Beta } else { $script:config.Version.Stable }
-    Write-Log "Starting $($script:config.Title) Optimization in $SelectedMode mode $version" -Level Info
+    Write-Log "Starting $($script:config.Title) Optimization in $SelectedMode mode" -Level Info
     
     if (-not (Test-AdminPrivileges)) {
         Write-Log "Requesting administrator privileges..." -Level Warning
