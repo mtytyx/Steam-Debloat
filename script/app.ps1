@@ -43,7 +43,7 @@ $script:config = @{
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
-    LogFile = Join-Path $env:TEMP "SteamDebloatPro.log"
+    LogFile = Join-Path $env:USERPROFILE "Desktop\SteamDebloat.log"
     BackupDir = Join-Path $env:USERPROFILE "SteamDebloatBackup"
     SteamInstallDir = "C:\Program Files (x86)\Steam"
     MaxBackups = 5
@@ -395,8 +395,12 @@ function Start-SteamDebloat {
     try {
         Initialize-Environment -SelectedMode $SelectedMode
         
-        if ($ForceBackup -or (Read-Host "Do you want to create a backup before proceeding? (Y/N)").ToUpper() -eq 'Y') {
-            Backup-SteamFiles
+        Write-Host "WARNING: THIS BACKUP WILL INCLUDE YOUR ENTIRE STEAM DIRECTORY." -ForegroundColor Yellow
+        Write-Host "IF YOU HAVE HEAVY GAMES INSTALLED, THIS PROCEDURE MAY TAKE MORE THAN 10 HOUR." -ForegroundColor Yellow
+        Write-Host ""
+
+        if ($ForceBackup -or (Read-Host "Do you want to create a backup before proceeding?  (Y/N)").ToUpper() -eq 'Y') {
+        Backup-SteamFiles
         }
         
         Stop-SteamProcesses
