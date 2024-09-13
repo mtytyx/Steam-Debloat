@@ -62,12 +62,12 @@ Steam Debloat is a comprehensive toolkit designed to optimize and customize your
   - 🧹 Removes non-essential components to enhance performance
 
   ### Pros and Cons:
-  ✅ Significant performance improvement with reduced system load
-  ✅ Minimal impact on core Steam functionality
-  ✅ Less frequent user prompts during installation
+  - ✅ Significant performance improvement with reduced system load
+  - ✅ Minimal impact on core Steam functionality
+  - ✅ Less frequent user prompts during installation
   
-  ❌ May not remove all bloatware
-  ❌ Possible residual components that could still affect performance
+  - ❌ May not remove all bloatware
+  - ❌ Possible residual components that could still affect performance
 
   ### Installation:
   1. **Download** the [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.2/Installer.bat)
