@@ -1,3 +1,4 @@
+[CmdletBinding()]
 param (
     [Parameter(Position = 0)]
     [ValidateSet("Normal", "Lite", "TEST", "TEST-Lite", "TEST-Version")]
@@ -7,7 +8,6 @@ param (
     [switch]$ForceBackup,
     [switch]$SkipDowngrade,
     [string]$CustomVersion,
-    [switch]$Verbose
 )
 
 # Set strict mode and error action preference
