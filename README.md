@@ -136,5 +136,5 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 ---
 
 <p align="center">
-  Made with ❤️ by the Steam Debloat Team
+  Made with ❤️ by my
 </p>
