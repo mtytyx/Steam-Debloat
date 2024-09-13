@@ -7,7 +7,8 @@ param (
     [switch]$SkipIntro,
     [switch]$ForceBackup,
     [switch]$SkipDowngrade,
-    [string]$CustomVersion
+    [string]$CustomVersion,
+    [switch]$NoInteraction
 )
 
 # Set strict mode and error action preference
@@ -20,12 +21,12 @@ Import-Module Microsoft.PowerShell.Management
 
 # Configuration
 $script:config = @{
-    Title = "Steam"
-    GitHub = "Github.com/mtytyx"
+    Title = "Steam Debloat"
+    GitHub = "Github.com/mtytyx/Steam-Debloat"
     Version = @{
-        ps1 = "v3.2"
-        Stable = "v2.2"
-        Beta = "v1.2"
+        ps1 = "v3.4"  # Updated version number
+        Stable = "v2.3"
+        Beta = "v1.3"
     }
     Color = @{
         Info = "Cyan"
@@ -81,11 +82,15 @@ function Write-Log {
     if ($NoNewline) {
         Write-Host -NoNewline $Message
     } else {
-        foreach ($char in $Message.ToCharArray()) {
-            Write-Host -NoNewline $char
-            Start-Sleep -Milliseconds $Delay
+        if (-not $NoInteraction) {
+            foreach ($char in $Message.ToCharArray()) {
+                Write-Host -NoNewline $char
+                Start-Sleep -Milliseconds $Delay
+            }
+            Write-Host ""
+        } else {
+            Write-Host $Message
         }
-        Write-Host ""
     }
     
     # Append to log file
@@ -100,7 +105,6 @@ function Write-Log {
     }
 }
 
-# Enhanced Web Request Function with Retry Logic
 function Invoke-SafeWebRequest {
     [CmdletBinding()]
     param (
@@ -214,6 +218,7 @@ function Initialize-Environment {
         if ($ForceBackup) { $arguments += " -ForceBackup" }
         if ($SkipDowngrade) { $arguments += " -SkipDowngrade" }
         if ($CustomVersion) { $arguments += " -CustomVersion `"$CustomVersion`"" }
+        if ($NoInteraction) { $arguments += " -NoInteraction" }
         if ($VerbosePreference -eq 'Continue') { $arguments += " -Verbose" }
         
         Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList $arguments
@@ -290,6 +295,69 @@ function Invoke-SteamUpdate {
     $timer.Stop()
 }
 
+function Get-DowngradeChoice {
+    if ($NoInteraction) {
+        return -not $SkipDowngrade
+    }
+    $choice = Read-Host "Do you want to downgrade Steam? (Y/N)"
+    return $choice.ToUpper() -eq 'Y'
+}
+
+function Get-CustomVersionUrl {
+    if ($NoInteraction) {
+        return $CustomVersion
+    }
+    $useCustom = Read-Host "Do you want to use a custom version URL? (Y/N)"
+    if ($useCustom.ToUpper() -eq 'Y') {
+        return Read-Host "Enter the custom version URL"
+    }
+    return $null
+}
+
+function Backup-SteamFiles {
+    Write-Log "Starting Steam backup process..." -Level Info
+    $backupPath = Join-Path $script:config.BackupDir (Get-Date -Format "yyyy-MM-dd_HH-mm-ss")
+    
+    try {
+        New-Item -Path $backupPath -ItemType Directory -Force | Out-Null
+        Copy-Item -Path $script:config.SteamInstallDir -Destination $backupPath -Recurse -Force
+        Write-Log "Steam backup created successfully at $backupPath" -Level Success
+        
+        # Remove old backups if exceed MaxBackups
+        $backups = Get-ChildItem -Path $script:config.BackupDir | Sort-Object CreationTime -Descending
+        if ($backups.Count -gt $script:config.MaxBackups) {
+            $backupsToRemove = $backups | Select-Object -Skip $script:config.MaxBackups
+            foreach ($backup in $backupsToRemove) {
+                Remove-Item -Path $backup.FullName -Recurse -Force
+                Write-Log "Removed old backup: $($backup.FullName)" -Level Info
+            }
+        }
+    }
+    catch {
+        throw "Failed to create Steam backup: $_"
+    }
+}
+
+function Restore-SteamFiles {
+    Write-Log "Starting Steam restore process..." -Level Info
+    $latestBackup = Get-ChildItem -Path $script:config.BackupDir | Sort-Object CreationTime -Descending | Select-Object -First 1
+    
+    if ($null -eq $latestBackup) {
+        Write-Log "No backup found to restore." -Level Warning
+        return
+    }
+    
+    try {
+        Stop-SteamProcesses
+        Remove-Item -Path $script:config.SteamInstallDir -Recurse -Force
+        Copy-Item -Path $latestBackup.FullName -Destination $script:config.SteamInstallDir -Recurse
+        Write-Log "Steam files restored successfully from $($latestBackup.FullName)" -Level Success
+    }
+    catch {
+        throw "Failed to restore Steam files: $_"
+    }
+}
+
 function Move-ConfigFile {
     [CmdletBinding()]
     param (
@@ -297,14 +365,14 @@ function Move-ConfigFile {
         [string]$SourcePath
     )
     
-    $destination = Join-Path $script:config.SteamInstallDir "steam.cfg"
+    $destinationPath = Join-Path $script:config.SteamInstallDir "steam.cfg"
     
-    if (Test-Path $SourcePath) {
-        Move-Item -Path $SourcePath -Destination $destination -Force
-        Write-Log "Moved steam.cfg to Steam directory" -Level Success
+    try {
+        Copy-Item -Path $SourcePath -Destination $destinationPath -Force
+        Write-Log "Moved steam.cfg to Steam installation directory" -Level Success
     }
-    else {
-        throw "File $SourcePath not found."
+    catch {
+        throw "Failed to move steam.cfg: $_"
     }
 }
 
@@ -318,71 +386,28 @@ function Move-SteamBatToDesktop {
         [string]$SelectedMode
     )
     
-    $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam.bat")
-    if (Test-Path $SourcePath) {
-        Move-Item -Path $SourcePath -Destination $desktopPath -Force
-        Write-Log "Moved Steam.bat to desktop" -Level Success
+    $desktopPath = [Environment]::GetFolderPath("Desktop")
+    $destinationPath = Join-Path $desktopPath "Steam-$SelectedMode.bat"
+    
+    try {
+        Copy-Item -Path $SourcePath -Destination $destinationPath -Force
+        Write-Log "Moved Steam-$SelectedMode.bat to desktop" -Level Success
     }
-    else {
-        throw "File $SourcePath not found."
+    catch {
+        throw "Failed to move Steam-$SelectedMode.bat to desktop: $_"
     }
 }
 
 function Remove-TempFiles {
-    Get-ChildItem $env:TEMP -Filter "Steam*.bat" | Remove-Item -Force
-    Write-Log "Removed temporary files" -Level Success
-}
-
-function Backup-SteamFiles {
-    $steamDir = $script:config.SteamInstallDir
-    $backupDir = $script:config.BackupDir
+    Write-Log "Cleaning up temporary files..." -Level Info
     
-    if (!(Test-Path $backupDir)) {
-        New-Item -ItemType Directory -Path $backupDir | Out-Null
-    }
-    
-    $backupName = "SteamBackup_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-    $backupPath = Join-Path $backupDir $backupName
-    
-    Write-Log "Creating backup of Steam files..." -Level Info
     try {
-        Copy-Item -Path $steamDir -Destination $backupPath -Recurse -Force
-        Write-Log "Backup created successfully at $backupPath" -Level Success
-        
-        # Remove old backups if exceeding MaxBackups
-        $backups = Get-ChildItem $backupDir | Sort-Object CreationTime -Descending | Select-Object -Skip $script:config.MaxBackups
-        foreach ($oldBackup in $backups) {
-            Remove-Item $oldBackup.FullName -Recurse -Force
-            Write-Log "Removed old backup: $($oldBackup.Name)" -Level Debug
-        }
+        Remove-Item -Path (Join-Path $env:TEMP "Steam-*.bat") -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path (Join-Path $env:TEMP "steam.cfg") -Force -ErrorAction SilentlyContinue
+        Write-Log "Temporary files cleaned up successfully" -Level Success
     }
     catch {
-        Write-Log "Failed to create backup: $_" -Level Error
-        throw $_
-    }
-}
-
-function Restore-SteamFiles {
-    $backupDir = $script:config.BackupDir
-    $steamDir = $script:config.SteamInstallDir
-    
-    $latestBackup = Get-ChildItem $backupDir | Sort-Object CreationTime -Descending | Select-Object -First 1
-    
-    if ($latestBackup) {
-        Write-Log "Restoring Steam files from backup..." -Level Info
-        try {
-            Stop-SteamProcesses
-            Remove-Item $steamDir -Recurse -Force
-            Copy-Item -Path $latestBackup.FullName -Destination $steamDir -Recurse -Force
-            Write-Log "Steam files restored successfully from $($latestBackup.Name)" -Level Success
-        }
-        catch {
-            Write-Log "Failed to restore Steam files: $_" -Level Error
-            throw $_
-        }
-    }
-    else {
-        Write-Log "No backup found to restore from." -Level Warning
+        Write-Log "Failed to clean up some temporary files: $_" -Level Warning
     }
 }
 
@@ -396,21 +421,27 @@ function Start-SteamDebloat {
     try {
         Initialize-Environment -SelectedMode $SelectedMode
         
-        Write-Host "WARNING: THIS BACKUP WILL INCLUDE YOUR ENTIRE STEAM DIRECTORY." -ForegroundColor Yellow
-        Write-Host "IF YOU HAVE HEAVY GAMES INSTALLED, THIS PROCEDURE MAY TAKE MORE THAN 10 HOUR." -ForegroundColor Yellow
-        Write-Host ""
+        if (-not $NoInteraction) {
+            Write-Host "WARNING: THIS BACKUP WILL INCLUDE YOUR ENTIRE STEAM DIRECTORY." -ForegroundColor Yellow
+            Write-Host "IF YOU HAVE HEAVY GAMES INSTALLED, THIS PROCEDURE MAY TAKE MORE THAN 10 HOURS." -ForegroundColor Yellow
+            Write-Host ""
+        }
 
-        if ($ForceBackup -or (Read-Host "Do you want to create a backup before proceeding?  (Y/N)").ToUpper() -eq 'Y') {
-        Backup-SteamFiles
+        if ($ForceBackup -or (-not $NoInteraction -and (Read-Host "Do you want to create a backup before proceeding? (Y/N)").ToUpper() -eq 'Y')) {
+            Backup-SteamFiles
         }
         
         Stop-SteamProcesses
         
         $files = Get-Files -SelectedMode $SelectedMode
         
-        if (-not $SkipDowngrade) {
-            $downgradeUrl = if ($CustomVersion) { $CustomVersion } else { $script:config.DefaultDowngradeUrl }
+        $downgradeChoice = Get-DowngradeChoice
+        if ($downgradeChoice) {
+            $customUrl = Get-CustomVersionUrl
+            $downgradeUrl = if ($customUrl) { $customUrl } else { $script:config.DefaultDowngradeUrl }
             Invoke-SteamUpdate -Url $downgradeUrl
+        } else {
+            Write-Log "Skipping Steam downgrade process." -Level Info
         }
         
         Move-ConfigFile -SourcePath $files.SteamCfg
@@ -419,20 +450,20 @@ function Start-SteamDebloat {
         Remove-TempFiles
         
         Write-Log "Steam Debloat process completed successfully!" -Level Success
-        Write-Log "Please run the Steam.bat file on your desktop to complete the optimization." -Level Info
+        Write-Log "Please run the Steam-$SelectedMode.bat file on your desktop to complete the optimization." -Level Info
     }
     catch {
         Write-Log "An error occurred during the Steam Debloat process: $_" -Level Error
         Write-Log "For more information and troubleshooting, please visit: $($script:config.ErrorPage)" -Level Info
         
-        if ((Read-Host "Do you want to restore Steam files from the latest backup? (Y/N)").ToUpper() -eq 'Y') {
+        if (-not $NoInteraction -and (Read-Host "Do you want to restore Steam files from the latest backup? (Y/N)").ToUpper() -eq 'Y') {
             Restore-SteamFiles
         }
     }
 }
 
 # Main execution
-if (-not $SkipIntro) {
+if (-not $SkipIntro -and -not $NoInteraction) {
     Show-Introduction
 }
 
