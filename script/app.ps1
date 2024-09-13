@@ -196,12 +196,13 @@ function Move-SteamBatToDesktop {
         [string]$SourcePath,
         [string]$SelectedMode
     )
-    if ($SelectedMode -like "TEST*" -or (Read-Host "Do you want to move Steam-$SelectedMode.bat to the desktop? (y/n)") -eq 'y') {
-        if (Test-Path $SourcePath) {
-            $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam-$SelectedMode.bat")
-            Move-Item -Path $SourcePath -Destination $desktopPath -Force
-            Write-ColoredMessage "Moved Steam-$SelectedMode.bat to desktop" "Success"
-        }
+    $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam-$SelectedMode.bat")
+    if (Test-Path $SourcePath) {
+        Move-Item -Path $SourcePath -Destination $desktopPath -Force
+        Write-ColoredMessage "Moved Steam-$SelectedMode.bat to desktop" "Success"
+    }
+    else {
+        throw "File $SourcePath not found."
     }
 }
 
