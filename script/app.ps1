@@ -160,7 +160,7 @@ function Start-ProcessAsAdmin {
 
 function Show-Introduction {
     Clear-Host
-    Write-Log "`nWelcome to $($script:config.Title) - $($script:config.GitHub) - $(script:config.Version.Script)`n" -Level Info
+    Write-Log "`nWelcome to $($script:config.Title) - $($script:config.GitHub) - $($script:config.Version.Script)`n" -Level Info
     Write-Log "This script optimizes and debloats Steam for better performance." -Level Info
     Write-Log "------------------------------------------------" -Level Info
     Write-Log "1. Steam Debloat Stable (Version $($script:config.Version.Stable))" -Level Info
