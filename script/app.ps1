@@ -450,7 +450,10 @@ function Start-SteamDebloat {
         Remove-TempFiles
         
         Write-Log "Steam Debloat process completed successfully!" -Level Success
-        Write-Log "Please run the Steam-$SelectedMode.bat file on your desktop to complete the optimization." -Level Info
+        Write-Log "Steam Updated and configured for better performance." -Level Info
+        Write-Log "You would help me a lot by contributing to improve the repository."
+        Write-Log "Press enter to exit."
+        Read-Host
     }
     catch {
         Write-Log "An error occurred during the Steam Debloat process: $_" -Level Error
