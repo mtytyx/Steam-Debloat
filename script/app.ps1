@@ -7,7 +7,7 @@ param (
     [switch]$SkipIntro,
     [switch]$ForceBackup,
     [switch]$SkipDowngrade,
-    [string]$CustomVersion,
+    [string]$CustomVersion
 )
 
 # Set strict mode and error action preference
