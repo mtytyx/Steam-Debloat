@@ -321,7 +321,7 @@ function Move-SteamBatToDesktop {
     $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam.bat")
     if (Test-Path $SourcePath) {
         Move-Item -Path $SourcePath -Destination $desktopPath -Force
-        Write-Log "Moved Steam-$SelectedMode.bat to desktop" -Level Success
+        Write-Log "Moved Steam.bat to desktop" -Level Success
     }
     else {
         throw "File $SourcePath not found."
@@ -419,7 +419,7 @@ function Start-SteamDebloat {
         Remove-TempFiles
         
         Write-Log "Steam Debloat process completed successfully!" -Level Success
-        Write-Log "Please run the Steam-$SelectedMode.bat file on your desktop to complete the optimization." -Level Info
+        Write-Log "Please run the Steam.bat file on your desktop to complete the optimization." -Level Info
     }
     catch {
         Write-Log "An error occurred during the Steam Debloat process: $_" -Level Error
