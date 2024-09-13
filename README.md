@@ -122,7 +122,7 @@ We welcome contributions from the community! To contribute:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-Please read our [Contributing Guide](https://github.com/mtytyx/Steam-Debloat/blob/main/CONTRIBUTING.md) for more details.
+Please read our [Contributing Guide](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/CONTRIBUTING.md) for more details.
 
 ## 📄 License
 
