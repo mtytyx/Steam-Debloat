@@ -1,5 +1,5 @@
 param (
-    [string]$Mode = "Normal"
+    [string]$Mode = $null
 )
 
 # Configuration
@@ -91,15 +91,15 @@ function Get-UserSelection {
         $choice = Read-Host "Please choose an option (1 or 2)"
         switch ($choice) {
             1 {
-                $mode = Read-Host "Choose mode: Normal or Lite"
-                if ($mode -notin @("Normal", "Lite")) {
+                $selectedMode = Read-Host "Choose mode: Normal or Lite"
+                if ($selectedMode -notin @("Normal", "Lite")) {
                     Write-ColoredMessage "Invalid choice. Please try again." "Error"
                     continue
                 }
             }
             2 {
-                $mode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
-                if ($mode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
+                $selectedMode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
+                if ($selectedMode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
                     Write-ColoredMessage "Invalid choice. Please try again." "Error"
                     continue
                 }
@@ -109,18 +109,21 @@ function Get-UserSelection {
                 continue
             }
         }
-        return $mode
+        return $selectedMode
     } while ($true)
 }
 
 function Initialize-Environment {
+    param (
+        [string]$SelectedMode
+    )
     $host.UI.RawUI.WindowTitle = "$($config.Title) - $($config.GitHub)"
-    $version = if ($Mode -like "TEST*") { $config.Version.Beta } else { $config.Version.Stable }
-    Write-ColoredMessage "Starting $($config.Title) Optimization in $Mode mode $version" "Info"
+    $version = if ($SelectedMode -like "TEST*") { $config.Version.Beta } else { $config.Version.Stable }
+    Write-ColoredMessage "Starting $($config.Title) Optimization in $SelectedMode mode $version" "Info"
     
     if (-not (Test-AdminPrivileges)) {
         Write-ColoredMessage "Requesting administrator privileges..." "Warning"
-        Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList "-File `"$PSCommandPath`" -Mode `"$Mode`""
+        Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList "-File `"$PSCommandPath`" -Mode `"$SelectedMode`""
         exit
     }
 }
@@ -131,15 +134,18 @@ function Stop-SteamProcesses {
 }
 
 function Get-Files {
-    Write-ColoredMessage "Downloading required files..." "Info"
+    param (
+        [string]$SelectedMode
+    )
+    Write-ColoredMessage "Downloading required files for $SelectedMode mode..." "Info"
     
-    $steamBatUrl = $config.Urls[$Mode].SteamBat
+    $steamBatUrl = $config.Urls[$SelectedMode].SteamBat
     $steamCfgUrl = $config.Urls.SteamCfg
     
     try {
-        $steamBatPath = Join-Path $env:TEMP "Steam-$Mode.bat"
+        $steamBatPath = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
         Invoke-SafeWebRequest -Uri $steamBatUrl -OutFile $steamBatPath
-        Write-ColoredMessage "Successfully downloaded Steam-$Mode.bat" "Success"
+        Write-ColoredMessage "Successfully downloaded Steam-$SelectedMode.bat" "Success"
         
         $steamCfgPath = Join-Path $env:TEMP "steam.cfg"
         Invoke-SafeWebRequest -Uri $steamCfgUrl -OutFile $steamCfgPath
@@ -187,13 +193,14 @@ function Move-ConfigFile {
 
 function Move-SteamBatToDesktop {
     param (
-        [string]$SourcePath
+        [string]$SourcePath,
+        [string]$SelectedMode
     )
-    if ($Mode -like "TEST*" -or (Read-Host "Do you want to move Steam-$Mode.bat to the desktop? (y/n)") -eq 'y') {
+    if ($SelectedMode -like "TEST*" -or (Read-Host "Do you want to move Steam-$SelectedMode.bat to the desktop? (y/n)") -eq 'y') {
         if (Test-Path $SourcePath) {
-            $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam-$Mode.bat")
+            $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam-$SelectedMode.bat")
             Move-Item -Path $SourcePath -Destination $desktopPath -Force
-            Write-ColoredMessage "Moved Steam-$Mode.bat to desktop" "Success"
+            Write-ColoredMessage "Moved Steam-$SelectedMode.bat to desktop" "Success"
         }
     }
 }
@@ -212,13 +219,14 @@ function Show-Completion {
 
 # Main execution
 try {
-    Show-Introduction
-    $Mode = Get-UserSelection
-    if (-not $Mode) { exit }
+    if (-not $Mode) {
+        Show-Introduction
+        $Mode = Get-UserSelection
+    }
     
-    Initialize-Environment
+    Initialize-Environment -SelectedMode $Mode
     Stop-SteamProcesses
-    $files = Get-Files
+    $files = Get-Files -SelectedMode $Mode
     
     if ($Mode -eq "TEST-Version") {
         $version = Read-Host "Enter the desired Steam version"
@@ -232,7 +240,7 @@ try {
     }
     
     Move-ConfigFile -SourcePath $files.SteamCfg
-    Move-SteamBatToDesktop -SourcePath $files.SteamBat
+    Move-SteamBatToDesktop -SourcePath $files.SteamBat -SelectedMode $Mode
     Remove-TempFiles
     Show-Completion
 }
