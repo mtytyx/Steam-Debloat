@@ -1,20 +1,38 @@
+[CmdletBinding()]
 param (
-    [string]$Mode = $null
+    [Parameter(Position = 0)]
+    [ValidateSet("Normal", "Lite", "TEST", "TEST-Lite", "TEST-Version")]
+    [string]$Mode = $null,
+
+    [switch]$SkipIntro,
+    [switch]$ForceBackup,
+    [switch]$SkipDowngrade,
+    [string]$CustomVersion,
+    [switch]$Verbose
 )
 
+# Set strict mode and error action preference
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+
+# Import required modules
+Import-Module Microsoft.PowerShell.Utility
+Import-Module Microsoft.PowerShell.Management
+
 # Configuration
-$config = @{
-    Title = "Steam Debloat"
+$script:config = @{
+    Title = "Steam Debloat Pro"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        Stable = "v2.9"
-        Beta = "v1.2"
+        Stable = "v3.0"
+        Beta = "v2.0"
     }
     Color = @{
         Info = "Cyan"
         Success = "Green"
         Warning = "Yellow"
         Error = "Red"
+        Debug = "Magenta"
     }
     ErrorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls = @{
@@ -26,40 +44,96 @@ $config = @{
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
+    LogFile = Join-Path $env:TEMP "SteamDebloatPro.log"
+    BackupDir = Join-Path $env:USERPROFILE "SteamDebloatBackup"
+    SteamInstallDir = "C:\Program Files (x86)\Steam"
+    MaxBackups = 5
+    RetryAttempts = 3
+    RetryDelay = 5
 }
 
-# Helper Functions
-function Write-ColoredMessage {
+# Enhanced Logging Function
+function Write-Log {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$true, Position=0)]
         [string]$Message,
-        [string]$ColorName,
-        [int]$Delay = 10
+        
+        [Parameter(Position=1)]
+        [ValidateSet("Info", "Success", "Warning", "Error", "Debug")]
+        [string]$Level = "Info",
+        
+        [Parameter(Position=2)]
+        [int]$Delay = 10,
+        
+        [switch]$NoNewline
     )
     
-    $color = $config.Color[$ColorName]
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logMessage = "[$timestamp] [$Level] $Message"
+    
+    # Write to console with color
+    $color = $script:config.Color[$Level]
     Write-Host -NoNewline "["
-    Write-Host -NoNewline $ColorName.ToUpper() -ForegroundColor $color
+    Write-Host -NoNewline $Level.ToUpper() -ForegroundColor $color
     Write-Host -NoNewline "] "
     
-    foreach ($char in $Message.ToCharArray()) {
-        Write-Host -NoNewline $char
-        Start-Sleep -Milliseconds $Delay
+    if ($NoNewline) {
+        Write-Host -NoNewline $Message
+    } else {
+        foreach ($char in $Message.ToCharArray()) {
+            Write-Host -NoNewline $char
+            Start-Sleep -Milliseconds $Delay
+        }
+        Write-Host ""
     }
-    Write-Host ""
+    
+    # Append to log file
+    Add-Content -Path $script:config.LogFile -Value $logMessage
+    
+    # If verbose mode is on, provide more details for debugging
+    if ($VerbosePreference -eq 'Continue' -and $Level -eq "Debug") {
+        $callStack = Get-PSCallStack | Select-Object -Skip 1 | ForEach-Object { "$($_.FunctionName) - $($_.ScriptLineNumber)" }
+        $debugInfo = "  Call Stack: $($callStack -join ' -> ')"
+        Write-Host $debugInfo -ForegroundColor $script:config.Color.Debug
+        Add-Content -Path $script:config.LogFile -Value $debugInfo
+    }
 }
 
+# Enhanced Web Request Function with Retry Logic
 function Invoke-SafeWebRequest {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$true)]
         [string]$Uri,
-        [string]$OutFile
+        
+        [Parameter(Mandatory=$true)]
+        [string]$OutFile,
+        
+        [int]$MaxRetries = $script:config.RetryAttempts,
+        [int]$RetryDelaySeconds = $script:config.RetryDelay
     )
     
-    try {
-        Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing -ErrorAction Stop
-    }
-    catch {
-        throw "Failed to download file from $Uri. Error: $_"
-    }
+    $attempt = 0
+    do {
+        $attempt++
+        try {
+            Write-Log "Attempting download from $Uri (Attempt $attempt of $MaxRetries)" -Level Debug
+            $response = Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing -ErrorAction Stop
+            Write-Log "Successfully downloaded file from $Uri" -Level Success
+            return $response
+        }
+        catch {
+            Write-Log "Attempt $attempt failed: $_" -Level Warning
+            if ($attempt -lt $MaxRetries) {
+                Write-Log "Retrying in $RetryDelaySeconds seconds..." -Level Info
+                Start-Sleep -Seconds $RetryDelaySeconds
+            }
+            else {
+                throw "Failed to download file from $Uri after $MaxRetries attempts. Error: $_"
+            }
+        }
+    } while ($attempt -lt $MaxRetries)
 }
 
 function Test-AdminPrivileges {
@@ -67,23 +141,31 @@ function Test-AdminPrivileges {
 }
 
 function Start-ProcessAsAdmin {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$true)]
         [string]$FilePath,
+        
+        [Parameter(Mandatory=$true)]
         [string]$ArgumentList
     )
     
-    Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -Verb RunAs
+    try {
+        Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -Verb RunAs -Wait
+    }
+    catch {
+        throw "Failed to start process as admin: $_"
+    }
 }
 
-# Main Functions
 function Show-Introduction {
     Clear-Host
-    Write-Host "`nWelcome to $($config.Title) - $($config.GitHub)`n"
-    Write-Host "This script optimizes and debloats Steam for better performance."
-    Write-Host "------------------------------------------------"
-    Write-Host "1. Steam Debloat Stable (Version $($config.Version.Stable))"
-    Write-Host "2. Steam Debloat Beta (Version $($config.Version.Beta))"
-    Write-Host "------------------------------------------------`n"
+    Write-Log "`nWelcome to $($script:config.Title) - $($script:config.GitHub)`n" -Level Info
+    Write-Log "This script optimizes and debloats Steam for better performance." -Level Info
+    Write-Log "------------------------------------------------" -Level Info
+    Write-Log "1. Steam Debloat Stable (Version $($script:config.Version.Stable))" -Level Info
+    Write-Log "2. Steam Debloat Beta (Version $($script:config.Version.Beta))" -Level Info
+    Write-Log "------------------------------------------------`n" -Level Info
 }
 
 function Get-UserSelection {
@@ -93,19 +175,19 @@ function Get-UserSelection {
             1 {
                 $selectedMode = Read-Host "Choose mode: Normal or Lite"
                 if ($selectedMode -notin @("Normal", "Lite")) {
-                    Write-ColoredMessage "Invalid choice. Please try again." "Error"
+                    Write-Log "Invalid choice. Please try again." -Level Error
                     continue
                 }
             }
             2 {
                 $selectedMode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
                 if ($selectedMode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
-                    Write-ColoredMessage "Invalid choice. Please try again." "Error"
+                    Write-Log "Invalid choice. Please try again." -Level Error
                     continue
                 }
             }
             default {
-                Write-ColoredMessage "Invalid choice. Please try again." "Error"
+                Write-Log "Invalid choice. Please try again." -Level Error
                 continue
             }
         }
@@ -114,42 +196,65 @@ function Get-UserSelection {
 }
 
 function Initialize-Environment {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$true)]
         [string]$SelectedMode
     )
-    $host.UI.RawUI.WindowTitle = "$($config.Title) - $($config.GitHub)"
-    $version = if ($SelectedMode -like "TEST*") { $config.Version.Beta } else { $config.Version.Stable }
-    Write-ColoredMessage "Starting $($config.Title) Optimization in $SelectedMode mode $version" "Info"
+    
+    $host.UI.RawUI.WindowTitle = "$($script:config.Title) - $($script:config.GitHub)"
+    $version = if ($SelectedMode -like "TEST*") { $script:config.Version.Beta } else { $script:config.Version.Stable }
+    Write-Log "Starting $($script:config.Title) Optimization in $SelectedMode mode $version" -Level Info
     
     if (-not (Test-AdminPrivileges)) {
-        Write-ColoredMessage "Requesting administrator privileges..." "Warning"
-        Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList "-File `"$PSCommandPath`" -Mode `"$SelectedMode`""
+        Write-Log "Requesting administrator privileges..." -Level Warning
+        $scriptPath = $MyInvocation.MyCommand.Path
+        $arguments = "-File `"$scriptPath`" -Mode `"$SelectedMode`""
+        if ($SkipIntro) { $arguments += " -SkipIntro" }
+        if ($ForceBackup) { $arguments += " -ForceBackup" }
+        if ($SkipDowngrade) { $arguments += " -SkipDowngrade" }
+        if ($CustomVersion) { $arguments += " -CustomVersion `"$CustomVersion`"" }
+        if ($VerbosePreference -eq 'Continue') { $arguments += " -Verbose" }
+        
+        Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList $arguments
         exit
     }
 }
 
 function Stop-SteamProcesses {
-    Write-ColoredMessage "Stopping Steam processes..." "Info"
-    Get-Process | Where-Object { $_.Name -like "*steam*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+    Write-Log "Stopping Steam processes..." -Level Info
+    Get-Process | Where-Object { $_.Name -like "*steam*" } | ForEach-Object {
+        try {
+            $_.Kill()
+            $_.WaitForExit(5000)
+            Write-Log "Stopped process: $($_.Name)" -Level Debug
+        }
+        catch {
+            Write-Log "Failed to stop process $($_.Name): $_" -Level Warning
+        }
+    }
 }
 
 function Get-Files {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$true)]
         [string]$SelectedMode
     )
-    Write-ColoredMessage "Downloading required files for $SelectedMode mode..." "Info"
     
-    $steamBatUrl = $config.Urls[$SelectedMode].SteamBat
-    $steamCfgUrl = $config.Urls.SteamCfg
+    Write-Log "Downloading required files for $SelectedMode mode..." -Level Info
+    
+    $steamBatUrl = $script:config.Urls[$SelectedMode].SteamBat
+    $steamCfgUrl = $script:config.Urls.SteamCfg
     
     try {
         $steamBatPath = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
         Invoke-SafeWebRequest -Uri $steamBatUrl -OutFile $steamBatPath
-        Write-ColoredMessage "Successfully downloaded Steam-$SelectedMode.bat" "Success"
+        Write-Log "Successfully downloaded Steam-$SelectedMode.bat" -Level Success
         
         $steamCfgPath = Join-Path $env:TEMP "steam.cfg"
         Invoke-SafeWebRequest -Uri $steamCfgUrl -OutFile $steamCfgPath
-        Write-ColoredMessage "Successfully downloaded steam.cfg" "Success"
+        Write-Log "Successfully downloaded steam.cfg" -Level Success
         
         return @{
             SteamBat = $steamBatPath
@@ -162,29 +267,41 @@ function Get-Files {
 }
 
 function Invoke-SteamUpdate {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$true)]
         [string]$Url
     )
     
-    Write-ColoredMessage "Starting Steam update process..." "Info"
+    Write-Log "Starting Steam update process..." -Level Info
     $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $Url -exitsteam"
-    Start-Process -FilePath "C:\Program Files (x86)\Steam\steam.exe" -ArgumentList $arguments
+    Start-Process -FilePath "$($script:config.SteamInstallDir)\steam.exe" -ArgumentList $arguments
     
-    Write-ColoredMessage "Waiting for Steam to close..." "Info"
+    Write-Log "Waiting for Steam to close..." -Level Info
+    $timeout = 300 # 5 minutes timeout
+    $timer = [Diagnostics.Stopwatch]::StartNew()
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
+        if ($timer.Elapsed.TotalSeconds -gt $timeout) {
+            Write-Log "Timeout reached. Steam process did not close." -Level Warning
+            break
+        }
         Start-Sleep -Seconds 5
     }
+    $timer.Stop()
 }
 
 function Move-ConfigFile {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$true)]
         [string]$SourcePath
     )
-    $destination = "C:\Program Files (x86)\Steam\steam.cfg"
+    
+    $destination = Join-Path $script:config.SteamInstallDir "steam.cfg"
     
     if (Test-Path $SourcePath) {
         Move-Item -Path $SourcePath -Destination $destination -Force
-        Write-ColoredMessage "Moved steam.cfg to Steam directory" "Success"
+        Write-Log "Moved steam.cfg to Steam directory" -Level Success
     }
     else {
         throw "File $SourcePath not found."
@@ -192,14 +309,19 @@ function Move-ConfigFile {
 }
 
 function Move-SteamBatToDesktop {
+    [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$true)]
         [string]$SourcePath,
+        
+        [Parameter(Mandatory=$true)]
         [string]$SelectedMode
     )
+    
     $desktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("Desktop"), "Steam-$SelectedMode.bat")
     if (Test-Path $SourcePath) {
         Move-Item -Path $SourcePath -Destination $desktopPath -Force
-        Write-ColoredMessage "Moved Steam-$SelectedMode.bat to desktop" "Success"
+        Write-Log "Moved Steam-$SelectedMode.bat to desktop" -Level Success
     }
     else {
         throw "File $SourcePath not found."
@@ -208,47 +330,107 @@ function Move-SteamBatToDesktop {
 
 function Remove-TempFiles {
     Get-ChildItem $env:TEMP -Filter "Steam*.bat" | Remove-Item -Force
-    Write-ColoredMessage "Removed temporary files" "Success"
+    Write-Log "Removed temporary files" -Level Success
 }
 
-function Show-Completion {
-    Write-ColoredMessage "Steam configured and updated successfully." "Success"
-    Write-Host "`nThank you for using $($config.Title)!"
-    Write-Host "If you encounter any issues, please report them at: $($config.ErrorPage)"
-    Read-Host "`nPress Enter to exit"
+function Backup-SteamFiles {
+    $steamDir = $script:config.SteamInstallDir
+    $backupDir = $script:config.BackupDir
+    
+    if (!(Test-Path $backupDir)) {
+        New-Item -ItemType Directory -Path $backupDir | Out-Null
+    }
+    
+    $backupName = "SteamBackup_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+    $backupPath = Join-Path $backupDir $backupName
+    
+    Write-Log "Creating backup of Steam files..." -Level Info
+    try {
+        Copy-Item -Path $steamDir -Destination $backupPath -Recurse -Force
+        Write-Log "Backup created successfully at $backupPath" -Level Success
+        
+        # Remove old backups if exceeding MaxBackups
+        $backups = Get-ChildItem $backupDir | Sort-Object CreationTime -Descending | Select-Object -Skip $script:config.MaxBackups
+        foreach ($oldBackup in $backups) {
+            Remove-Item $oldBackup.FullName -Recurse -Force
+            Write-Log "Removed old backup: $($oldBackup.Name)" -Level Debug
+        }
+    }
+    catch {
+        Write-Log "Failed to create backup: $_" -Level Error
+        throw $_
+    }
+}
+
+function Restore-SteamFiles {
+    $backupDir = $script:config.BackupDir
+    $steamDir = $script:config.SteamInstallDir
+    
+    $latestBackup = Get-ChildItem $backupDir | Sort-Object CreationTime -Descending | Select-Object -First 1
+    
+    if ($latestBackup) {
+        Write-Log "Restoring Steam files from backup..." -Level Info
+        try {
+            Stop-SteamProcesses
+            Remove-Item $steamDir -Recurse -Force
+            Copy-Item -Path $latestBackup.FullName -Destination $steamDir -Recurse -Force
+            Write-Log "Steam files restored successfully from $($latestBackup.Name)" -Level Success
+        }
+        catch {
+            Write-Log "Failed to restore Steam files: $_" -Level Error
+            throw $_
+        }
+    }
+    else {
+        Write-Log "No backup found to restore from." -Level Warning
+    }
+}
+
+function Start-SteamDebloat {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]$SelectedMode
+    )
+    
+    try {
+        Initialize-Environment -SelectedMode $SelectedMode
+        
+        if ($ForceBackup -or (Read-Host "Do you want to create a backup before proceeding? (Y/N)").ToUpper() -eq 'Y') {
+            Backup-SteamFiles
+        }
+        
+        Stop-SteamProcesses
+        
+        $files = Get-Files -SelectedMode $SelectedMode
+        
+        if (-not $SkipDowngrade) {
+            $downgradeUrl = if ($CustomVersion) { $CustomVersion } else { $script:config.DefaultDowngradeUrl }
+            Invoke-SteamUpdate -Url $downgradeUrl
+        }
+        
+        Move-ConfigFile -SourcePath $files.SteamCfg
+        Move-SteamBatToDesktop -SourcePath $files.SteamBat -SelectedMode $SelectedMode
+        
+        Remove-TempFiles
+        
+        Write-Log "Steam Debloat process completed successfully!" -Level Success
+        Write-Log "Please run the Steam-$SelectedMode.bat file on your desktop to complete the optimization." -Level Info
+    }
+    catch {
+        Write-Log "An error occurred during the Steam Debloat process: $_" -Level Error
+        Write-Log "For more information and troubleshooting, please visit: $($script:config.ErrorPage)" -Level Info
+        
+        if ((Read-Host "Do you want to restore Steam files from the latest backup? (Y/N)").ToUpper() -eq 'Y') {
+            Restore-SteamFiles
+        }
+    }
 }
 
 # Main execution
-try {
-    if (-not $Mode) {
-        Show-Introduction
-        $Mode = Get-UserSelection
-    }
-    
-    Initialize-Environment -SelectedMode $Mode
-    Stop-SteamProcesses
-    $files = Get-Files -SelectedMode $Mode
-    
-    if ($Mode -eq "TEST-Version") {
-        $version = Read-Host "Enter the desired Steam version"
-        $url = "http://web.archive.org/web/$($version)if_/media.steampowered.com/client"
-        Invoke-SteamUpdate -Url $url
-    } else {
-        $downgrade = Read-Host "Do you want to downgrade Steam to December 2022 version? (y/n)"
-        if ($downgrade -eq 'y') {
-            Invoke-SteamUpdate -Url $config.DefaultDowngradeUrl
-        }
-    }
-    
-    Move-ConfigFile -SourcePath $files.SteamCfg
-    Move-SteamBatToDesktop -SourcePath $files.SteamBat -SelectedMode $Mode
-    Remove-TempFiles
-    Show-Completion
+if (-not $SkipIntro) {
+    Show-Introduction
 }
-catch {
-    Write-ColoredMessage "An error occurred: $_" "Error"
-    Write-ColoredMessage "Please report this issue at $($config.ErrorPage)" "Error"
-    Read-Host "Press Enter to open the issue page..."
-    Start-Process $config.ErrorPage
-    exit 1
-}
+
+$selectedMode = if ($Mode) { $Mode } else { Get-UserSelection }
+Start-SteamDebloat -SelectedMode $selectedMode
