@@ -135,10 +135,9 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 
 ---
 
-### 💀 Warning 
+### 💀 Results 
 
-1. There are steam scripts that many are intended to "optimize" but many do it by touching files like `config.vdf` and `loginusers.vdf` but really the only thing that works is to downgrade steam in case of optimizing steam to the limit or optimizing steam in a way safe with only parameters and optimizing 'steam.cfg' but from there there is nothing that optimizes steam more. Check all the files on [Virustotal](https://virustotal.com/) and don't get carried avarice by the greed that Steam consumes little.
-2. Virustotal results
+1. Virustotal results
 - Version to which steam is outdated [2022Dec](https://www.virustotal.com/gui/url/73d0c1e2bf9ca30701504a8ec1225502676b2f794d64d93c79945ba37b900051)
 - Steam debloat source code [APP.PS1](https://www.virustotal.com/gui/file/efda4de8df6b082f53bbff59dc8cb14e4da9377259642c3f9c3b55714fe5b49b?nocache=1)
 
