@@ -47,8 +47,8 @@ Steam Debloat is a comprehensive toolkit designed to optimize and customize your
 ## 💻 System Requirements
 
 - **Operating System**: Windows 7, 8, 8.1, 10, or 11
-- **Architecture**: 64-bit
-- **PowerShell**: Version 5.1 or higher (for advanced installation method)
+- **Architecture**: 32-bit or 64-bit
+- **PowerShell**: Version 5.1 or higher
 - **Administrator Rights**: Required for installation and execution
 
 ## 📥 Downloads
