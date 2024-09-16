@@ -29,7 +29,7 @@
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
-- [💀 Virustotal](#-virustotal)
+- [💀 Virustotal](#-virustotal-results)
 
 ## 🔍 Overview
 
