@@ -26,7 +26,7 @@ Import-Module Microsoft.PowerShell.Management
 
 # Configuration
 $script:config = @{
-    Title = "Steam Debloat"
+    Title = "Steam"
     GitHub = "Github.com/mtytyx"
     Version = @{
         ps1 = "v5.7"
