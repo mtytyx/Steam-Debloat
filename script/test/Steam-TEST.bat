@@ -18,7 +18,7 @@ set "LIMIT_THREADS=1"
 
 :: Build options string
 set "OPTS=!BASE_OPTS!"
-if %DISABLE_BROWSER%==1 set "OPTS=!OPTS! -no-browser -cef-disable-remote-fonts"
+if %DISABLE_BROWSER%==1 set "OPTS=!OPTS! -cef-disable-remote-fonts"
 if %DISABLE_GPU%==1 set "OPTS=!OPTS! -disable-gpu -disable-gpu-vsync"
 if %USE_CEF_SINGLE_PROCESS%==1 set "OPTS=!OPTS! -cef-single-process -no-cef-sandbox"
 if %DISABLE_VR%==1 set "OPTS=!OPTS! -vrdisable"
