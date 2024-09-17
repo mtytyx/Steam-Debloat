@@ -224,7 +224,8 @@ function Get-UserSelection {
                     continue
                 }
             }
-            2 {
+            2 { 
+                Write-Log "You have entered beta mode. you will not receive support on issues." -Level Warning
                 $selectedMode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
                 if ($selectedMode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
                     Write-Log "Invalid choice. Please try again." -Level Error
