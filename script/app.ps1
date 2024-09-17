@@ -632,9 +632,9 @@ function Start-SteamDebloat {
         
         Remove-TempFiles
         
-        Write-Log "Advanced Steam Optimization process completed successfully!" -Level Success
+        Write-Log "Steam Optimization process completed successfully!" -Level Success
         Write-Log "Steam has been updated and configured for optimal performance." -Level Info
-        Write-Log "You can contribute to improve the repository at: $($script:config.GitHub)" -Level Info
+        Write-Log "You can contribute to improve the repository at: https://github.com/mtytyx/Steam-Debloat" -Level Info
         Write-Log "Press Enter to exit."
         if (-not $NoInteraction) {
             Read-Host
