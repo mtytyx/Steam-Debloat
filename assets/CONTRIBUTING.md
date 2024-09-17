@@ -37,7 +37,7 @@ By participating in this project, you are expected to uphold our [Code of Conduc
 1. Fork the repository on GitHub
 2. Clone your fork locally
    ```
-   git clone https://github.com/YOUR-USERNAME/Steam-Debloat.git
+   git clone https://github.com/mtytyx/Steam-Debloat.git
    ```
 3. Add the original repository as a remote named "upstream"
    ```
