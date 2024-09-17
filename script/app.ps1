@@ -40,18 +40,18 @@ $script:config = @{
         Error = "Red"
         Debug = "Magenta"
     }
-    ErrorPage = "https://github.com/advancedsteamoptimizer/issues"
+    ErrorPage = "https://github.com/Steam-Debloat/issues"
     Urls = @{
-        "Normal" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/Steam.bat" }
-        "Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/Steam-Lite.bat" }
-        "TEST" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/test/Steam-TEST.bat" }
-        "TEST-Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/test/Steam-Lite-TEST.bat" }
-        "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/test/Steam-TEST.bat" }
-        "SteamCfg" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/steam.cfg"
+        "Normal" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/Steam.bat" }
+        "Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/Steam-Lite.bat" }
+        "TEST" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/test/Steam-TEST.bat" }
+        "TEST-Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat" }
+        "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/test/Steam-TEST.bat" }
+        "SteamCfg" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/steam.cfg"
     }
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
-    LogFile = Join-Path $env:USERPROFILE "Desktop\AdvancedSteamOptimizer.log"
-    BackupDir = Join-Path $env:USERPROFILE "AdvancedSteamOptimizerBackup"
+    LogFile = Join-Path $env:USERPROFILE "Desktop\Steam-Debloat.log"
+    BackupDir = Join-Path $env:USERPROFILE "Steam-DebloatBackup"
     SteamInstallDir = "C:\Program Files (x86)\Steam"
     MaxBackups = $BackupRetention
     RetryAttempts = 5
