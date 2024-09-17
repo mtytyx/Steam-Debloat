@@ -26,12 +26,12 @@ Import-Module Microsoft.PowerShell.Management
 
 # Configuration
 $script:config = @{
-    Title = "Advanced Steam Optimizer"
-    GitHub = "Github.com/advancedsteamoptimizer"
+    Title = "Steam Debloat"
+    GitHub = "Github.com/mtytyx"
     Version = @{
         ps1 = "v5.7"
         Stable = "v4.0"
-        Beta = "v4.0 beta 1"
+        Beta = "v4.3"
     }
     Color = @{
         Info = "Cyan"
