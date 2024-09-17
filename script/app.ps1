@@ -8,7 +8,12 @@ param (
     [switch]$ForceBackup,
     [switch]$SkipDowngrade,
     [string]$CustomVersion,
-    [switch]$NoInteraction
+    [switch]$NoInteraction,
+    [switch]$PerformanceMode,
+    [switch]$AdvancedCleaning,
+    [switch]$DisableUpdates,
+    [int]$BackupRetention = 5,
+    [string]$LogLevel = "Info"
 )
 
 # Set strict mode and error action preference
@@ -21,12 +26,12 @@ Import-Module Microsoft.PowerShell.Management
 
 # Configuration
 $script:config = @{
-    Title = "Steam"
-    GitHub = "Github.com/mtytyx/Steam-Debloat"
+    Title = "Advanced Steam Optimizer"
+    GitHub = "Github.com/advancedsteamoptimizer"
     Version = @{
-        ps1 = "v3.7"
-        Stable = "v2.5"
-        Beta = "v2.5-v3"
+        ps1 = "v5.7"
+        Stable = "v4.0"
+        Beta = "v4.0 beta 1"
     }
     Color = @{
         Info = "Cyan"
@@ -35,25 +40,31 @@ $script:config = @{
         Error = "Red"
         Debug = "Magenta"
     }
-    ErrorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
+    ErrorPage = "https://github.com/advancedsteamoptimizer/issues"
     Urls = @{
-        "Normal" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat" }
-        "Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam-Lite.bat" }
-        "TEST" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
-        "TEST-Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat" }
-        "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
-        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
+        "Normal" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/Steam.bat" }
+        "Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/Steam-Lite.bat" }
+        "TEST" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/test/Steam-TEST.bat" }
+        "TEST-Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/test/Steam-Lite-TEST.bat" }
+        "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/test/Steam-TEST.bat" }
+        "SteamCfg" = "https://raw.githubusercontent.com/advancedsteamoptimizer/main/script/steam.cfg"
     }
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
-    LogFile = Join-Path $env:USERPROFILE "Desktop\SteamDebloat.log"
-    BackupDir = Join-Path $env:USERPROFILE "SteamDebloatBackup"
+    LogFile = Join-Path $env:USERPROFILE "Desktop\AdvancedSteamOptimizer.log"
+    BackupDir = Join-Path $env:USERPROFILE "AdvancedSteamOptimizerBackup"
     SteamInstallDir = "C:\Program Files (x86)\Steam"
-    MaxBackups = 5
-    RetryAttempts = 3
-    RetryDelay = 5
+    MaxBackups = $BackupRetention
+    RetryAttempts = 5
+    RetryDelay = 10
+    PerformanceTweaks = @{
+        DisableOverlay = $true
+        LowViolence = $false
+        DisableVoiceChat = $true
+        OptimizeNetworkConfig = $true
+    }
 }
 
-# Enhanced Logging Function
+# Enhanced Logging Function with Log Rotation
 function Write-Log {
     [CmdletBinding()]
     param (
@@ -69,6 +80,10 @@ function Write-Log {
         
         [switch]$NoNewline
     )
+    
+    if ($Level -eq "Debug" -and $LogLevel -ne "Debug") {
+        return
+    }
     
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logMessage = "[$timestamp] [$Level] $Message"
@@ -93,15 +108,26 @@ function Write-Log {
         }
     }
     
-    # Append to log file
-    Add-Content -Path $script:config.LogFile -Value $logMessage
+    # Append to log file with rotation
+    $logFile = $script:config.LogFile
+    Add-Content -Path $logFile -Value $logMessage
+    
+    # Rotate log if it exceeds 10MB
+    if ((Get-Item $logFile).Length -gt 10MB) {
+        $backupLog = "$logFile.1"
+        if (Test-Path $backupLog) {
+            Remove-Item $backupLog -Force
+        }
+        Rename-Item $logFile $backupLog
+        New-Item $logFile -ItemType File
+    }
     
     # If verbose mode is on, provide more details for debugging
     if ($VerbosePreference -eq 'Continue' -and $Level -eq "Debug") {
         $callStack = Get-PSCallStack | Select-Object -Skip 1 | ForEach-Object { "$($_.FunctionName) - $($_.ScriptLineNumber)" }
         $debugInfo = "  Call Stack: $($callStack -join ' -> ')"
         Write-Host $debugInfo -ForegroundColor $script:config.Color.Debug
-        Add-Content -Path $script:config.LogFile -Value $debugInfo
+        Add-Content -Path $logFile -Value $debugInfo
     }
 }
 
@@ -164,11 +190,26 @@ function Start-ProcessAsAdmin {
 
 function Show-Introduction {
     Clear-Host
+    $art = @"
+  ____  _                        
+ / ___|| |_ ___  __ _ _ __ ___   
+ \___ \| __/ _ \/ _` | '_ ` _ \  
+  ___) | ||  __/ (_| | | | | | | 
+ |____/ \__\___|\__,_|_| |_| |_| 
+                                 
+  ____       _     _             _   
+ |  _ \  ___| |__ | | ___   __ _| |_ 
+ | | | |/ _ \ '_ \| |/ _ \ / _` | __|
+ | |_| |  __/ |_) | | (_) | (_| | |_ 
+ |____/ \___|_.__/|_|\___/ \__,_|\__|
+                                     
+"@
+    Write-Host $art -ForegroundColor Cyan
     Write-Log "`nWelcome to $($script:config.Title) - $($script:config.GitHub) - $($script:config.Version.ps1) `n" -Level Info
-    Write-Log "This script optimizes and debloats Steam for better performance." -Level Info
+    Write-Log "This advanced script optimizes and enhances Steam for superior performance." -Level Info
     Write-Log "------------------------------------------------" -Level Info
-    Write-Log "1. Steam Debloat Stable (Version $($script:config.Version.Stable))" -Level Info
-    Write-Log "2. Steam Debloat Beta (Version $($script:config.Version.Beta))" -Level Info
+    Write-Log "1. Steam Optimization Stable (Version $($script:config.Version.Stable))" -Level Info
+    Write-Log "2. Steam Optimization Beta (Version $($script:config.Version.Beta))" -Level Info
     Write-Log "------------------------------------------------`n" -Level Info
 }
 
@@ -219,6 +260,9 @@ function Initialize-Environment {
         if ($SkipDowngrade) { $arguments += " -SkipDowngrade" }
         if ($CustomVersion) { $arguments += " -CustomVersion `"$CustomVersion`"" }
         if ($NoInteraction) { $arguments += " -NoInteraction" }
+        if ($PerformanceMode) { $arguments += " -PerformanceMode" }
+        if ($AdvancedCleaning) { $arguments += " -AdvancedCleaning" }
+        if ($DisableUpdates) { $arguments += " -DisableUpdates" }
         if ($VerbosePreference -eq 'Continue') { $arguments += " -Verbose" }
         
         Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList $arguments
@@ -293,6 +337,8 @@ function Invoke-SteamUpdate {
         Start-Sleep -Seconds 5
     }
     $timer.Stop()
+    
+    Write-Log "Steam update process completed." -Level Success
 }
 
 function Get-DowngradeChoice {
@@ -320,8 +366,28 @@ function Backup-SteamFiles {
     
     try {
         New-Item -Path $backupPath -ItemType Directory -Force | Out-Null
-        Copy-Item -Path $script:config.SteamInstallDir -Destination $backupPath -Recurse -Force
-        Write-Log "Steam backup created successfully at $backupPath" -Level Success
+        
+        # Use robocopy for efficient copying
+        $robocopyArgs = @(
+            $script:config.SteamInstallDir,
+            $backupPath,
+            "/E",
+            "/Z",
+            "/MT:16",
+            "/R:3",
+            "/W:10",
+            "/NP",
+            "/NFL",
+            "/NDL"
+        )
+        
+        $robocopyResult = Start-Process -FilePath "robocopy" -ArgumentList $robocopyArgs -NoNewWindow -Wait -PassThru
+        
+        if ($robocopyResult.ExitCode -lt 8) {
+            Write-Log "Steam backup created successfully at $backupPath" -Level Success
+        } else {
+            throw "Robocopy encountered errors during backup. Exit code: $($robocopyResult.ExitCode)"
+        }
         
         # Remove old backups if exceed MaxBackups
         $backups = Get-ChildItem -Path $script:config.BackupDir | Sort-Object CreationTime -Descending
@@ -349,9 +415,29 @@ function Restore-SteamFiles {
     
     try {
         Stop-SteamProcesses
-        Remove-Item -Path $script:config.SteamInstallDir -Recurse -Force
-        Copy-Item -Path $latestBackup.FullName -Destination $script:config.SteamInstallDir -Recurse
-        Write-Log "Steam files restored successfully from $($latestBackup.FullName)" -Level Success
+        
+        # Use robocopy for efficient restoration
+        $robocopyArgs = @(
+            $latestBackup.FullName,
+            $script:config.SteamInstallDir,
+            "/E",
+            "/Z",
+            "/MT:16",
+            "/R:3",
+            "/W:10",
+            "/NP",
+            "/NFL",
+            "/NDL",
+            "/PURGE"
+        )
+        
+        $robocopyResult = Start-Process -FilePath "robocopy" -ArgumentList $robocopyArgs -NoNewWindow -Wait -PassThru
+        
+        if ($robocopyResult.ExitCode -lt 8) {
+            Write-Log "Steam files restored successfully from $($latestBackup.FullName)" -Level Success
+        } else {
+            throw "Robocopy encountered errors during restoration. Exit code: $($robocopyResult.ExitCode)"
+        }
     }
     catch {
         throw "Failed to restore Steam files: $_"
@@ -411,6 +497,91 @@ function Remove-TempFiles {
     }
 }
 
+function Optimize-SteamPerformance {
+    Write-Log "Applying performance optimizations..." -Level Info
+    
+    try {
+        # Disable Steam Overlay
+        if ($script:config.PerformanceTweaks.DisableOverlay) {
+            Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "GameOverlayDisabled" -Value 1 -Type DWord
+            Write-Log "Disabled Steam Overlay" -Level Success
+        }
+        
+        # Enable Low Violence mode (if configured)
+        if ($script:config.PerformanceTweaks.LowViolence) {
+            Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "LowViolence" -Value 1 -Type DWord
+            Write-Log "Enabled Low Violence mode" -Level Success
+        }
+        
+        # Disable Voice Chat
+        if ($script:config.PerformanceTweaks.DisableVoiceChat) {
+            Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "VoiceReceiveVolume" -Value 0 -Type DWord
+            Write-Log "Disabled Voice Chat" -Level Success
+        }
+        
+        # Optimize Network Configuration
+        if ($script:config.PerformanceTweaks.OptimizeNetworkConfig) {
+            $libraryFoldersPath = Join-Path $script:config.SteamInstallDir "steamapps\libraryfolders.vdf"
+            if (Test-Path $libraryFoldersPath) {
+                $content = Get-Content $libraryFoldersPath -Raw
+                $content = $content -replace '("MaximumConnectionsPerServer"\s+")(\d+)(")', '$1128$3'
+                $content | Set-Content $libraryFoldersPath -Force
+                Write-Log "Optimized network configuration" -Level Success
+            } else {
+                Write-Log "Could not find libraryfolders.vdf. Skipping network optimization." -Level Warning
+            }
+        }
+        
+        Write-Log "Performance optimizations applied successfully" -Level Success
+    }
+    catch {
+        throw "Failed to apply performance optimizations: $_"
+    }
+}
+
+function Invoke-AdvancedCleaning {
+    Write-Log "Performing advanced cleaning..." -Level Info
+    
+    try {
+        # Clear download cache
+        Remove-Item -Path "$($script:config.SteamInstallDir)\steamapps\downloading\*" -Recurse -Force -ErrorAction SilentlyContinue
+        
+        # Clear shader cache
+        Remove-Item -Path "$($script:config.SteamInstallDir)\steamapps\shadercache\*" -Recurse -Force -ErrorAction SilentlyContinue
+        
+        # Clear Steam browser cache
+        $browserCachePath = "$env:LOCALAPPDATA\Steam\htmlcache"
+        if (Test-Path $browserCachePath) {
+            Remove-Item -Path "$browserCachePath\*" -Recurse -Force -ErrorAction SilentlyContinue
+        }
+        
+        # Clear old installation files
+        Get-ChildItem -Path "$($script:config.SteamInstallDir)\steamapps" -Filter "*.old" -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
+        
+        Write-Log "Advanced cleaning completed successfully" -Level Success
+    }
+    catch {
+        Write-Log "Error during advanced cleaning: $_" -Level Warning
+    }
+}
+
+function Disable-SteamUpdates {
+    Write-Log "Disabling automatic Steam updates..." -Level Info
+    
+    try {
+        $steamCfgPath = Join-Path $script:config.SteamInstallDir "steam.cfg"
+        $content = @"
+BootStrapperInhibitAll=enable
+BootStrapperForceSelfUpdate=disable
+"@
+        $content | Set-Content $steamCfgPath -Force
+        Write-Log "Automatic Steam updates disabled" -Level Success
+    }
+    catch {
+        throw "Failed to disable Steam updates: $_"
+    }
+}
+
 function Start-SteamDebloat {
     [CmdletBinding()]
     param (
@@ -447,16 +618,30 @@ function Start-SteamDebloat {
         Move-ConfigFile -SourcePath $files.SteamCfg
         Move-SteamBatToDesktop -SourcePath $files.SteamBat -SelectedMode $SelectedMode
         
+        if ($PerformanceMode) {
+            Optimize-SteamPerformance
+        }
+        
+        if ($AdvancedCleaning) {
+            Invoke-AdvancedCleaning
+        }
+        
+        if ($DisableUpdates) {
+            Disable-SteamUpdates
+        }
+        
         Remove-TempFiles
         
-        Write-Log "Steam Debloat process completed successfully!" -Level Success
-        Write-Log "Steam Updated and configured for better performance." -Level Info
-        Write-Log "You would help me a lot by contributing to improve the repository."
-        Write-Log "Press enter to exit."
-        Read-Host
+        Write-Log "Advanced Steam Optimization process completed successfully!" -Level Success
+        Write-Log "Steam has been updated and configured for optimal performance." -Level Info
+        Write-Log "You can contribute to improve the repository at: $($script:config.GitHub)" -Level Info
+        Write-Log "Press Enter to exit."
+        if (-not $NoInteraction) {
+            Read-Host
+        }
     }
     catch {
-        Write-Log "An error occurred during the Steam Debloat process: $_" -Level Error
+        Write-Log "An error occurred during the Steam Optimization process: $_" -Level Error
         Write-Log "For more information and troubleshooting, please visit: $($script:config.ErrorPage)" -Level Info
         
         if (-not $NoInteraction -and (Read-Host "Do you want to restore Steam files from the latest backup? (Y/N)").ToUpper() -eq 'Y') {

@@ -1,2 +1,10 @@
 @echo off
-start "" /B /LOW "C:\Program Files (x86)\Steam\steam.exe" -silent -nointro -single_core -nocrashmonitor -tcp -disablehighdpi -lowpower -no-dwrite -no-verifyfiles -noforwarding -skipstreaming -no-background-updates -cef-disable-remote-fonts -cef-disable-web-security -no-cafs -disable-broadcast -disable-steamvr -no-shaders -no-preload -no-splash -no-browser_throttle -no-sound -no-movies -cef-disable-gpu-compositing -cef-disable-gpu -cef-disable-renderer-restart -cef-single-process -nofasthtml -skipstreamingdrivers -no-cef-sandbox -no-shared-textures -oldtraymenu -no-overlay-html-mode -steamvrdisable -vrdisable -disablepartnerlicenses
+:: Steam Balanced Launcher
+:: Optimized for low resource usage while maintaining most functionality
+
+set "STEAM_PATH=C:\Program Files (x86)\Steam\steam.exe"
+
+set "OPTS=-silent -noverifyfiles -norepairfiles -noshaders -no-dwrite -nocrashdialog -single_core -tcp -clearbeta -netbuffer 262144 -cef-single-process -no-cef-sandbox -vrdisable -no-shared-textures -disable-font-subpixel-positioning -cef-disable-remote-fonts -no-browser -disable-gpu-vsync -threads 2"
+
+start "" /B /NORMAL "%STEAM_PATH%" %OPTS%
+exit
