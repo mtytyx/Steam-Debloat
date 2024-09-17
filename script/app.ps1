@@ -40,14 +40,14 @@ $script:config = @{
         Error = "Red"
         Debug = "Magenta"
     }
-    ErrorPage = "https://github.com/Steam-Debloat/issues"
+    ErrorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls = @{
-        "Normal" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/Steam.bat" }
-        "Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/Steam-Lite.bat" }
-        "TEST" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/test/Steam-TEST.bat" }
-        "TEST-Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat" }
-        "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/test/Steam-TEST.bat" }
-        "SteamCfg" = "https://raw.githubusercontent.com/Steam-Debloat/main/script/steam.cfg"
+        "Normal" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat" }
+        "Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam-Lite.bat" }
+        "TEST" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
+        "TEST-Lite" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat" }
+        "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
+        "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
     LogFile = Join-Path $env:USERPROFILE "Desktop\Steam-Debloat.log"
