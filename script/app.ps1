@@ -29,9 +29,9 @@ $script:config = @{
     Title = "Steam"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        ps1 = "v6.0"
-        Stable = "v4.0"
-        Beta = "v4.3"
+        ps1 = "v6.5"
+        Stable = "v4.2"
+        Beta = "v4.4"
     }
     Color = @{
         Info = "Cyan"
