@@ -273,17 +273,37 @@ function Initialize-Environment {
 
 function Stop-SteamProcesses {
     Write-Log "Stopping Steam processes..." -Level Info
-    Get-Process | Where-Object { $_.Name -like "*steam*" } | ForEach-Object {
-        try {
-            $_.Kill()
-            $_.WaitForExit(5000)
-            Write-Log "Stopped process: $($_.Name)" -Level Debug
+    $steamProcesses = Get-Process | Where-Object { $_.Name -like "*steam*" }
+    
+    if ($steamProcesses) {
+        foreach ($process in $steamProcesses) {
+            try {
+                $process.Kill()
+                $process.WaitForExit(5000)
+                Write-Log "Stopped process: $($process.Name)" -Level Debug
+            }
+            catch {
+                Write-Log "Failed to stop process $($process.Name): $_" -Level Warning
+            }
         }
-        catch {
-            Write-Log "Failed to stop process $($_.Name): $_" -Level Warning
+        
+        # Wait for all Steam processes to close
+        $timeout = 300 # 5 minutes timeout
+        $timer = [Diagnostics.Stopwatch]::StartNew()
+        while (Get-Process | Where-Object { $_.Name -like "*steam*" }) {
+            if ($timer.Elapsed.TotalSeconds -gt $timeout) {
+                Write-Log "Timeout reached. Some Steam processes could not be closed." -Level Warning
+                break
+            }
+            Start-Sleep -Seconds 5
         }
+        $timer.Stop()
+    }
+    else {
+        Write-Log "No Steam processes found running." -Level Info
     }
 }
+
 
 function Get-Files {
     [CmdletBinding()]
@@ -328,14 +348,15 @@ function Invoke-SteamUpdate {
     Start-Process -FilePath "$($script:config.SteamInstallDir)\steam.exe" -ArgumentList $arguments
     
     Write-Log "Waiting for Steam to close..." -Level Info
-    $timeout = 300 # 5 minutes timeout
+    $timeout = 1800 # 30 minutes timeout
     $timer = [Diagnostics.Stopwatch]::StartNew()
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
         if ($timer.Elapsed.TotalSeconds -gt $timeout) {
             Write-Log "Timeout reached. Steam process did not close." -Level Warning
             break
         }
-        Start-Sleep -Seconds 5
+        Start-Sleep -Seconds 10
+        Write-Log "Still waiting for Steam to close... (Elapsed time: $($timer.Elapsed.TotalMinutes.ToString("F2")) minutes)" -Level Info
     }
     $timer.Stop()
     
@@ -351,12 +372,14 @@ function Get-DowngradeChoice {
 }
 
 function Get-CustomVersionUrl {
-    if ($NoInteraction) {
-        return $CustomVersion
-    }
-    $useCustom = Read-Host "Do you want to use a custom version URL? (Y/N)"
-    if ($useCustom.ToUpper() -eq 'Y') {
-        return Read-Host "Enter the custom version URL"
+    if ($SelectedMode -eq "TEST-Version") {
+        if ($NoInteraction) {
+            return $CustomVersion
+        }
+        $useCustom = Read-Host "Do you want to use a custom version URL? (Y/N)"
+        if ($useCustom.ToUpper() -eq 'Y') {
+            return Read-Host "Enter the custom version URL"
+        }
     }
     return $null
 }
