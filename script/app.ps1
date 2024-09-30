@@ -1,3 +1,5 @@
+# Enhanced Steam Debloat Script
+
 [CmdletBinding()]
 param (
     [Parameter(Position = 0)]
@@ -13,7 +15,11 @@ param (
     [switch]$AdvancedCleaning,
     [switch]$DisableUpdates,
     [int]$BackupRetention = 5,
-    [string]$LogLevel = "Info"
+    [string]$LogLevel = "Info",
+    [switch]$ParallelProcessing,
+    [switch]$CleanDuplicates,
+    [switch]$OptimizeMemory,
+    [switch]$GranularControl
 )
 
 # Set strict mode and error action preference
@@ -26,10 +32,10 @@ Import-Module Microsoft.PowerShell.Management
 
 # Configuration
 $script:config = @{
-    Title = "Steam"
+    Title = "Enhanced Steam Debloat"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        ps1 = "v6.5"
+        ps1 = "v7.0"
         Stable = "v4.2"
         Beta = "v4.4"
     }
@@ -64,7 +70,7 @@ $script:config = @{
     }
 }
 
-# Enhanced Logging Function with Log Rotation
+# Enhanced Logging Function with Log Rotation and Error Handling
 function Write-Log {
     [CmdletBinding()]
     param (
@@ -108,18 +114,23 @@ function Write-Log {
         }
     }
     
-    # Append to log file with rotation
-    $logFile = $script:config.LogFile
-    Add-Content -Path $logFile -Value $logMessage
-    
-    # Rotate log if it exceeds 10MB
-    if ((Get-Item $logFile).Length -gt 10MB) {
-        $backupLog = "$logFile.1"
-        if (Test-Path $backupLog) {
-            Remove-Item $backupLog -Force
+    # Append to log file with rotation and error handling
+    try {
+        $logFile = $script:config.LogFile
+        Add-Content -Path $logFile -Value $logMessage -ErrorAction Stop
+        
+        # Rotate log if it exceeds 10MB
+        if ((Get-Item $logFile).Length -gt 10MB) {
+            $backupLog = "$logFile.1"
+            if (Test-Path $backupLog) {
+                Remove-Item $backupLog -Force -ErrorAction Stop
+            }
+            Rename-Item $logFile $backupLog -ErrorAction Stop
+            New-Item $logFile -ItemType File -ErrorAction Stop
         }
-        Rename-Item $logFile $backupLog
-        New-Item $logFile -ItemType File
+    }
+    catch {
+        Write-Host "Failed to write to log file: $_" -ForegroundColor Red
     }
     
     # If verbose mode is on, provide more details for debugging
@@ -127,263 +138,53 @@ function Write-Log {
         $callStack = Get-PSCallStack | Select-Object -Skip 1 | ForEach-Object { "$($_.FunctionName) - $($_.ScriptLineNumber)" }
         $debugInfo = "  Call Stack: $($callStack -join ' -> ')"
         Write-Host $debugInfo -ForegroundColor $script:config.Color.Debug
-        Add-Content -Path $logFile -Value $debugInfo
-    }
-}
-
-function Invoke-SafeWebRequest {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$Uri,
-        
-        [Parameter(Mandatory=$true)]
-        [string]$OutFile,
-        
-        [int]$MaxRetries = $script:config.RetryAttempts,
-        [int]$RetryDelaySeconds = $script:config.RetryDelay
-    )
-    
-    $attempt = 0
-    do {
-        $attempt++
         try {
-            Write-Log "Attempting download from $Uri (Attempt $attempt of $MaxRetries)" -Level Debug
-            $response = Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing -ErrorAction Stop
-            Write-Log "Successfully downloaded file from $Uri" -Level Success
-            return $response
+            Add-Content -Path $logFile -Value $debugInfo -ErrorAction Stop
         }
         catch {
-            Write-Log "Attempt $attempt failed: $_" -Level Warning
-            if ($attempt -lt $MaxRetries) {
-                Write-Log "Retrying in $RetryDelaySeconds seconds..." -Level Info
-                Start-Sleep -Seconds $RetryDelaySeconds
-            }
-            else {
-                throw "Failed to download file from $Uri after $MaxRetries attempts. Error: $_"
-            }
+            Write-Host "Failed to write debug info to log file: $_" -ForegroundColor Red
         }
-    } while ($attempt -lt $MaxRetries)
+    }
 }
 
-function Test-AdminPrivileges {
-    return ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
-
-function Start-ProcessAsAdmin {
-    [CmdletBinding()]
+# Progress Bar Function
+function Show-Progress {
     param (
-        [Parameter(Mandatory=$true)]
-        [string]$FilePath,
-        
-        [Parameter(Mandatory=$true)]
-        [string]$ArgumentList
+        [int]$PercentComplete,
+        [string]$Status
+    )
+    Write-Progress -Activity "Steam Debloat Progress" -Status $Status -PercentComplete $PercentComplete
+}
+
+# Parallel File Processing Function
+function Invoke-ParallelFileOperation {
+    param (
+        [scriptblock]$ScriptBlock,
+        [string[]]$InputObject,
+        [int]$ThrottleLimit = 5
     )
     
-    try {
-        Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -Verb RunAs -Wait
-    }
-    catch {
-        throw "Failed to start process as admin: $_"
-    }
-}
-
-function Show-Introduction {
-    Clear-Host
-    $art = @"
-  ____  _                        
- / ___|| |_ ___  __ _ _ __ ___   
- \___ \| __/ _ \/ _` | '_ ` _ \  
-  ___) | ||  __/ (_| | | | | | | 
- |____/ \__\___|\__,_|_| |_| |_| 
-                                 
-  ____       _     _             _   
- |  _ \  ___| |__ | | ___   __ _| |_ 
- | | | |/ _ \ '_ \| |/ _ \ / _` | __|
- | |_| |  __/ |_) | | (_) | (_| | |_ 
- |____/ \___|_.__/|_|\___/ \__,_|\__|
-                                     
-"@
-    Write-Host $art -ForegroundColor Cyan
-    Write-Log "`nWelcome to $($script:config.Title) - $($script:config.GitHub) - $($script:config.Version.ps1) `n" -Level Info
-    Write-Log "This advanced script optimizes and enhances Steam for superior performance." -Level Info
-    Write-Log "------------------------------------------------" -Level Info
-    Write-Log "1. Steam Optimization Stable (Version $($script:config.Version.Stable))" -Level Info
-    Write-Log "2. Steam Optimization Beta (Version $($script:config.Version.Beta))" -Level Info
-    Write-Log "------------------------------------------------`n" -Level Info
-}
-
-function Get-UserSelection {
-    do {
-        $choice = Read-Host "Please choose an option (1 or 2)"
-        switch ($choice) {
-            1 {
-                $selectedMode = Read-Host "Choose mode: Normal or Lite"
-                if ($selectedMode -notin @("Normal", "Lite")) {
-                    Write-Log "Invalid choice. Please try again." -Level Error
-                    continue
-                }
-            }
-            2 { 
-                Write-Log "You have entered beta mode. you will not receive support on issues." -Level Warning
-                $selectedMode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
-                if ($selectedMode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
-                    Write-Log "Invalid choice. Please try again." -Level Error
-                    continue
-                }
-            }
-            default {
-                Write-Log "Invalid choice. Please try again." -Level Error
-                continue
-            }
-        }
-        return $selectedMode
-    } while ($true)
-}
-
-function Initialize-Environment {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$SelectedMode
-    )
+    $jobs = @()
     
-    $host.UI.RawUI.WindowTitle = "$($script:config.Title) - $($script:config.GitHub)"
-    $version = if ($SelectedMode -like "TEST*") { $script:config.Version.Beta } else { $script:config.Version.Stable }
-    Write-Log "Starting $($script:config.Title) Optimization in $SelectedMode mode" -Level Info
-    
-    if (-not (Test-AdminPrivileges)) {
-        Write-Log "Requesting administrator privileges..." -Level Warning
-        $scriptPath = $MyInvocation.MyCommand.Path
-        $arguments = "-File `"$scriptPath`" -Mode `"$SelectedMode`""
-        if ($SkipIntro) { $arguments += " -SkipIntro" }
-        if ($ForceBackup) { $arguments += " -ForceBackup" }
-        if ($SkipDowngrade) { $arguments += " -SkipDowngrade" }
-        if ($CustomVersion) { $arguments += " -CustomVersion `"$CustomVersion`"" }
-        if ($NoInteraction) { $arguments += " -NoInteraction" }
-        if ($PerformanceMode) { $arguments += " -PerformanceMode" }
-        if ($AdvancedCleaning) { $arguments += " -AdvancedCleaning" }
-        if ($DisableUpdates) { $arguments += " -DisableUpdates" }
-        if ($VerbosePreference -eq 'Continue') { $arguments += " -Verbose" }
+    foreach ($item in $InputObject) {
+        $jobs += Start-Job -ScriptBlock $ScriptBlock -ArgumentList $item
         
-        Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList $arguments
-        exit
-    }
-}
-
-function Stop-SteamProcesses {
-    Write-Log "Stopping Steam processes..." -Level Info
-    $steamProcesses = Get-Process | Where-Object { $_.Name -like "*steam*" }
-    
-    if ($steamProcesses) {
-        foreach ($process in $steamProcesses) {
-            try {
-                $process.Kill()
-                $process.WaitForExit(5000)
-                Write-Log "Stopped process: $($process.Name)" -Level Debug
-            }
-            catch {
-                Write-Log "Failed to stop process $($process.Name): $_" -Level Warning
-            }
+        while (($jobs | Where-Object { $_.State -eq 'Running' }).Count -ge $ThrottleLimit) {
+            Start-Sleep -Milliseconds 100
         }
         
-        # Wait for all Steam processes to close
-        $timeout = 300 # 5 minutes timeout
-        $timer = [Diagnostics.Stopwatch]::StartNew()
-        while (Get-Process | Where-Object { $_.Name -like "*steam*" }) {
-            if ($timer.Elapsed.TotalSeconds -gt $timeout) {
-                Write-Log "Timeout reached. Some Steam processes could not be closed." -Level Warning
-                break
-            }
-            Start-Sleep -Seconds 5
-        }
-        $timer.Stop()
-    }
-    else {
-        Write-Log "No Steam processes found running." -Level Info
-    }
-}
-
-
-function Get-Files {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$SelectedMode
-    )
-    
-    Write-Log "Downloading required files for $SelectedMode mode..." -Level Info
-    
-    $steamBatUrl = $script:config.Urls[$SelectedMode].SteamBat
-    $steamCfgUrl = $script:config.Urls.SteamCfg
-    
-    try {
-        $steamBatPath = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
-        Invoke-SafeWebRequest -Uri $steamBatUrl -OutFile $steamBatPath
-        Write-Log "Successfully downloaded Steam-$SelectedMode.bat" -Level Success
-        
-        $steamCfgPath = Join-Path $env:TEMP "steam.cfg"
-        Invoke-SafeWebRequest -Uri $steamCfgUrl -OutFile $steamCfgPath
-        Write-Log "Successfully downloaded steam.cfg" -Level Success
-        
-        return @{
-            SteamBat = $steamBatPath
-            SteamCfg = $steamCfgPath
+        foreach ($job in ($jobs | Where-Object { $_.State -eq 'Completed' })) {
+            Receive-Job $job
+            Remove-Job $job
         }
     }
-    catch {
-        throw "Failed to download files. Error: $_"
-    }
-}
-
-function Invoke-SteamUpdate {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$Url
-    )
     
-    Write-Log "Starting Steam update process..." -Level Info
-    $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $Url -exitsteam"
-    Start-Process -FilePath "$($script:config.SteamInstallDir)\steam.exe" -ArgumentList $arguments
-    
-    Write-Log "Waiting for Steam to close..." -Level Info
-    $timeout = 1800 # 30 minutes timeout
-    $timer = [Diagnostics.Stopwatch]::StartNew()
-    while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
-        if ($timer.Elapsed.TotalSeconds -gt $timeout) {
-            Write-Log "Timeout reached. Steam process did not close." -Level Warning
-            break
-        }
-        Start-Sleep -Seconds 10
-        Write-Log "Still waiting for Steam to close... (Elapsed time: $($timer.Elapsed.TotalMinutes.ToString("F2")) minutes)" -Level Info
-    }
-    $timer.Stop()
-    
-    Write-Log "Steam update process completed." -Level Success
+    # Wait for remaining jobs
+    $jobs | Wait-Job | Receive-Job
+    $jobs | Remove-Job
 }
 
-function Get-DowngradeChoice {
-    if ($NoInteraction) {
-        return -not $SkipDowngrade
-    }
-    $choice = Read-Host "Do you want to downgrade Steam? (Y/N)"
-    return $choice.ToUpper() -eq 'Y'
-}
-
-function Get-CustomVersionUrl {
-    if ($SelectedMode -eq "TEST-Version") {
-        if ($NoInteraction) {
-            return $CustomVersion
-        }
-        $useCustom = Read-Host "Do you want to use a custom version URL? (Y/N)"
-        if ($useCustom.ToUpper() -eq 'Y') {
-            return Read-Host "Enter the custom version URL"
-        }
-    }
-    return $null
-}
-
+# Enhanced Backup Function with Progress Bar
 function Backup-SteamFiles {
     Write-Log "Starting Steam backup process..." -Level Info
     $backupPath = Join-Path $script:config.BackupDir (Get-Date -Format "yyyy-MM-dd_HH-mm-ss")
@@ -391,7 +192,10 @@ function Backup-SteamFiles {
     try {
         New-Item -Path $backupPath -ItemType Directory -Force | Out-Null
         
-        # Use robocopy for efficient copying
+        $totalSize = (Get-ChildItem $script:config.SteamInstallDir -Recurse | Measure-Object -Property Length -Sum).Sum
+        $copiedSize = 0
+        
+        # Use robocopy for efficient copying with progress reporting
         $robocopyArgs = @(
             $script:config.SteamInstallDir,
             $backupPath,
@@ -400,17 +204,33 @@ function Backup-SteamFiles {
             "/MT:16",
             "/R:3",
             "/W:10",
-            "/NP",
-            "/NFL",
-            "/NDL"
+            "/BYTES",
+            "/TEE",
+            "/NP"
         )
         
-        $robocopyResult = Start-Process -FilePath "robocopy" -ArgumentList $robocopyArgs -NoNewWindow -Wait -PassThru
+        $robocopyJob = Start-Job -ScriptBlock {
+            param($args)
+            & robocopy.exe $args
+        } -ArgumentList $robocopyArgs
         
-        if ($robocopyResult.ExitCode -lt 8) {
+        while ($robocopyJob.State -eq 'Running') {
+            $output = Receive-Job $robocopyJob
+            if ($output -match '(?<=\s+)\d+(?=\s+)') {
+                $copiedSize = [long]$matches[0]
+                $percentComplete = [math]::Min(100, [math]::Round(($copiedSize / $totalSize) * 100, 2))
+                Show-Progress -PercentComplete $percentComplete -Status "Backing up Steam files..."
+            }
+            Start-Sleep -Milliseconds 500
+        }
+        
+        $finalOutput = Receive-Job $robocopyJob
+        Remove-Job $robocopyJob
+        
+        if ($finalOutput -notmatch 'ERROR') {
             Write-Log "Steam backup created successfully at $backupPath" -Level Success
         } else {
-            throw "Robocopy encountered errors during backup. Exit code: $($robocopyResult.ExitCode)"
+            throw "Robocopy encountered errors during backup. Check the log for details."
         }
         
         # Remove old backups if exceed MaxBackups
@@ -428,141 +248,7 @@ function Backup-SteamFiles {
     }
 }
 
-function Restore-SteamFiles {
-    Write-Log "Starting Steam restore process..." -Level Info
-    $latestBackup = Get-ChildItem -Path $script:config.BackupDir | Sort-Object CreationTime -Descending | Select-Object -First 1
-    
-    if ($null -eq $latestBackup) {
-        Write-Log "No backup found to restore." -Level Warning
-        return
-    }
-    
-    try {
-        Stop-SteamProcesses
-        
-        # Use robocopy for efficient restoration
-        $robocopyArgs = @(
-            $latestBackup.FullName,
-            $script:config.SteamInstallDir,
-            "/E",
-            "/Z",
-            "/MT:16",
-            "/R:3",
-            "/W:10",
-            "/NP",
-            "/NFL",
-            "/NDL",
-            "/PURGE"
-        )
-        
-        $robocopyResult = Start-Process -FilePath "robocopy" -ArgumentList $robocopyArgs -NoNewWindow -Wait -PassThru
-        
-        if ($robocopyResult.ExitCode -lt 8) {
-            Write-Log "Steam files restored successfully from $($latestBackup.FullName)" -Level Success
-        } else {
-            throw "Robocopy encountered errors during restoration. Exit code: $($robocopyResult.ExitCode)"
-        }
-    }
-    catch {
-        throw "Failed to restore Steam files: $_"
-    }
-}
-
-function Move-ConfigFile {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$SourcePath
-    )
-    
-    $destinationPath = Join-Path $script:config.SteamInstallDir "steam.cfg"
-    
-    try {
-        Copy-Item -Path $SourcePath -Destination $destinationPath -Force
-        Write-Log "Moved steam.cfg to Steam installation directory" -Level Success
-    }
-    catch {
-        throw "Failed to move steam.cfg: $_"
-    }
-}
-
-function Move-SteamBatToDesktop {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$SourcePath,
-        
-        [Parameter(Mandatory=$true)]
-        [string]$SelectedMode
-    )
-    
-    $desktopPath = [Environment]::GetFolderPath("Desktop")
-    $destinationPath = Join-Path $desktopPath "Steam-$SelectedMode.bat"
-    
-    try {
-        Copy-Item -Path $SourcePath -Destination $destinationPath -Force
-        Write-Log "Moved Steam-$SelectedMode.bat to desktop" -Level Success
-    }
-    catch {
-        throw "Failed to move Steam-$SelectedMode.bat to desktop: $_"
-    }
-}
-
-function Remove-TempFiles {
-    Write-Log "Cleaning up temporary files..." -Level Info
-    
-    try {
-        Remove-Item -Path (Join-Path $env:TEMP "Steam-*.bat") -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path (Join-Path $env:TEMP "steam.cfg") -Force -ErrorAction SilentlyContinue
-        Write-Log "Temporary files cleaned up successfully" -Level Success
-    }
-    catch {
-        Write-Log "Failed to clean up some temporary files: $_" -Level Warning
-    }
-}
-
-function Optimize-SteamPerformance {
-    Write-Log "Applying performance optimizations..." -Level Info
-    
-    try {
-        # Disable Steam Overlay
-        if ($script:config.PerformanceTweaks.DisableOverlay) {
-            Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "GameOverlayDisabled" -Value 1 -Type DWord
-            Write-Log "Disabled Steam Overlay" -Level Success
-        }
-        
-        # Enable Low Violence mode (if configured)
-        if ($script:config.PerformanceTweaks.LowViolence) {
-            Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "LowViolence" -Value 1 -Type DWord
-            Write-Log "Enabled Low Violence mode" -Level Success
-        }
-        
-        # Disable Voice Chat
-        if ($script:config.PerformanceTweaks.DisableVoiceChat) {
-            Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "VoiceReceiveVolume" -Value 0 -Type DWord
-            Write-Log "Disabled Voice Chat" -Level Success
-        }
-        
-        # Optimize Network Configuration
-        if ($script:config.PerformanceTweaks.OptimizeNetworkConfig) {
-            $libraryFoldersPath = Join-Path $script:config.SteamInstallDir "steamapps\libraryfolders.vdf"
-            if (Test-Path $libraryFoldersPath) {
-                $content = Get-Content $libraryFoldersPath -Raw
-                $content = $content -replace '("MaximumConnectionsPerServer"\s+")(\d+)(")', '$1128$3'
-                $content | Set-Content $libraryFoldersPath -Force
-                Write-Log "Optimized network configuration" -Level Success
-            } else {
-                Write-Log "Could not find libraryfolders.vdf. Skipping network optimization." -Level Warning
-            }
-        }
-        
-        Write-Log "Performance optimizations applied successfully" -Level Success
-    }
-    catch {
-        throw "Failed to apply performance optimizations: $_"
-    }
-}
-
+# Enhanced Cleaning Function
 function Invoke-AdvancedCleaning {
     Write-Log "Performing advanced cleaning..." -Level Info
     
@@ -582,6 +268,15 @@ function Invoke-AdvancedCleaning {
         # Clear old installation files
         Get-ChildItem -Path "$($script:config.SteamInstallDir)\steamapps" -Filter "*.old" -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
         
+        # Clear Steam logs
+        Remove-Item -Path "$($script:config.SteamInstallDir)\logs\*" -Recurse -Force -ErrorAction SilentlyContinue
+        
+        # Clear Steam crash dumps
+        Remove-Item -Path "$($script:config.SteamInstallDir)\dumps\*" -Recurse -Force -ErrorAction SilentlyContinue
+        
+        # Clear Steam package cache
+        Remove-Item -Path "$($script:config.SteamInstallDir)\package\*" -Recurse -Force -ErrorAction SilentlyContinue
+        
         Write-Log "Advanced cleaning completed successfully" -Level Success
     }
     catch {
@@ -589,23 +284,150 @@ function Invoke-AdvancedCleaning {
     }
 }
 
-function Disable-SteamUpdates {
-    Write-Log "Disabling automatic Steam updates..." -Level Info
+# Function to remove duplicate files
+function Remove-DuplicateFiles {
+    Write-Log "Searching for and removing duplicate files..." -Level Info
     
     try {
-        $steamCfgPath = Join-Path $script:config.SteamInstallDir "steam.cfg"
-        $content = @"
-BootStrapperInhibitAll=enable
-BootStrapperForceSelfUpdate=disable
-"@
-        $content | Set-Content $steamCfgPath -Force
-        Write-Log "Automatic Steam updates disabled" -Level Success
+        $steamAppsPath = Join-Path $script:config.SteamInstallDir "steamapps\common"
+        $files = Get-ChildItem -Path $steamAppsPath -Recurse -File
+        
+        $fileHashes = @{}
+        $duplicatesRemoved = 0
+        
+        foreach ($file in $files) {
+            $hash = Get-FileHash -Path $file.FullName -Algorithm MD5
+            
+            if ($fileHashes.ContainsKey($hash.Hash)) {
+                Remove-Item -Path $file.FullName -Force
+                $duplicatesRemoved++
+            } else {
+                $fileHashes[$hash.Hash] = $file.FullName
+            }
+        }
+        
+        Write-Log "Removed $duplicatesRemoved duplicate files" -Level Success
     }
     catch {
-        throw "Failed to disable Steam updates: $_"
+        Write-Log "Error while removing duplicate files: $_" -Level Warning
     }
 }
 
+# Function to optimize memory
+function Optimize-SystemMemory {
+    Write-Log "Optimizing system memory..." -Level Info
+    
+    try {
+        # Clear standby list
+        Write-Log "Clearing standby list..." -Level Info
+        $standbyListCleaner = @"
+using System;
+using System.Runtime.InteropServices;
+
+public static class MemoryOptimizer
+{
+    [DllImport("psapi.dll")]
+    static extern int EmptyWorkingSet(IntPtr hwProc);
+
+    public static void ClearStandbyList()
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        EmptyWorkingSet(System.Diagnostics.Process.GetCurrentProcess().Handle);
+    }
+}
+"@
+
+        Add-Type -TypeDefinition $standbyListCleaner
+
+        [MemoryOptimizer]::ClearStandbyList()
+        
+        # Adjust virtual memory
+        Write-Log "Adjusting virtual memory settings..." -Level Info
+        $computerSystem = Get-WmiObject -Class Win32_ComputerSystem
+        $totalRam = [Math]::Round($computerSystem.TotalPhysicalMemory / 1GB)
+        
+        $initialSize = $totalRam * 1024
+        $maximumSize = $initialSize * 3
+        
+        $pagefile = Get-WmiObject -Class Win32_PageFileSetting
+        $pagefile.InitialSize = $initialSize
+        $pagefile.MaximumSize = $maximumSize
+        $pagefile.Put()
+        
+        Write-Log "Memory optimization completed" -Level Success
+    }
+    catch {
+        Write-Log "Error during memory optimization: $_" -Level Warning
+    }
+}
+
+# Function for granular control of Steam services
+function Set-SteamServices {
+    param (
+        [switch]$DisableUpdates,
+        [switch]$DisableBroadcasting,
+        [switch]$DisableWorkshop,
+        [switch]$DisableCloudSync
+    )
+    
+    Write-Log "Configuring Steam services..." -Level Info
+    
+    try {
+        $steamConfigPath = Join-Path $script:config.SteamInstallDir "config\config.vdf"
+        $config = Get-Content $steamConfigPath -Raw
+        
+        if ($DisableUpdates) {
+            $config = $config -replace '"AutoUpdateEnabled"\s+"1"', '"AutoUpdateEnabled"		"0"'
+            Write-Log "Disabled automatic updates" -Level Info
+        }
+        
+        if ($DisableBroadcasting) {
+            $config = $config -replace '"EnableBroadcasts"\s+"1"', '"EnableBroadcasts"		"0"'
+            Write-Log "Disabled broadcasting" -Level Info
+        }
+        
+        if ($DisableWorkshop) {
+            $config = $config -replace '"EnableWorkshop"\s+"1"', '"EnableWorkshop"		"0"'
+            Write-Log "Disabled Workshop" -Level Info
+        }
+        
+        if ($DisableCloudSync) {
+            $config = $config -replace '"EnableCloudSync"\s+"1"', '"EnableCloudSync"		"0"'
+            Write-Log "Disabled Cloud Sync" -Level Info
+        }
+        
+        $config | Set-Content $steamConfigPath -Force
+        Write-Log "Steam services configured successfully" -Level Success
+    }
+    catch {
+        Write-Log "Error configuring Steam services: $_" -Level Warning
+    }
+}
+
+# Function to remove unused language packs
+function Remove-UnusedLanguagePacks {
+    Write-Log "Removing unused language packs..." -Level Info
+    
+    try {
+        $languageFolder = Join-Path $script:config.SteamInstallDir "steam\games\*\*_*.vpk"
+        $currentLanguage = (Get-Culture).Name
+        
+        Get-ChildItem -Path $languageFolder -Recurse | Where-Object {
+            $_.Name -notmatch $currentLanguage
+        } | ForEach-Object {
+            Remove-Item $_.FullName -Force
+            Write-Log "Removed language pack: $($_.Name)" -Level Info
+        }
+        
+        Write-Log "Unused language packs removed successfully" -Level Success
+    }
+    catch {
+        Write-Log "Error removing unused language packs: $_" -Level Warning
+    }
+}
+
+# Main execution function
 function Start-SteamDebloat {
     [CmdletBinding()]
     param (
@@ -650,9 +472,19 @@ function Start-SteamDebloat {
             Invoke-AdvancedCleaning
         }
         
-        if ($DisableUpdates) {
-            Disable-SteamUpdates
+        if ($CleanDuplicates) {
+            Remove-DuplicateFiles
         }
+        
+        if ($OptimizeMemory) {
+            Optimize-SystemMemory
+        }
+        
+        if ($GranularControl) {
+            Set-SteamServices -DisableUpdates:$DisableUpdates -DisableBroadcasting -DisableWorkshop -DisableCloudSync
+        }
+        
+        Remove-UnusedLanguagePacks
         
         Remove-TempFiles
         
