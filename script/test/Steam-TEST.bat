@@ -7,7 +7,7 @@ setlocal enabledelayedexpansion
 set "STEAM_PATH=C:\Program Files (x86)\Steam\steam.exe"
 
 :: Base options
-set "BASE_OPTS=-silent -noverifyfiles -norepairfiles -noshaders -nocrashdialog -single_core -tcp -clearbeta"
+set "BASE_OPTS=-noverifyfiles -norepairfiles -noshaders -nocrashdialog -single_core -tcp -clearbeta"
 
 :: Toggleable options (0 = off, 1 = on)
 set "DISABLE_BROWSER=0"
