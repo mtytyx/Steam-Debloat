@@ -23,8 +23,7 @@
   <a href="#-quick-start">Quick Start</a> •
   <a href="#-download-options">Download Options</a> •
   <a href="#-faq">FAQ</a> •
-  <a href="#-contributing">Contributing</a> •
-  <a href="#-support">Support</a>
+  <a href="#-contributing">Contributing</a> 
 </p>
 
 ## 🌟 Why Steam Debloat?
