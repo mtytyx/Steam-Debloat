@@ -146,7 +146,7 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 ---
 
 <p align="center">
-  <strong>Made with ❤️ by the Steam Debloat Team</strong>
+  <strong>Made with ❤️ by me</strong>
 </p>
 
 <p align="center">
