@@ -41,6 +41,7 @@ $script:config = @{
     }
 }
 
+
 function Write-Log {
     param ([string]$Message, [string]$Level = "Info", [switch]$NoNewline)
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
@@ -151,9 +152,21 @@ function Start-SteamDebloat {
     try {
         if (-not (Test-AdminPrivileges)) {
             Write-Log "Requesting administrator privileges..." -Level Warning
-            Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList "-File `"$($MyInvocation.MyCommand.Path)`" -Mode `"$SelectedMode`" $($PSBoundParameters.GetEnumerator() | ForEach-Object { "-$($_.Key) `"$($_.Value)`"" })"
+            $scriptPath = $MyInvocation.MyCommand.Path
+            $arguments = "-File `"$scriptPath`" -Mode `"$SelectedMode`""
+            foreach ($param in $PSBoundParameters.GetEnumerator()) {
+                if ($param.Key -ne "Mode") {
+                    $arguments += " -$($param.Key)"
+                    if ($param.Value -isnot [switch]) {
+                        $arguments += " `"$($param.Value)`""
+                    }
+                }
+            }
+            Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList $arguments
             return
         }
+
+
 
         $host.UI.RawUI.WindowTitle = "$($script:config.Title) - $($script:config.GitHub)"
         Write-Log "Starting $($script:config.Title) Optimization in $SelectedMode mode" -Level Info
