@@ -29,7 +29,7 @@ $script:config = @{
     Title = "Steam"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        ps1 = "v6.6"
+        ps1 = "v7.1"
         Stable = "v4.2"
         Beta = "v4.4"
     }
@@ -357,7 +357,7 @@ function Install-VCRedistAIO {
         Invoke-SafeWebRequest -Uri $script:config.VCRedistUrl -OutFile $vcRedistPath
         Write-Log "VC++ AIO downloaded successfully" -Level Success
         
-        Start-Process -FilePath $vcRedistPath -ArgumentList "/silent" -Wait
+        Start-Process -FilePath $vcRedistPath -ArgumentList -Wait
         Write-Log "VC++ AIO installed successfully" -Level Success
     }
     catch {
