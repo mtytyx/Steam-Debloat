@@ -357,7 +357,7 @@ function Install-VCRedistAIO {
         Invoke-SafeWebRequest -Uri $script:config.VCRedistUrl -OutFile $vcRedistPath
         Write-Log "VC++ AIO downloaded successfully" -Level Success
         
-        Start-Process -FilePath $vcRedistPath -ArgumentList -Wait
+        Start-Process -FilePath $vcRedistPath -Wait
         Write-Log "VC++ AIO installed successfully" -Level Success
     }
     catch {
