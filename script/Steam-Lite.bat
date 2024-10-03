@@ -1,10 +1,2 @@
 @echo off
-:: Steam Lite Launcher
-:: Optimized for lower resource usage while maintaining essential functionality
-
-set "STEAM_PATH=C:\Program Files (x86)\Steam\steam.exe"
-
-set "OPTS=-nobootstrapupdate -nobigpicture -noverifyfiles -norepairfiles -noshaders -nocrashdialog -single_core -tcp -clearbeta -netbuffer 262144 -cef-single-process -no-cef-sandbox -vrdisable -no-shared-textures -disable-font-subpixel-positioning -cef-force-32bit -disable-gpu-vsync -console"
-
-start "" /B /LOW "%STEAM_PATH%" %OPTS%
-exit
+start "" /B /LOW "C:\Program Files (x86)\Steam\steam.exe" -silent -nointro -nocrashmonitor -disablehighdpi -single_core -vrdisable -tcp -cef-force-32bit -no-dwrite -no-verifyfiles -skipstreaming -no-background-updates -lowpower -windowed -no-browser -cef-disable-remote-fonts -cef-disable-web-security -no-cafs -disable-broadcast -disable-steamvr -no-shaders -no-preload -no-splash -no-sound -no-movies
