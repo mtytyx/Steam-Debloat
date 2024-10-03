@@ -28,9 +28,9 @@ $script:config = @{
     Title = "Steam Debloat"
     GitHub = "Github.com/mtytyx/Steam-Debloat"
     Version = @{
-        ps1 = "v8.0"
-        Stable = "v4.3"
-        Beta = "v4.5"
+        ps1 = "v8.4"
+        Stable = "v4.2"
+        Beta = "v4.4"
     }
     Color = @{
         Info = "Cyan"
