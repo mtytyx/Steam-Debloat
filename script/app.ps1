@@ -29,7 +29,7 @@ $script:config = @{
     Title = "Steam"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        ps1 = "v7.2"
+        ps1 = "v7.3"
         Stable = "v4.2"
         Beta = "v4.4"
     }
@@ -368,25 +368,6 @@ function Install-VCRedistAIO {
     }
 }
 
-function Reinstall-Steam {
-    Write-Log "Downloading and reinstalling Steam..." -Level Info
-    $steamSetupPath = Join-Path $env:TEMP "SteamSetup.exe"
-    
-    try {
-        Invoke-SafeWebRequest -Uri $script:config.SteamSetupUrl -OutFile $steamSetupPath
-        Write-Log "Steam setup downloaded successfully" -Level Success
-        
-        Start-Process -FilePath $steamSetupPath -ArgumentList "/S" -Wait
-        Write-Log "Steam reinstalled successfully" -Level Success
-    }
-    catch {
-        throw "Failed to download or reinstall Steam: $_"
-    }
-    finally {
-        Remove-Item -Path $steamSetupPath -Force -ErrorAction SilentlyContinue
-    }
-}
-
 function Invoke-SteamUpdate {
     [CmdletBinding()]
     param (
@@ -684,11 +665,6 @@ function Start-SteamDebloat {
         
         if (-not $NoInteraction -and (Read-Host "Do you want to install VC++ AIO for better performance?( (Y/N)").ToUpper() -eq 'Y') {
             Install-VCRedistAIO
-        }
-        
-        $reinstallSteam = -not $NoInteraction -and (Read-Host "Do you want to reinstall Steam before downgrading? (Y/N)").ToUpper() -eq 'Y'
-        if ($reinstallSteam) {
-            Reinstall-Steam
         }
         
         $downgradeChoice = Get-DowngradeChoice
