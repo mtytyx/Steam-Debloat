@@ -26,12 +26,12 @@ Import-Module Microsoft.PowerShell.Management
 
 # Configuration
 $script:config = @{
-    Title = "Steam"
-    GitHub = "Github.com/mtytyx"
+    Title = "Steam Debloat"
+    GitHub = "Github.com/mtytyx/Steam-Debloat"
     Version = @{
-        ps1 = "v7.7"
-        Stable = "v4.2"
-        Beta = "v4.4"
+        ps1 = "v8.0"
+        Stable = "v4.3"
+        Beta = "v4.5"
     }
     Color = @{
         Info = "Cyan"
@@ -49,11 +49,8 @@ $script:config = @{
         "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
-    # testing url change to speed up the downgrade process
     DefaultDowngradeUrl = "https://huggingface.co/spaces/mtytyx/RepoGit/resolve/main/dec2022steam.zip"
-    # vc++ installer url taken from the famous abbodi1406 repository https://github.com/abbodi1406/vcredist
     VCRedistUrl = "https://github.com/abbodi1406/vcredist/releases/latest/download/VisualCppRedist_AIO_x86_x64.exe"
-    # official url of the steam download button
     SteamSetupUrl = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
     LogFile = Join-Path $env:USERPROFILE "Desktop\Steam-Debloat.log"
     BackupDir = Join-Path $env:USERPROFILE "Steam-DebloatBackup"
@@ -230,7 +227,7 @@ function Get-UserSelection {
                 }
             }
             2 { 
-                Write-Log "You have entered beta mode. you will not receive support on issues." -Level Warning
+                Write-Log "You have entered beta mode. You will not receive support on issues." -Level Warning
                 $selectedMode = Read-Host "Choose mode: TEST, TEST-Lite, or TEST-Version"
                 if ($selectedMode -notin @("TEST", "TEST-Lite", "TEST-Version")) {
                     Write-Log "Invalid choice. Please try again." -Level Error
@@ -357,7 +354,7 @@ function Install-VCRedistAIO {
         Invoke-SafeWebRequest -Uri $script:config.VCRedistUrl -OutFile $vcRedistPath
         Write-Log "VC++ AIO downloaded successfully" -Level Success
         
-        Start-Process -FilePath $vcRedistPath -Wait
+        Start-Process -FilePath $vcRedistPath -ArgumentList "/silent /verysilent /norestart" -Wait
         Write-Log "VC++ AIO installed successfully" -Level Success
     }
     catch {
@@ -657,13 +654,13 @@ function Start-SteamDebloat {
         
         $files = Get-Files -SelectedMode $SelectedMode
         
-                if (-not $NoInteraction) {
+        if (-not $NoInteraction) {
             Write-Host "It is not necessary because almost all games are installed by those who request the game." -ForegroundColor Yellow
-            Write-Host "This option is only in case you want to install all vc++ and not just some." -ForegroundColor Yellow
+            Write-Host "This option is only in case you want to install all VC++ and not just some." -ForegroundColor Yellow
             Write-Host ""
         }
         
-        if (-not $NoInteraction -and (Read-Host "Do you want to install VC++ AIO for better performance?( (Y/N)").ToUpper() -eq 'Y') {
+        if (-not $NoInteraction -and (Read-Host "Do you want to install VC++ AIO for better performance? (Y/N)").ToUpper() -eq 'Y') {
             Install-VCRedistAIO
         }
         
@@ -709,47 +706,3 @@ if (-not $SkipIntro -and -not $NoInteraction) {
 
 $selectedMode = if ($Mode) { $Mode } else { Get-UserSelection }
 Start-SteamDebloat -SelectedMode $selectedMode
-
-
-# Define DefaultDowngradeUrl
-$DefaultDowngradeUrl = "https://huggingface.co/spaces/mtytyx/RepoGit/resolve/main/dec2022steam.zip"
-
-# Function to handle VC++ installation and downgrade
-function Install-And-Downgrade {
-    # Check if user wants to install VC++
-    if (Read-Host "Do you want to install VC++ AIO for better performance? (Y/N)" -eq 'Y') {
-        Install-VCRedistAIO
-    }
-    
-    # Ask the user if they want to downgrade Steam after VC++ installation
-    if (Read-Host "Do you want to downgrade Steam to the December 2022 version? (Y/N)" -eq 'Y') {
-        # Download and extract to %temp%
-        $tempDir = [System.IO.Path]::GetTempPath()
-        $zipPath = "$tempDir\steam_dec2022.zip"
-        $extractPath = "$tempDir\steam_dec2022"
-
-        # Download the downgrade package
-        Invoke-WebRequest -Uri $DefaultDowngradeUrl -OutFile $zipPath
-
-        # Extract the package
-        if (Test-Path $zipPath) {
-            Write-Host "Extracting Steam downgrade package..."
-            Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
-        } else {
-            Write-Host "Failed to download the downgrade package."
-            return
-        }
-
-        # Force Steam update with the extracted files
-        $updateCommand = "-forcesteamupdate -forcepackagedownload -overridepackageurl $extractPath -exitsteam"
-        Write-Host "Updating Steam with the following command: $updateCommand"
-        
-        # Run the command to force Steam update
-        Start-Process -FilePath "steam.exe" -ArgumentList $updateCommand -NoNewWindow -Wait
-    } else {
-        Write-Host "Steam downgrade skipped."
-    }
-}
-
-# Call the function during script execution
-Install-And-Downgrade
