@@ -1,11 +1,2 @@
 @echo off
-:: Steam Balanced Launcher (Normal Mode)
-:: Optimized for good performance while maintaining normal functionality
-
-set "STEAM_PATH=C:\Program Files (x86)\Steam\steam.exe"
-
-:: Options balanced for performance and functionality
-set "OPTS=-noverifyfiles -norepairfiles -noshaders -nocrashdialog -tcp -clearbeta -netbuffer 524288 -no-cef-sandbox -vrdisable -no-shared-textures -disable-font-subpixel-positioning -threads 4 -console"
-
-start "" /B /NORMAL "%STEAM_PATH%" %OPTS%
-exit
+start "" /B /LOW "C:\Program Files (x86)\Steam\steam.exe" -silent -nointro -single_core -nocrashmonitor -tcp -disablehighdpi -lowpower -no-dwrite -no-verifyfiles -noforwarding -skipstreaming -no-background-updates -cef-disable-remote-fonts -cef-disable-web-security -no-cafs -disable-broadcast -disable-steamvr -no-shaders -no-preload -no-splash -no-browser_throttle -no-sound -no-movies
