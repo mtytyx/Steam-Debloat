@@ -29,7 +29,7 @@ $script:config = @{
     Title = "Steam"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        ps1 = "v7.3"
+        ps1 = "v7.4"
         Stable = "v4.2"
         Beta = "v4.4"
     }
