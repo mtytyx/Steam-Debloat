@@ -29,7 +29,7 @@ $script:config = @{
     Title = "Steam"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        ps1 = "v7.4"
+        ps1 = "v7.5"
         Stable = "v4.2"
         Beta = "v4.4"
     }
@@ -665,15 +665,6 @@ function Start-SteamDebloat {
         
         if (-not $NoInteraction -and (Read-Host "Do you want to install VC++ AIO for better performance?( (Y/N)").ToUpper() -eq 'Y') {
             Install-VCRedistAIO
-        }
-        
-        $downgradeChoice = Get-DowngradeChoice
-        if ($downgradeChoice) {
-            $customUrl = Get-CustomVersionUrl
-            $downgradeUrl = if ($customUrl) { $customUrl } else { $script:config.DefaultDowngradeUrl }
-            Invoke-SteamUpdate -Url $downgradeUrl
-        } else {
-            Write-Log "Skipping Steam downgrade process." -Level Info
         }
         
         Move-ConfigFile -SourcePath $files.SteamCfg
