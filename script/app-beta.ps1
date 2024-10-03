@@ -15,6 +15,7 @@ param (
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+# Configuration
 $script:config = @{
     Title = "Steam Debloat"
     GitHub = "Github.com/mtytyx/Steam-Debloat"
@@ -41,19 +42,30 @@ $script:config = @{
     }
 }
 
-
+# Logging function
 function Write-Log {
-    param ([string]$Message, [string]$Level = "Info", [switch]$NoNewline)
+    param (
+        [string]$Message,
+        [string]$Level = "Info",
+        [switch]$NoNewline
+    )
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logMessage = "[$timestamp] [$Level] $Message"
     $color = $script:config.Color[$Level]
-    if ($NoNewline) { Write-Host -NoNewline "[$Level] $Message" -ForegroundColor $color }
-    else { Write-Host "[$Level] $Message" -ForegroundColor $color }
+    if ($NoNewline) {
+        Write-Host -NoNewline "[$Level] $Message" -ForegroundColor $color
+    } else {
+        Write-Host "[$Level] $Message" -ForegroundColor $color
+    }
     Add-Content -Path $script:config.LogFile -Value $logMessage
 }
 
+# Safe web request function with retry logic
 function Invoke-SafeWebRequest {
-    param ([string]$Uri, [string]$OutFile)
+    param (
+        [string]$Uri,
+        [string]$OutFile
+    )
     $attempt = 0
     do {
         $attempt++
@@ -61,94 +73,150 @@ function Invoke-SafeWebRequest {
             Invoke-WebRequest -Uri $Uri -OutFile $OutFile -UseBasicParsing -ErrorAction Stop
             return
         } catch {
-            if ($attempt -ge $script:config.RetryAttempts) { throw }
+            if ($attempt -ge $script:config.RetryAttempts) {
+                throw "Failed to download from $Uri after $($script:config.RetryAttempts) attempts: $_"
+            }
+            Write-Log "Download attempt $attempt failed. Retrying in $($script:config.RetryDelay) seconds..." -Level Warning
             Start-Sleep -Seconds $script:config.RetryDelay
         }
     } while ($true)
 }
 
-function Test-AdminPrivileges { return ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) }
+# Check for admin privileges
+function Test-AdminPrivileges {
+    return ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
 
+# Start process as admin
 function Start-ProcessAsAdmin {
-    param ([string]$FilePath, [string]$ArgumentList)
+    param (
+        [string]$FilePath,
+        [string]$ArgumentList
+    )
     Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -Verb RunAs -Wait
 }
 
+# Stop Steam processes
 function Stop-SteamProcesses {
     Get-Process | Where-Object { $_.Name -like "*steam*" } | ForEach-Object {
-        try { $_.Kill(); $_.WaitForExit(5000) }
-        catch { Write-Log "Failed to stop process $($_.Name): $_" -Level Warning }
+        try {
+            $_.Kill()
+            $_.WaitForExit(5000)
+            Write-Log "Stopped process: $($_.Name)" -Level Info
+        } catch {
+            Write-Log "Failed to stop process $($_.Name): $_" -Level Warning
+        }
     }
 }
 
-function Get-Files {
-    param ([string]$SelectedMode)
+# Get required files
+function Get-RequiredFiles {
+    param (
+        [string]$SelectedMode
+    )
     $steamBatPath = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
     $steamCfgPath = Join-Path $env:TEMP "steam.cfg"
+    
+    Write-Log "Downloading Steam-$SelectedMode.bat..." -Level Info
     Invoke-SafeWebRequest -Uri $script:config.Urls[$SelectedMode] -OutFile $steamBatPath
+    
+    Write-Log "Downloading steam.cfg..." -Level Info
     Invoke-SafeWebRequest -Uri $script:config.Urls.SteamCfg -OutFile $steamCfgPath
+    
     return @{ SteamBat = $steamBatPath; SteamCfg = $steamCfgPath }
 }
 
+# Invoke Steam update
 function Invoke-SteamUpdate {
-    param ([string]$Url)
+    param (
+        [string]$Url
+    )
     $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $Url -exitsteam"
+    Write-Log "Updating Steam from $Url..." -Level Info
     Start-Process -FilePath "$($script:config.SteamInstallDir)\steam.exe" -ArgumentList $arguments
     $timeout = 300
     $timer = [Diagnostics.Stopwatch]::StartNew()
     while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
-        if ($timer.Elapsed.TotalSeconds -gt $timeout) { break }
+        if ($timer.Elapsed.TotalSeconds -gt $timeout) {
+            Write-Log "Steam update process timed out after $timeout seconds." -Level Warning
+            break
+        }
         Start-Sleep -Seconds 5
     }
     $timer.Stop()
+    Write-Log "Steam update process completed in $($timer.Elapsed.TotalSeconds) seconds." -Level Info
 }
 
+# Move configuration file
 function Move-ConfigFile {
-    param ([string]$SourcePath)
-    Copy-Item -Path $SourcePath -Destination (Join-Path $script:config.SteamInstallDir "steam.cfg") -Force
+    param (
+        [string]$SourcePath
+    )
+    $destinationPath = Join-Path $script:config.SteamInstallDir "steam.cfg"
+    Copy-Item -Path $SourcePath -Destination $destinationPath -Force
+    Write-Log "Moved steam.cfg to $destinationPath" -Level Info
 }
 
+# Move Steam bat to desktop
 function Move-SteamBatToDesktop {
-    param ([string]$SourcePath, [string]$SelectedMode)
-    Copy-Item -Path $SourcePath -Destination (Join-Path ([Environment]::GetFolderPath("Desktop")) "Steam-$SelectedMode.bat") -Force
+    param (
+        [string]$SourcePath,
+        [string]$SelectedMode
+    )
+    $destinationPath = Join-Path ([Environment]::GetFolderPath("Desktop")) "Steam-$SelectedMode.bat"
+    Copy-Item -Path $SourcePath -Destination $destinationPath -Force
+    Write-Log "Moved Steam-$SelectedMode.bat to desktop" -Level Info
 }
 
+# Remove temporary files
 function Remove-TempFiles {
     Remove-Item -Path (Join-Path $env:TEMP "Steam-*.bat") -Force -ErrorAction SilentlyContinue
     Remove-Item -Path (Join-Path $env:TEMP "steam.cfg") -Force -ErrorAction SilentlyContinue
+    Write-Log "Removed temporary files" -Level Info
 }
 
+# Optimize Steam performance
 function Optimize-SteamPerformance {
     if ($script:config.PerformanceTweaks.DisableOverlay) {
         Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "GameOverlayDisabled" -Value 1 -Type DWord
+        Write-Log "Disabled Steam overlay" -Level Info
     }
     if ($script:config.PerformanceTweaks.DisableVoiceChat) {
         Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "VoiceReceiveVolume" -Value 0 -Type DWord
+        Write-Log "Disabled voice chat" -Level Info
     }
     if ($script:config.PerformanceTweaks.OptimizeNetworkConfig) {
         $libraryFoldersPath = Join-Path $script:config.SteamInstallDir "steamapps\libraryfolders.vdf"
         if (Test-Path $libraryFoldersPath) {
             (Get-Content $libraryFoldersPath -Raw) -replace '("MaximumConnectionsPerServer"\s+")(\d+)(")', '$1128$3' | Set-Content $libraryFoldersPath -Force
+            Write-Log "Optimized network configuration" -Level Info
         }
     }
 }
 
+# Perform advanced cleaning
 function Invoke-AdvancedCleaning {
     Remove-Item -Path "$($script:config.SteamInstallDir)\steamapps\downloading\*" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$($script:config.SteamInstallDir)\steamapps\shadercache\*" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$env:LOCALAPPDATA\Steam\htmlcache\*" -Recurse -Force -ErrorAction SilentlyContinue
     Get-ChildItem -Path "$($script:config.SteamInstallDir)\steamapps" -Filter "*.old" -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
+    Write-Log "Performed advanced cleaning" -Level Info
 }
 
+# Disable Steam updates
 function Disable-SteamUpdates {
     @"
 BootStrapperInhibitAll=enable
 BootStrapperForceSelfUpdate=disable
 "@ | Set-Content (Join-Path $script:config.SteamInstallDir "steam.cfg") -Force
+    Write-Log "Disabled Steam updates" -Level Info
 }
 
+# Main function to start Steam debloat process
 function Start-SteamDebloat {
-    param ([string]$SelectedMode)
+    param (
+        [string]$SelectedMode
+    )
     try {
         if (-not (Test-AdminPrivileges)) {
             Write-Log "Requesting administrator privileges..." -Level Warning
@@ -166,13 +234,11 @@ function Start-SteamDebloat {
             return
         }
 
-
-
         $host.UI.RawUI.WindowTitle = "$($script:config.Title) - $($script:config.GitHub)"
         Write-Log "Starting $($script:config.Title) Optimization in $SelectedMode mode" -Level Info
 
         Stop-SteamProcesses
-        $files = Get-Files -SelectedMode $SelectedMode
+        $files = Get-RequiredFiles -SelectedMode $SelectedMode
 
         if ($CustomVersion -or (-not $NoInteraction -and (Read-Host "Do you want to downgrade Steam? (Y/N)").ToUpper() -eq 'Y')) {
             $downgradeUrl = if ($CustomVersion) { $CustomVersion } else { $script:config.DefaultDowngradeUrl }
@@ -198,6 +264,7 @@ function Start-SteamDebloat {
     }
 }
 
+# Main execution
 if (-not $SkipIntro -and -not $NoInteraction) {
     Clear-Host
     Write-Host @"
