@@ -140,8 +140,9 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 
 ### 💀 Virustotal Results 
 
-- [Steam Legacy Version (2022 Dec)](https://www.virustotal.com/gui/url/73d0c1e2bf9ca30701504a8ec1225502676b2f794d64d93c79945ba37b900051)
-- [Steam Debloat Source Code (APP.PS1)](https://www.virustotal.com/gui/file/efda4de8df6b082f53bbff59dc8cb14e4da9377259642c3f9c3b55714fe5b49b?nocache=1)
+- [Steam Legacy Version on .zip (2022 Dec)](https://www.virustotal.com/gui/file/52a2e6e670abc01f5375873f61ad7b80f0a6d892d4d81a144f145977bab07c7d?nocache=1)
+- [Steam Legacy Version on archive.org (2022 Dec)](https://www.virustotal.com/gui/url/73d0c1e2bf9ca30701504a8ec1225502676b2f794d64d93c79945ba37b900051)
+- [Steam Debloat Source Code (app.ps1)](https://www.virustotal.com/gui/file/efda4de8df6b082f53bbff59dc8cb14e4da9377259642c3f9c3b55714fe5b49b?nocache=1)
 
 ---
 
