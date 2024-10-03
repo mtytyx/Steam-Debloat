@@ -29,7 +29,7 @@ $script:config = @{
     Title = "Steam"
     GitHub = "Github.com/mtytyx"
     Version = @{
-        ps1 = "v6.5"
+        ps1 = "v6.6"
         Stable = "v4.2"
         Beta = "v4.4"
     }
@@ -49,7 +49,12 @@ $script:config = @{
         "TEST-Version" = @{ "SteamBat" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat" }
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
     }
-    DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
+    # testing url change to speed up the downgrade process
+    DefaultDowngradeUrl = "https://huggingface.co/spaces/mtytyx/RepoGit/resolve/main/dec2022steam.zip"
+    # vc++ installer url taken from the famous abbodi1406 repository https://github.com/abbodi1406/vcredist
+    VCRedistUrl = "https://github.com/abbodi1406/vcredist/releases/latest/download/VisualCppRedist_AIO_x86_x64.exe"
+    # official url of the steam download button
+    SteamSetupUrl = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
     LogFile = Join-Path $env:USERPROFILE "Desktop\Steam-Debloat.log"
     BackupDir = Join-Path $env:USERPROFILE "Steam-DebloatBackup"
     SteamInstallDir = "C:\Program Files (x86)\Steam"
@@ -304,7 +309,6 @@ function Stop-SteamProcesses {
     }
 }
 
-
 function Get-Files {
     [CmdletBinding()]
     param (
@@ -336,6 +340,53 @@ function Get-Files {
     }
 }
 
+function Get-LatestVCRedistVersion {
+    $releaseUrl = "https://api.github.com/repos/abbodi1406/vcredist/releases/latest"
+    $release = Invoke-RestMethod -Uri $releaseUrl
+    return $release.tag_name
+}
+
+function Install-VCRedistAIO {
+    Write-Log "Downloading and installing VC++ AIO..." -Level Info
+    $vcRedistPath = Join-Path $env:TEMP "VisualCppRedist_AIO_x86_x64.exe"
+    
+    try {
+        $latestVersion = Get-LatestVCRedistVersion
+        Write-Log "Latest VC++ AIO version: $latestVersion" -Level Info
+        
+        Invoke-SafeWebRequest -Uri $script:config.VCRedistUrl -OutFile $vcRedistPath
+        Write-Log "VC++ AIO downloaded successfully" -Level Success
+        
+        Start-Process -FilePath $vcRedistPath -ArgumentList "/silent" -Wait
+        Write-Log "VC++ AIO installed successfully" -Level Success
+    }
+    catch {
+        throw "Failed to download or install VC++ AIO: $_"
+    }
+    finally {
+        Remove-Item -Path $vcRedistPath -Force -ErrorAction SilentlyContinue
+    }
+}
+
+function Reinstall-Steam {
+    Write-Log "Downloading and reinstalling Steam..." -Level Info
+    $steamSetupPath = Join-Path $env:TEMP "SteamSetup.exe"
+    
+    try {
+        Invoke-SafeWebRequest -Uri $script:config.SteamSetupUrl -OutFile $steamSetupPath
+        Write-Log "Steam setup downloaded successfully" -Level Success
+        
+        Start-Process -FilePath $steamSetupPath -ArgumentList "/S" -Wait
+        Write-Log "Steam reinstalled successfully" -Level Success
+    }
+    catch {
+        throw "Failed to download or reinstall Steam: $_"
+    }
+    finally {
+        Remove-Item -Path $steamSetupPath -Force -ErrorAction SilentlyContinue
+    }
+}
+
 function Invoke-SteamUpdate {
     [CmdletBinding()]
     param (
@@ -344,44 +395,39 @@ function Invoke-SteamUpdate {
     )
     
     Write-Log "Starting Steam update process..." -Level Info
-    $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl $Url -exitsteam"
-    Start-Process -FilePath "$($script:config.SteamInstallDir)\steam.exe" -ArgumentList $arguments
+    $downgradeZipPath = Join-Path $env:TEMP "dec2022steam.zip"
+    $extractPath = Join-Path $env:TEMP "dec2022steam"
     
-    Write-Log "Waiting for Steam to close..." -Level Info
-    $timeout = 1800 # 30 minutes timeout
-    $timer = [Diagnostics.Stopwatch]::StartNew()
-    while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
-        if ($timer.Elapsed.TotalSeconds -gt $timeout) {
-            Write-Log "Timeout reached. Steam process did not close." -Level Warning
-            break
+    try {
+        Invoke-SafeWebRequest -Uri $Url -OutFile $downgradeZipPath
+        Expand-Archive -Path $downgradeZipPath -DestinationPath $extractPath -Force
+        
+        $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl `"$extractPath`" -exitsteam"
+        Start-Process -FilePath "$($script:config.SteamInstallDir)\steam.exe" -ArgumentList $arguments
+        
+        Write-Log "Waiting for Steam to close..." -Level Info
+        $timeout = 1800 # 30 minutes timeout
+        $timer = [Diagnostics.Stopwatch]::StartNew()
+        while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
+            if ($timer.Elapsed.TotalSeconds -gt $timeout) {
+                Write-Log "Timeout reached. Steam process did not close." -Level Warning
+                break
+            }
+            Start-Sleep -Seconds 10
+            Write-Log "Still waiting for Steam to close... (Elapsed time: $($timer.Elapsed.TotalMinutes.ToString("F2")) minutes)" -Level Info
         }
-        Start-Sleep -Seconds 10
-        Write-Log "Still waiting for Steam to close... (Elapsed time: $($timer.Elapsed.TotalMinutes.ToString("F2")) minutes)" -Level Info
+        $timer.Stop()
+        
+        Write-Log "Steam update process completed." -Level Success
+        Write-Log "IMPORTANT: You will need to log in to Steam again due to the downgrade process." -Level Warning
     }
-    $timer.Stop()
-    
-    Write-Log "Steam update process completed." -Level Success
-}
-
-function Get-DowngradeChoice {
-    if ($NoInteraction) {
-        return -not $SkipDowngrade
+    catch {
+        throw "Failed to update Steam: $_"
     }
-    $choice = Read-Host "Do you want to downgrade Steam? (Y/N)"
-    return $choice.ToUpper() -eq 'Y'
-}
-
-function Get-CustomVersionUrl {
-    if ($SelectedMode -eq "TEST-Version") {
-        if ($NoInteraction) {
-            return $CustomVersion
-        }
-        $useCustom = Read-Host "Do you want to use a custom version URL? (Y/N)"
-        if ($useCustom.ToUpper() -eq 'Y') {
-            return Read-Host "Enter the custom version URL"
-        }
+    finally {
+        Remove-Item -Path $downgradeZipPath -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $extractPath -Recurse -Force -ErrorAction SilentlyContinue
     }
-    return $null
 }
 
 function Backup-SteamFiles {
@@ -630,6 +676,15 @@ function Start-SteamDebloat {
         
         $files = Get-Files -SelectedMode $SelectedMode
         
+        if (-not $NoInteraction -and (Read-Host "Do you want to install VC++ AIO for better performance? (Y/N)").ToUpper() -eq 'Y') {
+            Install-VCRedistAIO
+        }
+        
+        $reinstallSteam = -not $NoInteraction -and (Read-Host "Do you want to reinstall Steam before downgrading? (Y/N)").ToUpper() -eq 'Y'
+        if ($reinstallSteam) {
+            Reinstall-Steam
+        }
+        
         $downgradeChoice = Get-DowngradeChoice
         if ($downgradeChoice) {
             $customUrl = Get-CustomVersionUrl
@@ -677,7 +732,3 @@ function Start-SteamDebloat {
 # Main execution
 if (-not $SkipIntro -and -not $NoInteraction) {
     Show-Introduction
-}
-
-$selectedMode = if ($Mode) { $Mode } else { Get-UserSelection }
-Start-SteamDebloat -SelectedMode $selectedMode
