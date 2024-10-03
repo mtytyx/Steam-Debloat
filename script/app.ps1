@@ -732,3 +732,7 @@ function Start-SteamDebloat {
 # Main execution
 if (-not $SkipIntro -and -not $NoInteraction) {
     Show-Introduction
+}
+
+$selectedMode = if ($Mode) { $Mode } else { Get-UserSelection }
+Start-SteamDebloat -SelectedMode $selectedMode
