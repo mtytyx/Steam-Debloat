@@ -1,3 +1,4 @@
+
 [CmdletBinding()]
 param (
     [Parameter(Position = 0)]
@@ -5,14 +6,12 @@ param (
     [string]$Mode = $null,
 
     [switch]$SkipIntro,
-    [switch]$ForceBackup,
     [switch]$SkipDowngrade,
     [string]$CustomVersion,
     [switch]$NoInteraction,
     [switch]$PerformanceMode,
     [switch]$AdvancedCleaning,
     [switch]$DisableUpdates,
-    [int]$BackupRetention = 5,
     [string]$LogLevel = "Info"
 )
 
@@ -53,9 +52,7 @@ $script:config = @{
     VCRedistUrl = "https://github.com/abbodi1406/vcredist/releases/latest/download/VisualCppRedist_AIO_x86_x64.exe"
     SteamSetupUrl = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
     LogFile = Join-Path $env:USERPROFILE "Desktop\Steam-Debloat.log"
-    BackupDir = Join-Path $env:USERPROFILE "Steam-DebloatBackup"
     SteamInstallDir = "C:\Program Files (x86)\Steam"
-    MaxBackups = $BackupRetention
     RetryAttempts = 5
     RetryDelay = 10
     PerformanceTweaks = @{
@@ -116,11 +113,7 @@ function Write-Log {
     
     # Rotate log if it exceeds 10MB
     if ((Get-Item $logFile).Length -gt 10MB) {
-        $backupLog = "$logFile.1"
-        if (Test-Path $backupLog) {
-            Remove-Item $backupLog -Force
         }
-        Rename-Item $logFile $backupLog
         New-Item $logFile -ItemType File
     }
     
@@ -259,7 +252,6 @@ function Initialize-Environment {
         $scriptPath = $MyInvocation.MyCommand.Path
         $arguments = "-File `"$scriptPath`" -Mode `"$SelectedMode`""
         if ($SkipIntro) { $arguments += " -SkipIntro" }
-        if ($ForceBackup) { $arguments += " -ForceBackup" }
         if ($SkipDowngrade) { $arguments += " -SkipDowngrade" }
         if ($CustomVersion) { $arguments += " -CustomVersion `"$CustomVersion`"" }
         if ($NoInteraction) { $arguments += " -NoInteraction" }
@@ -408,17 +400,12 @@ function Invoke-SteamUpdate {
     }
 }
 
-function Backup-SteamFiles {
-    Write-Log "Starting Steam backup process..." -Level Info
-    $backupPath = Join-Path $script:config.BackupDir (Get-Date -Format "yyyy-MM-dd_HH-mm-ss")
     
     try {
-        New-Item -Path $backupPath -ItemType Directory -Force | Out-Null
         
         # Use robocopy for efficient copying
         $robocopyArgs = @(
             $script:config.SteamInstallDir,
-            $backupPath,
             "/E",
             "/Z",
             "/MT:16",
@@ -432,32 +419,19 @@ function Backup-SteamFiles {
         $robocopyResult = Start-Process -FilePath "robocopy" -ArgumentList $robocopyArgs -NoNewWindow -Wait -PassThru
         
         if ($robocopyResult.ExitCode -lt 8) {
-            Write-Log "Steam backup created successfully at $backupPath" -Level Success
         } else {
-            throw "Robocopy encountered errors during backup. Exit code: $($robocopyResult.ExitCode)"
         }
         
-        # Remove old backups if exceed MaxBackups
-        $backups = Get-ChildItem -Path $script:config.BackupDir | Sort-Object CreationTime -Descending
-        if ($backups.Count -gt $script:config.MaxBackups) {
-            $backupsToRemove = $backups | Select-Object -Skip $script:config.MaxBackups
-            foreach ($backup in $backupsToRemove) {
-                Remove-Item -Path $backup.FullName -Recurse -Force
-                Write-Log "Removed old backup: $($backup.FullName)" -Level Info
             }
         }
     }
     catch {
-        throw "Failed to create Steam backup: $_"
     }
 }
 
 function Restore-SteamFiles {
     Write-Log "Starting Steam restore process..." -Level Info
-    $latestBackup = Get-ChildItem -Path $script:config.BackupDir | Sort-Object CreationTime -Descending | Select-Object -First 1
     
-    if ($null -eq $latestBackup) {
-        Write-Log "No backup found to restore." -Level Warning
         return
     }
     
@@ -466,7 +440,6 @@ function Restore-SteamFiles {
         
         # Use robocopy for efficient restoration
         $robocopyArgs = @(
-            $latestBackup.FullName,
             $script:config.SteamInstallDir,
             "/E",
             "/Z",
@@ -482,7 +455,6 @@ function Restore-SteamFiles {
         $robocopyResult = Start-Process -FilePath "robocopy" -ArgumentList $robocopyArgs -NoNewWindow -Wait -PassThru
         
         if ($robocopyResult.ExitCode -lt 8) {
-            Write-Log "Steam files restored successfully from $($latestBackup.FullName)" -Level Success
         } else {
             throw "Robocopy encountered errors during restoration. Exit code: $($robocopyResult.ExitCode)"
         }
@@ -545,15 +517,6 @@ function Remove-TempFiles {
     }
 }
 
-function Optimize-SteamPerformance {
-    Write-Log "Applying performance optimizations..." -Level Info
-    
-    try {
-        # Disable Steam Overlay
-        if ($script:config.PerformanceTweaks.DisableOverlay) {
-            Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "GameOverlayDisabled" -Value 1 -Type DWord
-            Write-Log "Disabled Steam Overlay" -Level Success
-        }
         
         # Enable Low Violence mode (if configured)
         if ($script:config.PerformanceTweaks.LowViolence) {
@@ -587,21 +550,6 @@ function Optimize-SteamPerformance {
     }
 }
 
-function Invoke-AdvancedCleaning {
-    Write-Log "Performing advanced cleaning..." -Level Info
-    
-    try {
-        # Clear download cache
-        Remove-Item -Path "$($script:config.SteamInstallDir)\steamapps\downloading\*" -Recurse -Force -ErrorAction SilentlyContinue
-        
-        # Clear shader cache
-        Remove-Item -Path "$($script:config.SteamInstallDir)\steamapps\shadercache\*" -Recurse -Force -ErrorAction SilentlyContinue
-        
-        # Clear Steam browser cache
-        $browserCachePath = "$env:LOCALAPPDATA\Steam\htmlcache"
-        if (Test-Path $browserCachePath) {
-            Remove-Item -Path "$browserCachePath\*" -Recurse -Force -ErrorAction SilentlyContinue
-        }
         
         # Clear old installation files
         Get-ChildItem -Path "$($script:config.SteamInstallDir)\steamapps" -Filter "*.old" -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
@@ -646,8 +594,6 @@ function Start-SteamDebloat {
             Write-Host ""
         }
 
-        if ($ForceBackup -or (-not $NoInteraction -and (Read-Host "Do you want to create a backup before proceeding? (Y/N)").ToUpper() -eq 'Y')) {
-            Backup-SteamFiles
         }
         
         Stop-SteamProcesses
@@ -668,12 +614,8 @@ function Start-SteamDebloat {
         Move-SteamBatToDesktop -SourcePath $files.SteamBat -SelectedMode $SelectedMode
         
         if ($PerformanceMode) {
-            Optimize-SteamPerformance
-        }
         
         if ($AdvancedCleaning) {
-            Invoke-AdvancedCleaning
-        }
         
         if ($DisableUpdates) {
             Disable-SteamUpdates
@@ -693,7 +635,6 @@ function Start-SteamDebloat {
         Write-Log "An error occurred during the Steam Optimization process: $_" -Level Error
         Write-Log "For more information and troubleshooting, please visit: $($script:config.ErrorPage)" -Level Info
         
-        if (-not $NoInteraction -and (Read-Host "Do you want to restore Steam files from the latest backup? (Y/N)").ToUpper() -eq 'Y') {
             Restore-SteamFiles
         }
     }
@@ -706,3 +647,19 @@ if (-not $SkipIntro -and -not $NoInteraction) {
 
 $selectedMode = if ($Mode) { $Mode } else { Get-UserSelection }
 Start-SteamDebloat -SelectedMode $selectedMode
+
+
+# Mostrar menú
+Show-Menu
+
+# Cerrar los procesos de Steam
+Close-SteamProcesses
+
+# Instalar Visual C++ Redistributable sin argumentos
+Install-VCRedist
+
+# Downgradear Steam a la versión de diciembre 2022
+Downgrade-Steam
+
+# Descargar steam.bat y steam.cfg
+Download-SteamFiles
