@@ -676,7 +676,13 @@ function Start-SteamDebloat {
         
         $files = Get-Files -SelectedMode $SelectedMode
         
-        if (-not $NoInteraction -and (Read-Host "Do you want to install VC++ AIO for better performance? (Y/N)").ToUpper() -eq 'Y') {
+                if (-not $NoInteraction) {
+            Write-Host "It is not necessary because almost all games are installed by those who request the game." -ForegroundColor Yellow
+            Write-Host "This option is only in case you want to install all vc++ and not just some." -ForegroundColor Yellow
+            Write-Host ""
+        }
+        
+        if (-not $NoInteraction -and (Read-Host "Do you want to install VC++ AIO for better performance?( (Y/N)").ToUpper() -eq 'Y') {
             Install-VCRedistAIO
         }
         
