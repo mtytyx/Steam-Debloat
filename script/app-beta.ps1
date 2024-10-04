@@ -5,9 +5,6 @@ param (
     [string]$Mode = "Normal",
     [switch]$SkipIntro,
     [switch]$NoInteraction,
-    [switch]$PerformanceMode,
-    [switch]$AdvancedCleaning,
-    [switch]$DisableUpdates,
     [string]$CustomVersion,
     [string]$LogLevel = "Info"
 )
@@ -35,11 +32,6 @@ $script:config = @{
     SteamInstallDir = "C:\Program Files (x86)\Steam"
     RetryAttempts = 3
     RetryDelay = 5
-    PerformanceTweaks = @{
-        DisableOverlay = $true
-        DisableVoiceChat = $true
-        OptimizeNetworkConfig = $true
-    }
 }
 
 # Logging function
@@ -175,43 +167,6 @@ function Remove-TempFiles {
     Write-Log "Removed temporary files" -Level Info
 }
 
-# Optimize Steam performance
-function Optimize-SteamPerformance {
-    if ($script:config.PerformanceTweaks.DisableOverlay) {
-        Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "GameOverlayDisabled" -Value 1 -Type DWord
-        Write-Log "Disabled Steam overlay" -Level Info
-    }
-    if ($script:config.PerformanceTweaks.DisableVoiceChat) {
-        Set-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "VoiceReceiveVolume" -Value 0 -Type DWord
-        Write-Log "Disabled voice chat" -Level Info
-    }
-    if ($script:config.PerformanceTweaks.OptimizeNetworkConfig) {
-        $libraryFoldersPath = Join-Path $script:config.SteamInstallDir "steamapps\libraryfolders.vdf"
-        if (Test-Path $libraryFoldersPath) {
-            (Get-Content $libraryFoldersPath -Raw) -replace '("MaximumConnectionsPerServer"\s+")(\d+)(")', '$1128$3' | Set-Content $libraryFoldersPath -Force
-            Write-Log "Optimized network configuration" -Level Info
-        }
-    }
-}
-
-# Perform advanced cleaning
-function Invoke-AdvancedCleaning {
-    Remove-Item -Path "$($script:config.SteamInstallDir)\steamapps\downloading\*" -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item -Path "$($script:config.SteamInstallDir)\steamapps\shadercache\*" -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item -Path "$env:LOCALAPPDATA\Steam\htmlcache\*" -Recurse -Force -ErrorAction SilentlyContinue
-    Get-ChildItem -Path "$($script:config.SteamInstallDir)\steamapps" -Filter "*.old" -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
-    Write-Log "Performed advanced cleaning" -Level Info
-}
-
-# Disable Steam updates
-function Disable-SteamUpdates {
-    @"
-BootStrapperInhibitAll=enable
-BootStrapperForceSelfUpdate=disable
-"@ | Set-Content (Join-Path $script:config.SteamInstallDir "steam.cfg") -Force
-    Write-Log "Disabled Steam updates" -Level Info
-}
-
 # Main function to start Steam debloat process
 function Start-SteamDebloat {
     param (
@@ -240,17 +195,21 @@ function Start-SteamDebloat {
         Stop-SteamProcesses
         $files = Get-RequiredFiles -SelectedMode $SelectedMode
 
-        if ($CustomVersion -or (-not $NoInteraction -and (Read-Host "Do you want to downgrade Steam? (Y/N)").ToUpper() -eq 'Y')) {
-            $downgradeUrl = if ($CustomVersion) { $CustomVersion } else { $script:config.DefaultDowngradeUrl }
-            Invoke-SteamUpdate -Url $downgradeUrl
+        if ($SelectedMode -eq "TEST-Version") {
+            if (-not $CustomVersion) {
+                $CustomVersion = Read-Host "Enter the custom version URL for Steam update"
+            }
+            if ($CustomVersion) {
+                Invoke-SteamUpdate -Url $CustomVersion
+            } else {
+                Write-Log "No custom version URL provided. Skipping Steam update." -Level Warning
+            }
+        } elseif (-not $NoInteraction -and (Read-Host "Do you want to downgrade Steam? (Y/N)").ToUpper() -eq 'Y') {
+            Invoke-SteamUpdate -Url $script:config.DefaultDowngradeUrl
         }
 
         Move-ConfigFile -SourcePath $files.SteamCfg
         Move-SteamBatToDesktop -SourcePath $files.SteamBat -SelectedMode $SelectedMode
-
-        if ($PerformanceMode) { Optimize-SteamPerformance }
-        if ($AdvancedCleaning) { Invoke-AdvancedCleaning }
-        if ($DisableUpdates) { Disable-SteamUpdates }
 
         Remove-TempFiles
 
