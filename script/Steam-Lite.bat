@@ -1,2 +1,3 @@
 @echo off
-start "" /B /LOW "C:\Program Files (x86)\Steam\steam.exe" -silent -nointro -nocrashmonitor -disablehighdpi -single_core -vrdisable -tcp -cef-force-32bit -no-dwrite -no-verifyfiles -skipstreaming -no-background-updates -lowpower -windowed -no-browser -cef-disable-remote-fonts -cef-disable-web-security -no-cafs -disable-broadcast -disable-steamvr -no-shaders -no-preload -no-splash -no-sound -no-movies
+cd /d "C:\Program Files (x86)\Steam"
+start steam.exe -silent -cef-force-32bit -no-browser -no-dwrite -no-cef-sandbox -nooverlay -nofriendsui -nobigpicture -noshaders -novid -noverifyfiles -nointro -skipstreamingdrivers -norepairfiles -nohltv -480p -cef-disable-gpu -cef-disable-hang-timeouts -cef-disable-seccomp-sandbox -cef-disable-gpu-compositing -console
