@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.webp" alt="Steam Debloat Logo" width="250"/>
+  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.png" alt="Steam Debloat Logo" width="250"/>
 </p>
 
 <p align="center">
