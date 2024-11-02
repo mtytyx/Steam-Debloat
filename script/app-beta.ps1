@@ -27,12 +27,40 @@ $script:config = @{
         "TEST-Lite" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat"
         "TEST-Version" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
+        "MaintenanceStatus" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/maintenance.json" # URL para verificar mantenimiento
     }
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
     LogFile = Join-Path $env:USERPROFILE "Desktop\Steam-Debloat.log"
     SteamInstallDir = "C:\Program Files (x86)\Steam"
     RetryAttempts = 3
     RetryDelay = 5
+}
+
+function Test-MaintenanceStatus {
+    try {
+        Write-Log "Verificando estado de mantenimiento..." -Level Debug
+        
+        $response = Invoke-WebRequest -Uri $script:config.Urls.MaintenanceStatus -UseBasicParsing
+        $maintenance = $response.Content | ConvertFrom-Json
+        
+        if ($maintenance.status -eq "on") {
+            Write-Log "El sistema se encuentra en mantenimiento" -Level Warning
+            Write-Log "Razón: $($maintenance.reason)" -Level Warning
+            Write-Log "Por favor, intente más tarde" -Level Warning
+            if (-not $NoInteraction) { Read-Host "`nPresione Enter para salir" }
+            exit
+        }
+        
+        # Si el mantenimiento está desactivado, continuamos silenciosamente
+        Write-Log "Estado de mantenimiento verificado - Sistema disponible" -Level Debug
+        return $true
+    }
+    catch {
+        # Si no podemos verificar el mantenimiento, asumimos que el sistema está disponible
+        Write-Log "No se pudo verificar el estado de mantenimiento: $_" -Level Warning
+        Write-Log "Continuando con la ejecución..." -Level Warning
+        return $true
+    }
 }
 
 # Logging function
@@ -199,62 +227,72 @@ function Remove-TempFiles {
 
 # Main function to start the optimization process for Steam 
 function Start-SteamDebloat {
-   param (
-       [string]$SelectedMode 
-   )
-   
-   try {
-       if (-not (Test-AdminPrivileges)) {  
-           Write-Log "Requesting administrator privileges..." -Level Warning  
-           # Prepare arguments to restart as administrator  
-           $scriptPath = $MyInvocation.MyCommand.Path  
-           $arguments = "-File `"$scriptPath`" -Mode `"$SelectedMode`""  
-           
-           foreach ($param in $PSBoundParameters.GetEnumerator()) {  
-               if ($param.Key -ne "Mode") {  
-                   $arguments += " -$($param.Key)"  
-                   if ($param.Value -isnot [switch]) {  
-                       $arguments += " `"$($param.Value)`""  
-                   }  
-               }  
-           }  
-           Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList $arguments  
-           return  
-       }
+    param (
+        [string]$SelectedMode
+    )
+    
+    try {
+        # Verificar mantenimiento antes de continuar
+        if (-not (Test-MaintenanceStatus)) {
+            return
+        }
 
-       # Set title and log start of process 
-       $host.UI.RawUI.WindowTitle = "$($script:config.Title) - $($script:config.GitHub)"  
-       Write-Log "`nStarting optimization in mode: '$SelectedMode'" –Level Info  
+        if (-not (Test-AdminPrivileges)) {
+            Write-Log "Requesting administrator privileges..." -Level Warning
+            $scriptPath = $MyInvocation.MyCommand.Path
+            $arguments = "-File `"$scriptPath`" -Mode `"$SelectedMode`""
+            
+            foreach ($param in $PSBoundParameters.GetEnumerator()) {
+                if ($param.Key -ne "Mode") {
+                    $arguments += " -$($param.Key)"
+                    if ($param.Value -isnot [switch]) {
+                        $arguments += " `"$($param.Value)`""
+                    }
+                }
+            }
+            Start-ProcessAsAdmin -FilePath "powershell.exe" -ArgumentList $arguments
+            return
+        }
 
-       Stop-SteamProcesses  # Stop active Steam processes  
-       $files = Get-RequiredFiles –SelectedMode $SelectedMode  # Get required files 
+        # Resto del código original de Start-SteamDebloat...
+        $host.UI.RawUI.WindowTitle = "$($script:config.Title) - $($script:config.GitHub)"
+        Write-Log "`nStarting optimization in mode: '$SelectedMode'" -Level Info
 
-       if ($SelectedMode –eq "TEST-Version") {  
-           if (-not $CustomVersion) {  
-               # Prompt for custom URL if not provided 
-               $CustomVersion = Read-Host "`nEnter the custom version URL for Steam update:"  
-           }  
-           if ($CustomVersion) {  
-               Invoke-SteamUpdate –Url $CustomVersion  # Invoke update with custom URL 
-           } else {  
-               Write-Log "`nNo custom version URL provided. Skipping Steam update." –Level Warning  
-           }  
-       } elseif (-not $NoInteraction –and (Read-Host "`nDo you want to downgrade Steam? (Y/N)").ToUpper() –eq 'Y') {  
-           Invoke-SteamUpdate –Url $script:config.DefaultDowngradeUrl  # Invoke downgrade if requested 
-       }
+        Stop-SteamProcesses
+        $files = Get-RequiredFiles -SelectedMode $SelectedMode
 
-       Move-ConfigFile –SourcePath $files.SteamCfg  # Move CFG file to Steam installation directory 
-       Move-SteamBatToDesktop –SourcePath $files.SteamBat –SelectedMode $SelectedMode  # Move BAT file to desktop 
+        if ($SelectedMode -eq "TEST-Version") {
+            if (-not $CustomVersion) {
+                $CustomVersion = Read-Host "`nEnter the custom version URL for Steam update:"
+            }
+            if ($CustomVersion) {
+                Invoke-SteamUpdate -Url $CustomVersion
+            }
+            else {
+                Write-Log "`nNo custom version URL provided. Skipping Steam update." -Level Warning
+            }
+        }
+        elseif (-not $NoInteraction -and (Read-Host "`nDo you want to downgrade Steam? (Y/N)").ToUpper() -eq 'Y') {
+            Invoke-SteamUpdate -Url $script:config.DefaultDowngradeUrl
+        }
 
-       Remove-TempFiles  # Remove temporary files 
+        Move-ConfigFile -SourcePath $files.SteamCfg
+        Move-SteamBatToDesktop -SourcePath $files.SteamBat -SelectedMode $SelectedMode
 
-       Write-Log "`nOptimization process completed successfully!" –Level Success  
-       Write-Log "`nSteam has been updated and configured for optimal performance." –Level Info  
-       Write-Log "`nYou can contribute to improve the repository at: `"$($script:config.GitHub)`"" –Level Info  
+        Remove-TempFiles
 
-       if (-not $NoInteraction) { Read-host "`nPress Enter to exit" }    # Wait for input before exiting 
-   } catch {    # General error handling during the process    Write-log "`nAn error occurred: $_" –Level Error    Write-log "`nFor troubleshooting, visit: `"$($script:config.ErrorPage)`"" –Level Info   }
+        Write-Log "`nOptimization process completed successfully!" -Level Success
+        Write-Log "`nSteam has been updated and configured for optimal performance." -Level Info
+        Write-Log "`nYou can contribute to improve the repository at: `"$($script:config.GitHub)`"" -Level Info
+
+        if (-not $NoInteraction) { Read-Host "`nPress Enter to exit" }
+    }
+    catch {
+        Write-Log "`nAn error occurred: $_" -Level Error
+        Write-Log "`nFor troubleshooting, visit: `"$($script:config.ErrorPage)`"" -Level Info
+    }
 }
+
 
 # Main execution of the script 
 if (-not $SkipIntro -and -not $NoInteraction) {     Clear-host     Write-host @"
