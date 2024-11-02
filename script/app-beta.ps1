@@ -45,16 +45,16 @@ function Test-MaintenanceStatus {
         if ($maintenance.status -eq "on") {
             # Solo mostrar mensajes si hay mantenimiento
             Write-Host "`n===============================`n" -ForegroundColor Red
-            Write-Host "SISTEMA EN MANTENIMIENTO" -ForegroundColor Red
-            Write-Host "Razón: $($maintenance.reason)" -ForegroundColor Red
-            Write-Host "`nPor favor, intente más tarde" -ForegroundColor Red
+            Write-Host "SCRIPT IN MANTENANCE" -ForegroundColor Red
+            Write-Host "Reason: $($maintenance.reason)" -ForegroundColor Red
+            Write-Host "`nEstimated time 5-10 minutes" -ForegroundColor Red
             Write-Host "`n===============================`n" -ForegroundColor Red
             
             # Registrar en el log pero sin mostrar en pantalla
-            Write-Log "Sistema en mantenimiento - $($maintenance.reason)" -Level Warning
+            Write-Log "script in maintenance - $($maintenance.reason)" -Level Warning
             
             if (-not $NoInteraction) { 
-                Read-Host "Presione Enter para salir" 
+                Read-Host "nPress Enter to exit" 
             }
             exit
         }
