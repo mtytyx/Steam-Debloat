@@ -38,27 +38,29 @@ $script:config = @{
 
 function Test-MaintenanceStatus {
     try {
-        Write-Log "Checking maintenance status..." -Level Debug
-        
+        # Verificación silenciosa
         $response = Invoke-WebRequest -Uri $script:config.Urls.MaintenanceStatus -UseBasicParsing
         $maintenance = $response.Content | ConvertFrom-Json
         
         if ($maintenance.status -eq "on") {
-            Write-Log "The script is under maintenance" -Level Warning
-            Write-Log "Reason: $($maintenance.reason)" -Level Warning
-            Write-Log "Estimated time 5-10 minutes" -Level Warning
-            if (-not $NoInteraction) { Read-Host "`nPress Enter to exit" }
+            # Solo mostrar mensajes si hay mantenimiento
+            Write-Host "`n===============================`n" -ForegroundColor Red
+            Write-Host "SISTEMA EN MANTENIMIENTO" -ForegroundColor Red
+            Write-Host "Razón: $($maintenance.reason)" -ForegroundColor Red
+            Write-Host "`nPor favor, intente más tarde" -ForegroundColor Red
+            Write-Host "`n===============================`n" -ForegroundColor Red
+            
+            # Registrar en el log pero sin mostrar en pantalla
+            Write-Log "Sistema en mantenimiento - $($maintenance.reason)" -Level Warning
+            
+            if (-not $NoInteraction) { 
+                Read-Host "Presione Enter para salir" 
+            }
             exit
         }
-        
-        # Si el mantenimiento está desactivado, continuamos silenciosamente
-        Write-Log "Estado de mantenimiento verificado - Sistema disponible" -Level Debug
         return $true
     }
     catch {
-        # Si no podemos verificar el mantenimiento, asumimos que el sistema está disponible
-        Write-Log "No se pudo verificar el estado de mantenimiento: $_" -Level Warning
-        Write-Log "Continuando con la ejecución..." -Level Warning
         return $true
     }
 }
