@@ -38,16 +38,16 @@ $script:config = @{
 
 function Test-MaintenanceStatus {
     try {
-        Write-Log "Verificando estado de mantenimiento..." -Level Debug
+        Write-Log "Checking maintenance status..." -Level Debug
         
         $response = Invoke-WebRequest -Uri $script:config.Urls.MaintenanceStatus -UseBasicParsing
         $maintenance = $response.Content | ConvertFrom-Json
         
         if ($maintenance.status -eq "on") {
-            Write-Log "El sistema se encuentra en mantenimiento" -Level Warning
-            Write-Log "Razón: $($maintenance.reason)" -Level Warning
-            Write-Log "Por favor, intente más tarde" -Level Warning
-            if (-not $NoInteraction) { Read-Host "`nPresione Enter para salir" }
+            Write-Log "The script is under maintenance" -Level Warning
+            Write-Log "Reason: $($maintenance.reason)" -Level Warning
+            Write-Log "Estimated time 5-10 minutes" -Level Warning
+            if (-not $NoInteraction) { Read-Host "`nPress Enter to exit" }
             exit
         }
         
