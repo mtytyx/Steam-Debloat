@@ -143,8 +143,8 @@ Choose your perfect balance:
 
 ### Documentation
 
-- [📚 Full Documentation](https://github.com/mtytyx/Steam-Debloat/main/assets/wiki.md)
-- [🔧 Troubleshooting Guide](https://github.com/mtytyx/Steam-Debloat/main/assets/wiki.md)
+- [📚 Full Documentation](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/wiki.md)
+- [🔧 Troubleshooting Guide](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/wiki.md)
 
 ## 🌟 Success Stories
 
