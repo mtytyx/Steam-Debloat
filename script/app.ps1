@@ -90,16 +90,17 @@ function Start-ProcessAsAdmin {
 
 # Stop Steam processes
 function Stop-SteamProcesses {
-    Get-Process | Where-Object { $_.Name -like "*steam*" } | ForEach-Object {
+    $steamProcesses = Get-Process -Name "*steam*" -ErrorAction SilentlyContinue
+    foreach ($process in $steamProcesses) {
         try {
-            $_.Kill()
-            $_.WaitForExit(5000)
-            Write-Log "Stopped process: $($_.Name)" -Level Info
+            $process.Kill()
+            $process.WaitForExit(5000)
+            Write-Log "Stopped process: $($process.ProcessName)" -Level Info
         } catch {
             if ($_.Exception.Message -like "*The process has already exited.*") {
-                Write-Log "Process $($_.Name) has already exited, skipping." -Level Debug
+                Write-Log "Process $($process.ProcessName) has already exited, skipping." -Level Debug
             } else {
-                Write-Log "Failed to stop process $($_.Name): $_" -Level Warning
+                Write-Log "Failed to stop process $($process.ProcessName): $_" -Level Warning
             }
         }
     }
