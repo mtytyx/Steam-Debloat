@@ -96,7 +96,11 @@ function Stop-SteamProcesses {
             $_.WaitForExit(5000)
             Write-Log "Stopped process: $($_.Name)" -Level Info
         } catch {
-            Write-Log "Failed to stop process $($_.Name): $_" -Level Warning
+            if ($_.Exception.Message -like "*The process has already exited.*") {
+                Write-Log "Process $($_.Name) has already exited, skipping." -Level Debug
+            } else {
+                Write-Log "Failed to stop process $($_.Name): $_" -Level Warning
+            }
         }
     }
 }
