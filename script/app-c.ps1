@@ -47,7 +47,7 @@ function Write-Log {
     if ($NoNewline) {
         Write-Host -NoNewline "[$Level] $Message" -ForegroundColor $color -Background "DarkBlue" -Verbose
     } else {
-        Write-Host "[$Level] $Message" -ForegroundColor $color -Background "DarkBlue" -Verbose
+        Write-Host "[$Level] $Message" -ForegroundColor $color -BackgroundColor Black -Verbose
     }
     Add-Content -Path $script:config.LogFile -Value $logMessage
 }
