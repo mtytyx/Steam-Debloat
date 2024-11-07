@@ -41,7 +41,7 @@ Tired of a sluggish Steam client? Steam Debloat is your go-to solution for a lea
 
 ## 💻 System Requirements
 
-- **OS**: Windows 7, 8, 8.1, 10, or 11 (32-bit or 64-bit)
+- **OS**: Windows 7, 8, 8.1, 10, or 11 (winver 20H1+)
 - **PowerShell**: Version 5.1 or higher
 - **Permissions**: Administrator rights required
 
