@@ -16,8 +16,8 @@ $ErrorActionPreference = "Stop"
 $script:config = @{
     Title = "Steam Debloat"
     GitHub = "Github.com/mtytyx/Steam-Debloat"
-    Version = "v7.7"
-    Color = @{Info = "Cyan"; Success = "Green"; Warning = "Yellow"; Error = "Red"; Debug = "Magenta"}
+    Version = "v7.8"
+    Color = @{Info = "Green"; Success = "Green"; Warning = "Yellow"; Error = "Red"; Debug = "Green"}
     ErrorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls = @{
         "Normal" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat"
@@ -26,12 +26,45 @@ $script:config = @{
         "TEST-Lite" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-Lite-TEST.bat"
         "TEST-Version" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
         "SteamCfg" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
+        "SteamSetup" = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
     }
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
-    LogFile = Join-Path $env:USERPROFILE "Desktop\Steam-Debloat.log"
+    LogFile = Join-Path $env:TEMP "Steam-Debloat.log"
     SteamInstallDir = "C:\Program Files (x86)\Steam"
     RetryAttempts = 3
     RetryDelay = 5
+}
+
+# Check if Steam is installed
+function Test-SteamInstallation {
+    $steamExePath = Join-Path $script:config.SteamInstallDir "steam.exe"
+    return Test-Path $steamExePath
+}
+
+# Install Steam
+function Install-Steam {
+    Write-Log "Downloading Steam installer..." -Level Info
+    $setupPath = Join-Path $env:TEMP "SteamSetup.exe"
+    
+    try {
+        Invoke-SafeWebRequest -Uri $script:config.Urls.SteamSetup -OutFile $setupPath
+        Write-Log "Running Steam installer..." -Level Info
+        Start-Process -FilePath $setupPath -ArgumentList "/S" -Wait
+        
+        # Wait for installation to complete and verify
+        Start-Sleep -Seconds 10
+        if (Test-SteamInstallation) {
+            Write-Log "Steam installed successfully!" -Level Success
+            Remove-Item $setupPath -Force -ErrorAction SilentlyContinue
+            return $true
+        } else {
+            Write-Log "Steam installation may have failed. Please install manually." -Level Error
+            return $false
+        }
+    } catch {
+        Write-Log "Failed to install Steam: $_" -Level Error
+        return $false
+    }
 }
 
 # Logging function
@@ -45,9 +78,9 @@ function Write-Log {
     $logMessage = "[$timestamp] [$Level] $Message"
     $color = $script:config.Color[$Level]
     if ($NoNewline) {
-        Write-Host -NoNewline "[$Level] $Message" -ForegroundColor $color
+        Write-Host -NoNewline "[$Level] $Message" -ForegroundColor $color -Verbose
     } else {
-        Write-Host "[$Level] $Message" -ForegroundColor $color
+        Write-Host "[$Level] $Message" -ForegroundColor $color -Verbose
     }
     Add-Content -Path $script:config.LogFile -Value $logMessage
 }
@@ -113,13 +146,13 @@ function Get-RequiredFiles {
     )
     $steamBatPath = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
     $steamCfgPath = Join-Path $env:TEMP "steam.cfg"
-    
+
     Write-Log "Downloading Steam-$SelectedMode.bat..." -Level Info
     Invoke-SafeWebRequest -Uri $script:config.Urls[$SelectedMode] -OutFile $steamBatPath
-    
+
     Write-Log "Downloading steam.cfg..." -Level Info
     Invoke-SafeWebRequest -Uri $script:config.Urls.SteamCfg -OutFile $steamCfgPath
-    
+
     return @{ SteamBat = $steamBatPath; SteamCfg = $steamCfgPath }
 }
 
@@ -157,12 +190,11 @@ function Move-ConfigFile {
 # Move Steam bat to desktop
 function Move-SteamBatToDesktop {
     param (
-        [string]$SourcePath,
-        [string]$SelectedMode
+        [string]$SourcePath
     )
-    $destinationPath = Join-Path ([Environment]::GetFolderPath("Desktop")) "Steam-$SelectedMode.bat"
+    $destinationPath = Join-Path ([Environment]::GetFolderPath("Desktop")) "steam.bat"
     Copy-Item -Path $SourcePath -Destination $destinationPath -Force
-    Write-Log "Moved Steam-$SelectedMode.bat to desktop" -Level Info
+    Write-Log "Moved steam.bat to desktop" -Level Info
 }
 
 # Remove temporary files
@@ -172,7 +204,7 @@ function Remove-TempFiles {
     Write-Log "Removed temporary files" -Level Info
 }
 
-# Main function to start Steam debloat process
+# Updated Main function to start Steam debloat process
 function Start-SteamDebloat {
     param (
         [string]$SelectedMode
@@ -196,6 +228,22 @@ function Start-SteamDebloat {
 
         $host.UI.RawUI.WindowTitle = "$($script:config.Title) - $($script:config.GitHub)"
         Write-Log "Starting $($script:config.Title) Optimization in $SelectedMode mode" -Level Info
+
+        # Check if Steam is installed
+        if (-not (Test-SteamInstallation)) {
+            Write-Log "Steam is not installed on this system." -Level Warning
+            $choice = Read-Host "Would you like to install Steam? (Y/N)"
+            if ($choice.ToUpper() -eq 'Y') {
+                $installSuccess = Install-Steam
+                if (-not $installSuccess) {
+                    Write-Log "Cannot proceed without Steam installation." -Level Error
+                    return
+                }
+            } else {
+                Write-Log "Cannot proceed without Steam installation." -Level Error
+                return
+            }
+        }
 
         Stop-SteamProcesses
         $files = Get-RequiredFiles -SelectedMode $SelectedMode
@@ -232,10 +280,10 @@ function Start-SteamDebloat {
 if (-not $SkipIntro -and -not $NoInteraction) {
     Clear-Host
     Write-Host @"
-  ____  _                        ____       _     _             _   
- / ___|| |_ ___  __ _ _ __ ___  |  _ \  ___| |__ | | ___   __ _| |_ 
+  ____  _                        ____       _     _             _
+ / ___|| |_ ___  __ _ _ __ ___  |  _ \  ___| |__ | | ___   __ _| |_
  \___ \| __/ _ \/ _` | '_ ` _ \ | | | |/ _ \ '_ \| |/ _ \ / _` | __|
-  ___) | ||  __/ (_| | | | | | || |_| |  __/ |_) | | (_) | (_| | |_ 
+  ___) | ||  __/ (_| | | | | | || |_| |  __/ |_) | | (_) | (_| | |_
  |____/ \__\___|\__,_|_| |_| |_||____/ \___|_.__/|_|\___/ \__,_|\__|
 "@ -ForegroundColor Cyan
     Write-Log "`nWelcome to $($script:config.Title) - $($script:config.GitHub) - $($script:config.Version)`n" -Level Info
