@@ -78,9 +78,9 @@ function Write-Log {
     $logMessage = "[$timestamp] [$Level] $Message"
     $color = $script:config.Color[$Level]
     if ($NoNewline) {
-        Write-Host -NoNewline "[$Level] $Message" -ForegroundColor $color -Background "DarkBlue" -Verbose
+        Write-Host -NoNewline "[$Level] $Message" -ForegroundColor $color -Verbose
     } else {
-        Write-Host "[$Level] $Message" -ForegroundColor $color -BackgroundColor Black -Verbose
+        Write-Host "[$Level] $Message" -ForegroundColor $color -Verbose
     }
     Add-Content -Path $script:config.LogFile -Value $logMessage
 }
@@ -190,12 +190,11 @@ function Move-ConfigFile {
 # Move Steam bat to desktop
 function Move-SteamBatToDesktop {
     param (
-        [string]$SourcePath,
-        [string]$SelectedMode
+        [string]$SourcePath
     )
-    $destinationPath = Join-Path ([Environment]::GetFolderPath("Desktop")) "Steam-$SelectedMode.bat"
+    $destinationPath = Join-Path ([Environment]::GetFolderPath("Desktop")) "steam.bat"
     Copy-Item -Path $SourcePath -Destination $destinationPath -Force
-    Write-Log "Moved Steam-$SelectedMode.bat to desktop" -Level Info
+    Write-Log "Moved steam.bat to desktop" -Level Info
 }
 
 # Remove temporary files
