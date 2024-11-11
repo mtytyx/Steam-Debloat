@@ -16,7 +16,7 @@ $ErrorActionPreference = "Stop"
 $script:config = @{
     Title = "Steam Debloat"
     GitHub = "Github.com/mtytyx/Steam-Debloat"
-    Version = "v7.8"
+    Version = "v1.0.021"
     Color = @{Info = "Green"; Success = "Green"; Warning = "Yellow"; Error = "Red"; Debug = "Green"}
     ErrorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls = @{
@@ -187,6 +187,17 @@ function Move-ConfigFile {
     Write-Log "Moved steam.cfg to $destinationPath" -Level Info
 }
 
+# Move Steam bat to Startup folder
+function Move-SteamBatToStartup {
+    param (
+        [string]$SourcePath
+    )
+    $startupPath = [Environment]::GetFolderPath('Startup')
+    $destinationPath = Join-Path $startupPath "steam.bat"
+    Copy-Item -Path $SourcePath -Destination $destinationPath -Force
+    Write-Log "Moved steam.bat to Startup folder" -Level Info
+}
+
 # Move Steam bat to desktop
 function Move-SteamBatToDesktop {
     param (
@@ -195,6 +206,13 @@ function Move-SteamBatToDesktop {
     $destinationPath = Join-Path ([Environment]::GetFolderPath("Desktop")) "steam.bat"
     Copy-Item -Path $SourcePath -Destination $destinationPath -Force
     Write-Log "Moved steam.bat to desktop" -Level Info
+
+    if (-not $NoInteraction) {
+        $startupChoice = Read-Host "Would you like to add steam.bat to Startup folder? (Y/N)"
+        if ($startupChoice.ToUpper() -eq 'Y') {
+            Move-SteamBatToStartup -SourcePath $destinationPath
+        }
+    }
 }
 
 # Remove temporary files
@@ -262,7 +280,7 @@ function Start-SteamDebloat {
         }
 
         Move-ConfigFile -SourcePath $files.SteamCfg
-        Move-SteamBatToDesktop -SourcePath $files.SteamBat -SelectedMode $SelectedMode
+        Move-SteamBatToDesktop -SourcePath $files.SteamBat
 
         Remove-TempFiles
 
