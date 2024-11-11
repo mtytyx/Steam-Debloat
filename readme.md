@@ -84,7 +84,7 @@
 iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/app.ps1') }"
 ```
 
-- [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v7.8/Installer.bat)
+- [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.021/Installer.bat)
 
 ### Installation
 
@@ -109,7 +109,7 @@ Banish those pesky friends list display issues!
 
 Want to revert? No problem!
 
-[📥 Download Uninstall Script](https://github.com/mtytyx/Steam-Debloat/releases/download/v7.8/Uninstall-Steam-Legacy.bat)
+[📥 Download Uninstall Script](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.021/Uninstall-Steam-Legacy.bat)
 
 Run as admin and follow the prompts.
 
