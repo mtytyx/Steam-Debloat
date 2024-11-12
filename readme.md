@@ -130,7 +130,6 @@ Choose your perfect balance:
 ### 💻 Lite Mode
 
 - Maximum optimization
-- Keeps essential features
 - Optimized for gaming sessions
 - Minimal background processes
 
