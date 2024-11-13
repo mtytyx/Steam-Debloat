@@ -37,8 +37,7 @@ Yes, Steam Debloat is safe for the following reasons:
 
 ### What are the system requirements?
 
-- Windows 10 or higher (Winver 20H1)
-- Steam installed
+- Windows 10 or higher
 - Administrator privileges
 - PowerShell 5.1 or higher
 - Internet connection
