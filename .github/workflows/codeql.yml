@@ -21,11 +21,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'powershell', 'batch' ]
+      language: [ 'javascript', 'python' ]
+
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
+
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
