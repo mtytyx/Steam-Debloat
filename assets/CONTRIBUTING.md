@@ -1,7 +1,7 @@
 # Contributing to Steam-Debloat
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.webp" alt="Steam Debloat Logo" width="200"/>
+  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.png" alt="Steam Debloat Logo" width="200"/>
 </p>
 
 <p align="center">
