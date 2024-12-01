@@ -1,22 +1,6 @@
-[CmdletBinding()]
-param (
-    [Parameter(Position = 0)]
-    [ValidateSet("Normal", "Lite", "TEST", "TEST-Lite", "TEST-Version")]
-    [string]$Mode = "Normal",
-    [switch]$SkipIntro,
-    [switch]$NoInteraction,
-    [string]$CustomVersion,
-    [string]$LogLevel = "Info"
-)
-
-Set-StrictMode -Version Latest
-$ErrorActionPreference = "Stop"
 
 # Configuration
 $script:config = @{
-    Title = "Steam Debloat"
-    GitHub = "Github.com/mtytyx/Steam-Debloat"
-    Version = "v1.0.021"
     Color = @{Info = "Green"; Success = "Green"; Warning = "Yellow"; Error = "Red"; Debug = "Green"}
     ErrorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls = @{
@@ -293,19 +277,3 @@ function Start-SteamDebloat {
         Write-Log "For troubleshooting, visit: $($script:config.ErrorPage)" -Level Info
     }
 }
-
-# Main execution
-if (-not $SkipIntro -and -not $NoInteraction) {
-    Clear-Host
-    Write-Host @"
-  ____  _                        ____       _     _             _
- / ___|| |_ ___  __ _ _ __ ___  |  _ \  ___| |__ | | ___   __ _| |_
- \___ \| __/ _ \/ _` | '_ ` _ \ | | | |/ _ \ '_ \| |/ _ \ / _` | __|
-  ___) | ||  __/ (_| | | | | | || |_| |  __/ |_) | | (_) | (_| | |_
- |____/ \__\___|\__,_|_| |_| |_||____/ \___|_.__/|_|\___/ \__,_|\__|
-"@ -ForegroundColor Cyan
-    Write-Log "`nWelcome to $($script:config.Title) - $($script:config.GitHub) - $($script:config.Version)`n" -Level Info
-    $Mode = Read-Host "Choose mode (Normal/Lite/TEST/TEST-Lite/TEST-Version)"
-}
-
-Start-SteamDebloat -SelectedMode $Mode
