@@ -71,10 +71,10 @@
 
 | Metric        | Before | After  | Improvement   |
 | ------------- | ------ | ------ | ------------- |
-| Startup Time  | 12s    | 3.5s   | 70.8% faster  |
+| Startup Time  | 12s    | 5s   | 58.3% faster  |
 | Memory Usage  | 500MB  | 150MB  | 52.6% lower   |
-| CPU Usage     | 15%    | 2%     | 90% reduction |
-| Disk Activity | 45MB/s | 12MB/s | 73.3% lower   |
+| CPU Usage     | 15%    | 2%     | 86.67% reduction |
+| Disk Activity | 45MB/s | 1MB/s | 97.78% lower   |
 
 ## 🚀 Installation
 
