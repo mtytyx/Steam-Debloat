@@ -109,7 +109,7 @@ Banish those pesky friends list display issues!
 
 Want to revert? No problem!
 
-[📥 Download Uninstall Script](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.023/Uninstall-Steam-Legacy.bat)
+[📥 Download Uninstall Script](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.023/Uninstall.bat)
 
 Run as admin and follow the prompts.
 
