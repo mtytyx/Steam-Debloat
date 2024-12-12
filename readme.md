@@ -20,11 +20,16 @@
   </a>
 </p>
 
-<h1 align="center">Steam Debloat - Your Ultimate Steam Optimization Tool</h1>
+> [!CAUTION]
+> Many games need the latest version of steam to be run (is the end coming?) a method of bypassing compatibility is being worked on for dec2022
 
-<p align="center">
-  <strong>🚀 Transform your Steam client into a lightning-fast, resource-efficient gaming powerhouse! 🎮</strong>
-</p>
+
+> [!IMPORTANT]
+> I will soon provide a list of games compatible with dec2022 and the latest
+> 
+> If the game does not work for you, use `Uninstall.bat` to return to the latest version of Steam
+> 
+> You can't use 2 versions of Steam at the same time, can you?... coming soon
 
 ---
 
