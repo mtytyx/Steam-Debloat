@@ -110,7 +110,7 @@ Banish those pesky friends list display issues!
 3. Click "Install Patch" and you're done!
 </details>
 <details>
-  <summary><b>🔄 Uninstall Steam Legacy</b></summary>
+  <summary><b>🔄 Reinstall Steam</b></summary>
 
 Want to revert? No problem!
 
