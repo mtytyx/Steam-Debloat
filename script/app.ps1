@@ -16,7 +16,7 @@ $ErrorActionPreference = "Stop"
 $script:config = @{
     Title = "Steam Debloat"
     GitHub = "Github.com/mtytyx/Steam-Debloat"
-    Version = "v1.0.023"
+    Version = "v1.0.027"
     Color = @{Info = "Green"; Success = "Green"; Warning = "Yellow"; Error = "Red"; Debug = "Green"}
     ErrorPage = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls = @{
