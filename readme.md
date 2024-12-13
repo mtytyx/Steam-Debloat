@@ -27,7 +27,7 @@
 > [!IMPORTANT]
 > I will soon provide a list of games compatible with dec2022 and the latest
 > 
-> If the game does not work for you, use `Uninstall.bat` to return to the latest version of Steam
+> If the game does not work for you, use `Reinstaller.bat` to return to the latest version of Steam
 > 
 > You can't use 2 versions of Steam at the same time, can you?... coming soon
 
@@ -89,7 +89,7 @@
 iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/app.ps1') }"
 ```
 
-- [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.023/Installer.bat)
+- [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.027/Installer.bat)
 
 ### Installation
 
@@ -114,7 +114,7 @@ Banish those pesky friends list display issues!
 
 Want to revert? No problem!
 
-[📥 Download Uninstall Script](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.023/Uninstall.bat)
+[📥 Download Uninstall Script](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.027/Reinstaller.bat)
 
 Run as admin and follow the prompts.
 
