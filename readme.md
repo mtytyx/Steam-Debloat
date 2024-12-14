@@ -22,6 +22,7 @@
 
 > [!CAUTION]
 > Many games need the latest version of steam to be run (is the end coming?) a method of bypassing compatibility is being worked on for dec2022
+> Currently you can only use the latest version of Steam for the games to work, the downgrade method is obsolete (for now) but the optimizations can continue to be used
 
 
 > [!IMPORTANT]
