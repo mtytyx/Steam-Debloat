@@ -109,4 +109,4 @@ In case of security issues:
   <strong>Your security is our priority.</strong>
 </p>
 
-_This security policy is regularly updated. Last revision: 2024-11-13_
+_This security policy is regularly updated. Last revision: 2024-12-15_
