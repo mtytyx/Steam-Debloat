@@ -13,8 +13,6 @@ Currently supported versions of Steam Debloat with security updates and maintena
 | Normal Mode | :white_check_mark: | Weekly | 
 | Lite Mode | :white_check_mark: | Weekly |
 | Test Mode | :x: | Bi-weekly | 
-| Test-Lite | :x: | Bi-weekly |
-| Test-Version | :x: | Bi-weekly |
 
 ### Version Security Features
 
@@ -101,7 +99,7 @@ In case of security issues:
 | Date | Version | Security Update |
 |------|---------|----------------|
 | 2024-11-13 | 1.0.021 | Initial security policy |
-| 2024-11-06 | 1.0.021 | VirusTotal results update |
+| 2024-12-18 | 1.0.035 | VirusTotal results update |
 
 ---
 
@@ -109,4 +107,4 @@ In case of security issues:
   <strong>Your security is our priority.</strong>
 </p>
 
-_This security policy is regularly updated. Last revision: 2024-12-15_
+_This security policy is regularly updated. Last revision: 2024-12-18_
