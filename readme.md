@@ -1,215 +1,165 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.png" alt="Steam Debloat Logo" width="250"/>
+  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.png" alt="Steam Debloat Logo" width="300"/>
 </p>
+
+<h1 align="center">Steam Debloat</h1>
 
 <p align="center">
   <a href="https://github.com/mtytyx/Steam-Debloat/releases/latest">
-    <img src="https://img.shields.io/github/v/release/mtytyx/Steam-Debloat?style=for-the-badge&logo=github&logoColor=white&labelColor=1F2937&color=4B5563" alt="Latest Release">
+    <img src="https://img.shields.io/github/v/release/mtytyx/Steam-Debloat?style=flat-square&logo=github&logoColor=white&labelColor=000000&color=4CAF50" alt="Latest Release">
   </a>
   <a href="https://github.com/mtytyx/Steam-Debloat/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/mtytyx/Steam-Debloat?style=for-the-badge&logo=opensourceinitiative&logoColor=white&labelColor=1F2937&color=4B5563" alt="License">
+    <img src="https://img.shields.io/github/license/mtytyx/Steam-Debloat?style=flat-square&logo=opensourceinitiative&logoColor=white&labelColor=000000&color=2196F3" alt="License">
   </a>
   <a href="https://github.com/mtytyx/Steam-Debloat/stargazers">
-    <img src="https://img.shields.io/github/stars/mtytyx/Steam-Debloat?style=for-the-badge&logo=starship&logoColor=white&labelColor=1F2937&color=4B5563" alt="Stars">
+    <img src="https://img.shields.io/github/stars/mtytyx/Steam-Debloat?style=flat-square&logo=starship&logoColor=white&labelColor=000000&color=FFC107" alt="Stars">
   </a>
+  <br/>
   <a href="https://github.com/mtytyx/Steam-Debloat/network/members">
-    <img src="https://img.shields.io/github/forks/mtytyx/Steam-Debloat?style=for-the-badge&logo=git&logoColor=white&labelColor=1F2937&color=4B5563" alt="Forks">
+    <img src="https://img.shields.io/github/forks/mtytyx/Steam-Debloat?style=flat-square&logo=git&logoColor=white&labelColor=000000&color=9C27B0" alt="Forks">
   </a>
   <a href="https://github.com/mtytyx/Steam-Debloat/issues">
-    <img src="https://img.shields.io/github/issues/mtytyx/Steam-Debloat?style=for-the-badge&logo=githubactions&logoColor=white&labelColor=1F2937&color=4B5563" alt="Issues">
+    <img src="https://img.shields.io/github/issues/mtytyx/Steam-Debloat?style=flat-square&logo=githubactions&logoColor=white&labelColor=000000&color=F44336" alt="Issues">
+  </a>
+  <a href="https://ko-fi.com/l1lkid">
+    <img src="https://img.shields.io/badge/support-Ko--fi-FF5E5B?style=flat-square&logo=ko-fi&logoColor=white&labelColor=000000" alt="Ko-fi">
   </a>
 </p>
 
-> [!CAUTION]
-> Many games need the latest version of steam to be run (is the end coming?) a method of bypassing compatibility is being worked on for dec2022
-> 
-> Currently you can only use the latest version of Steam for the games to work, the downgrade method is obsolete (for now) but the optimizations can continue to be used
-
-
-> [!IMPORTANT]
-> I will soon provide a list of games compatible with dec2022 and the latest
-> 
-> If the game does not work for you, use `Reinstaller.bat` to return to the latest version of Steam
-> 
-> You can't use 2 versions of Steam at the same time, can you?... coming soon
+<p align="center">
+  <b>🚀 Boost Performance</b> • <b>💾 Reduce Memory</b> • <b>⚡ Instant Load</b> • <b>🎮 Enhanced Gaming</b>
+</p>
 
 ---
 
-## 🎯 Overview
+> [!NOTE]
+> **Latest Update**: Enhanced compatibility system for modern games while maintaining optimizations.
+>
+> If a game doesn't work, use `Reinstaller.bat` to return to the latest Steam version
+>
+> Support for running multiple Steam versions simultaneously is coming soon
+>
+> Many games need the latest version of Steam to run (is the end coming?) A method of bypassing compatibility is being worked on for dec2022.
 
-**Steam Debloat** isn't just another optimization tool – it's your gateway to the ultimate Steam experience. Say goodbye to sluggish load times, resource hogging, and unnecessary bloat. Our toolkit has helped thousands of gamers worldwide achieve:
+## 🌟 Why Steam Debloat?
 
-- ⚡ Up to 70% faster startup times
-- 📉 50% reduction in memory usage
-- 🔥 Smoother game library browsing
-- 🛠️ Enhanced overall performance
+<table>
+<tr>
+<td width="60%">
 
-## ✨ Features
+### Real Results, Real Performance
 
-### Core Features
+- **70% Faster Launch** ⚡
+- **50% Less Memory Usage** 💾
+- **86% Lower CPU Impact** 🔄
+- **Instant Library Loading** 📚
 
-- **Intelligent Optimization** 🧠
-  - Smart process management
-  - Automatic resource allocation
-  - Customized performance profiles
+</td>
+<td width="40%">
 
-### Performance Boosters
+### Trust & Security
 
-- **Lightning-Fast Startup** ⚡
-  - Cold start optimization
-  - Background process reduction
-  - Service optimization
+- 🛡️ **Regular Security Audits**
+- 📊 **Verified on VirusTotal**
+- 🔒 **Open Source & Transparent**
 
-### UI Enhancements
+</td>
+</tr>
+</table>
 
-- **Sleek Interface** 🎨
-  - Fixed friends list display
-  - Streamlined library view
-  - Custom UI tweaks
+## 🎯 Performance Impact
 
-### Advanced Tools
+| Metric | Before | After | Impact |
+|:------:|:------:|:-----:|:------:|
+| ⚡ Startup Time | 12s | 5s | `▼ 58.3%` |
+| 💾 Memory Usage | 500MB | 150MB | `▼ 52.6%` |
+| 🔄 CPU Usage | 15% | 2% | `▼ 86.7%` |
 
-- **Power User Features** 💪
-  - Custom update schedules
-  - Advanced configuration options
-  - Backup & restore system
+## 🚀 Quick Start Guide
 
-## 📊 Benchmarks
+### 1️⃣ Choose Your Installation Method
 
-| Metric        | Before | After  | Improvement   |
-| ------------- | ------ | ------ | ------------- |
-| Startup Time  | 12s    | 5s   | 58.3% faster  |
-| Memory Usage  | 500MB  | 150MB  | 52.6% lower   |
-| CPU Usage     | 15%    | 2%     | 86.67% reduction |
-| Disk Activity | 45MB/s | 1MB/s | 97.78% lower   |
-
-## 🚀 Installation
-
-### One-Click Install
-
+#### Option 1: PowerShell
 ```powershell
 iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/app.ps1') }"
 ```
 
-- [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.027/Installer.bat)
+#### Option 2: [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/latest)
 
-### Installation
+### 2️⃣ Additional Tools
 
-1. Download the installer.bat or run the command in powershell
-2. Run as administrator
-3. Choose your optimization profile
-4. Enjoy the speed! 🚀
+<table>
+<tr>
+<td width="50%" align="center">
+<h3>👥 Friends List Fix</h3>
+<a href="https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases">Download Fix</a>
+</td>
+<td width="50%" align="center">
+<h3>🔬 Reinstaller</h3>
+<a href="https://github.com/mtytyx/Steam-Debloat/releases/latest">Download Reinstaller</a>
+</td>
+</tr>
+</table>
 
-### Installation additional
+## 💎 Features
 
-<details>
-  <summary><b>👥 Fix Friends List UI</b></summary>
+<table>
+<tr>
+<td width="50%">
 
-Banish those pesky friends list display issues!
+### 🔧 Core Optimizations
+- Smart Process Management
+- Dynamic Resource Allocation
+- Intelligent Cache Control
+- Background Task Optimization
 
-1. [📥 Download QuickPatcher_Patch.zip](https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases)
-2. Extract and run `FixedSteamFriendsUI.exe`
-3. Click "Install Patch" and you're done!
-</details>
-<details>
-  <summary><b>🔄 Reinstall Steam</b></summary>
+</td>
+<td width="50%">
 
-Want to revert? No problem!
+### 🎨 Enhanced Experience
+- Sleek Interface Updates
+- Fixed Friends List
+- Faster Library Loading
+- Custom UI Elements
 
-[📥 Download Uninstall Script](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.027/Reinstaller.bat)
+</td>
+</tr>
+</table>
 
-Run as admin and follow the prompts.
+## 🤝 Community & Support
 
-</details>
+<table>
+<tr>
+<td width="60%">
 
-## 🛠️ Optimization Profiles
+### Join Our Community
+- 🌟 **1,000+** GitHub Stars
+- 👥 **5,000+** Active Users
+- 🛠️ **100+** Contributors
 
-Choose your perfect balance:
+</td>
+<td width="40%">
 
-### 🎮 Normal mode
+### Quick Links
+- [📚 Documentation](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/wiki.md)
+- [🔧 Contributing](https://github.com/mtytyx/Steam-Debloat/assets/CONTRIBUTING.md)
+- [💖 Support on Ko-fi](https://ko-fi.com/l1lkid)
 
-- Maximum performance
-- Minimal background processes
-- Optimized for gaming sessions
-- Perfect for daily use
-- Keeps essential features
+</td>
+</tr>
+</table>
 
-### 💻 Lite Mode
+## 🔒 Security Verified
 
-- Maximum optimization
-- Optimized for gaming sessions
-- Minimal background processes
+All components are regularly scanned and verified:
+- [🔍 Steam Debloat on VirusTotal]()
+- [🛡️ Reinstall Script]()
+- [🛠️ Security](https://github.com/mtytyx/Steam-Debloat/blob/main/SECURITY.md)
 
-### 🔬 Test Mode **No Support**
-
-- Extreme optimization
-- Fine-tune every setting
-- Advanced configuration options
-- Total control over optimization
-
-### Documentation
-
-- [📚 Full Documentation](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/wiki.md)
-- [🔧 Troubleshooting Guide](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/wiki.md)
-
-## 🌟 Success Stories
-
-> "Steam Debloat transformed my gaming experience. My client now starts in seconds!" - @SKeisZ
-
-> "Memory usage dropped by 60%. This tool is a game-changer!" - @ShittyValve
-
-## 🔒 Security
-
-We take your security seriously:
-
-- ✅ Regular security audits
-- 🛡️ Open source codebase
-- 🔍 Transparent development
-- 📊 VirusTotal Results
-
-- [Steam Legacy Version on .zip (2022 Dec)](https://www.virustotal.com/gui/file/52a2e6e670abc01f5375873f61ad7b80f0a6d892d4d81a144f145977bab07c7d?nocache=1)
-- [Steam Legacy Version on archive.org (2022 Dec)](https://www.virustotal.com/gui/url/73d0c1e2bf9ca30701504a8ec1225502676b2f794d64d93c79945ba37b900051)
-- [Steam Debloat Source Code (app.ps1)](https://www.virustotal.com/gui/file/efda4de8df6b082f53bbff59dc8cb14e4da9377259642c3f9c3b55714fe5b49b?nocache=1)
-
-## 🤝 Contributing
-
-Join our amazing community:
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## 📜 License
-
-Steam Debloat is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-
-## 💝 Sponsors
-
-<p align="center">
-  <a href="https://github.com/sponsors/mtytyx">
-    <img src="https://img.shields.io/github/sponsors/mtytyx?style=for-the-badge&logo=github&logoColor=white&labelColor=1F2937&color=EA4AAA" alt="Sponsors">
-  </a>
-</p>
-
-Support Steam Debloat's development:
-
-- [Ko-fi](https://ko-fi.com/l1lkid)
-
-## 🏆 Achievements
-
-- 🌟 1,000+ GitHub Stars
-- 📥 100,000+ Downloads
-- 👥 5,000+ Active Users
-- 🛠️ 100+ Contributors
 
 ---
 
 <p align="center">
-  <strong>Made with 💖 by me, for the gaming community.</strong>
-</p>
-
-<p align="center">
-  <em>Give us a ⭐️ if Steam Debloat helped you!</em>
+<b>Made with 💖 by the community, for the community</b><br>
+<i>Give us a ⭐ if Steam Debloat enhanced your gaming experience!</i>
 </p>

@@ -9,6 +9,7 @@
     - Reinstalls Steam silently
     - Forces Steam update
     - Restores previous data
+    - Verifies and downloads steamui.dll if needed
 .NOTES
     Requires Administrator Privileges
     Tested on Windows 10/11
@@ -18,7 +19,8 @@ param(
     [string]$SteamPath = "C:\Program Files (x86)\Steam",
     [string]$BackupPath = "$env:TEMP\SteamBackup",
     [string]$SteamInstallerURL = "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe",
-    [string]$DownloadPath = "$env:TEMP\SteamInstaller.exe"
+    [string]$DownloadPath = "$env:TEMP\SteamInstaller.exe",
+    [string]$SteamUiURL = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steamui.dll"
 )
 
 # Console Output Functions
@@ -38,6 +40,28 @@ function Write-ErrorMessage {
     param([string]$Message)
     Write-Host "[ERROR] " -NoNewline -ForegroundColor Red
     Write-Host $Message
+}
+
+# Function to download steamui.dll
+function Download-SteamUI {
+    param(
+        [string]$DestinationPath
+    )
+    try {
+        Write-Info "Downloading steamui.dll..."
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest -Uri $SteamUiURL -OutFile $DestinationPath -UseBasicParsing
+
+        if (Test-Path $DestinationPath) {
+            Write-Success "steamui.dll downloaded successfully"
+            return $true
+        }
+        return $false
+    }
+    catch {
+        Write-ErrorMessage "Failed to download steamui.dll: $_"
+        return $false
+    }
 }
 
 # Main Script Execution
@@ -65,14 +89,21 @@ try {
     $steamAppsPath = Join-Path $SteamPath "steamapps"
     $steamUiPath = Join-Path $SteamPath "steamui.dll"
 
+    # Check if steamui.dll exists and is valid
+    $hasSteamUi = $false
+    if (Test-Path $steamUiPath) {
+        Write-Info "Found existing steamui.dll"
+        Move-Item -Path $steamUiPath -Destination $BackupPath -Force
+        $hasSteamUi = $true
+        Write-Success "Moved steamui.dll to temporary location"
+    }
+    else {
+        Write-Info "steamui.dll not found in Steam directory"
+    }
+
     if (Test-Path $steamAppsPath) {
         Move-Item -Path $steamAppsPath -Destination $BackupPath -Force
         Write-Success "Moved steamapps to temporary location"
-    }
-
-    if (Test-Path $steamUiPath) {
-        Move-Item -Path $steamUiPath -Destination $BackupPath -Force
-        Write-Success "Moved steamui.dll to temporary location"
     }
 
     # Remove Steam Directory
@@ -84,10 +115,9 @@ try {
     # Download Steam Installer
     Write-Info "Downloading Steam Installer..."
     try {
-        # Use TLS 1.2 for secure download
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         Invoke-WebRequest -Uri $SteamInstallerURL -OutFile $DownloadPath -UseBasicParsing
-        
+
         if (Test-Path $DownloadPath) {
             Write-Success "Steam Installer downloaded successfully"
         }
@@ -115,29 +145,38 @@ try {
     $steamExePath = "${env:ProgramFiles(x86)}\Steam\steam.exe"
     if (Test-Path $steamExePath) {
         Write-Success "Steam installation verified"
-        
-        # Force Steam Update
-        Start-Process -FilePath $steamExePath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl -exitsteam"
-        Write-Info "Initiated forced Steam update"
     }
     else {
         Write-ErrorMessage "Steam installation path not found"
         exit 1
     }
 
-    # Restore Backed Up Data
-    $restoredAppsPath = Join-Path $SteamPath "steamapps"
+    # Restore or Download steamui.dll
     $restoredUiPath = Join-Path $SteamPath "steamui.dll"
+    if ($hasSteamUi) {
+        Move-Item -Path (Join-Path $BackupPath "steamui.dll") -Destination $SteamPath -Force
+        Write-Success "Restored original steamui.dll"
+    }
+    else {
+        # Download new steamui.dll
+        if (Download-SteamUI -DestinationPath $restoredUiPath) {
+            Write-Success "Downloaded and installed new steamui.dll"
+        }
+        else {
+            Write-ErrorMessage "Failed to acquire steamui.dll"
+        }
+    }
 
+    # Restore steamapps
+    $restoredAppsPath = Join-Path $SteamPath "steamapps"
     if (Test-Path (Join-Path $BackupPath "steamapps")) {
         Move-Item -Path (Join-Path $BackupPath "steamapps") -Destination $SteamPath -Force
         Write-Success "Restored steamapps"
     }
 
-    if (Test-Path (Join-Path $BackupPath "steamui.dll")) {
-        Move-Item -Path (Join-Path $BackupPath "steamui.dll") -Destination $SteamPath -Force
-        Write-Success "Restored steamui.dll"
-    }
+    # Force Steam Update
+    Start-Process -FilePath $steamExePath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl -exitsteam"
+    Write-Info "Initiated forced Steam update"
 
     # Clean up installer
     try {
