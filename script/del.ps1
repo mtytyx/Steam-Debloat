@@ -2,14 +2,15 @@
 .SYNOPSIS
     Comprehensive Steam Backup, Reinstall, and Update Script
 .DESCRIPTION
-    Performs a complete Steam installation reset with minimal data loss
-    - Moves Steam data to temporary location
+    Performs a complete Steam installation reset while preserving user data
+    - Moves Steam user data and games to temporary location
     - Downloads latest Steam installer
-    - Removes existing Steam installation
+    - Removes existing Steam installation (except backed up data)
     - Reinstalls Steam silently
     - Forces Steam update
     - Restores previous data
     - Verifies and downloads steamui.dll if needed
+    - Starts Steam automatically after installation
 .NOTES
     Requires Administrator Privileges
     Tested on Windows 10/11
@@ -87,9 +88,10 @@ try {
 
     # Backup Steam Data
     $steamAppsPath = Join-Path $SteamPath "steamapps"
+    $userDataPath = Join-Path $SteamPath "userdata"
     $steamUiPath = Join-Path $SteamPath "steamui.dll"
 
-    # Check if steamui.dll exists and is valid
+    # Check and backup steamui.dll
     $hasSteamUi = $false
     if (Test-Path $steamUiPath) {
         Write-Info "Found existing steamui.dll"
@@ -101,15 +103,31 @@ try {
         Write-Info "steamui.dll not found in Steam directory"
     }
 
+    # Backup steamapps (games)
     if (Test-Path $steamAppsPath) {
         Move-Item -Path $steamAppsPath -Destination $BackupPath -Force
         Write-Success "Moved steamapps to temporary location"
     }
 
-    # Remove Steam Directory
+    # Backup userdata (account data)
+    if (Test-Path $userDataPath) {
+        Move-Item -Path $userDataPath -Destination $BackupPath -Force
+        Write-Success "Moved userdata to temporary location"
+    }
+
+    # Create list of items to exclude from deletion
+    $excludeItems = @(
+        (Join-Path $BackupPath "steamapps"),
+        (Join-Path $BackupPath "userdata"),
+        (Join-Path $BackupPath "steamui.dll")
+    )
+
+    # Remove Steam Directory (except backed up items)
     if (Test-Path $SteamPath) {
-        Remove-Item -Path $SteamPath -Recurse -Force
-        Write-Success "Removed existing Steam installation"
+        Get-ChildItem -Path $SteamPath -Recurse | 
+        Where-Object { $_.FullName -notin $excludeItems } | 
+        Remove-Item -Recurse -Force
+        Write-Success "Removed existing Steam installation (preserved user data)"
     }
 
     # Download Steam Installer
@@ -135,6 +153,14 @@ try {
     try {
         Start-Process -FilePath $DownloadPath -ArgumentList "/S" -Wait -PassThru
         Write-Success "Steam installed silently"
+        
+        # Start Steam after installation
+        $steamExePath = "${env:ProgramFiles(x86)}\Steam\steam.exe"
+        if (Test-Path $steamExePath) {
+            Write-Info "Starting Steam..."
+            Start-Process -FilePath $steamExePath
+            Write-Success "Steam has been started"
+        }
     }
     catch {
         Write-ErrorMessage "Silent installation failed: $_"
@@ -142,7 +168,6 @@ try {
     }
 
     # Verify Steam Installation
-    $steamExePath = "${env:ProgramFiles(x86)}\Steam\steam.exe"
     if (Test-Path $steamExePath) {
         Write-Success "Steam installation verified"
     }
@@ -167,11 +192,16 @@ try {
         }
     }
 
-    # Restore steamapps
-    $restoredAppsPath = Join-Path $SteamPath "steamapps"
+    # Restore steamapps (games)
     if (Test-Path (Join-Path $BackupPath "steamapps")) {
         Move-Item -Path (Join-Path $BackupPath "steamapps") -Destination $SteamPath -Force
-        Write-Success "Restored steamapps"
+        Write-Success "Restored steamapps (games)"
+    }
+
+    # Restore userdata (account data)
+    if (Test-Path (Join-Path $BackupPath "userdata")) {
+        Move-Item -Path (Join-Path $BackupPath "userdata") -Destination $SteamPath -Force
+        Write-Success "Restored userdata (account data)"
     }
 
     # Force Steam Update
