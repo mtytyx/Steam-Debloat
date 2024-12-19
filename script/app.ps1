@@ -54,7 +54,9 @@ function Write-DebugLog {
 # Check maintenance status
 function Test-MaintenanceStatus {
     try {
+        # Fetch the JSON response from the URL
         $response = Invoke-RestMethod -Uri $script:config.Urls.MaintenanceCheck -UseBasicParsing
+        # Check if the system is under maintenance
         if ($response.maintenance -eq $true) {
             Clear-Host
             Write-Host @"
