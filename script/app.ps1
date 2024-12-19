@@ -26,7 +26,7 @@ $script:config = @{
         "TEST"             = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
         "SteamCfg"         = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
         "SteamSetup"       = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
-        "MaintenanceCheck" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/maintenance.json"
+        "MaintenanceCheck" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/maintenanceapp.json"
     }
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
     SteamInstallDir     = "C:\Program Files (x86)\Steam"
