@@ -16,6 +16,15 @@
     Tested on Windows 10/11
     PowerShell 5.1+ Recommended
 #>
+
+# Check if you are running as administrator
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Host "This script requires administrator privileges. Rebooting with elevated privileges..." -ForegroundColor Yellow
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    exit
+}
+
 param(
     [string]$SteamPath = "C:\Program Files (x86)\Steam",
     [string]$BackupPath = "$env:TEMP\SteamBackup",
@@ -41,6 +50,47 @@ function Write-ErrorMessage {
     param([string]$Message)
     Write-Host "[ERROR] " -NoNewline -ForegroundColor Red
     Write-Host $Message
+}
+
+# Feature to force delete files and folders
+function Remove-ForcefullyWithTimeout {
+    param (
+        [string]$Path,
+        [int]$TimeoutSeconds = 30
+    )
+    
+    $startTime = Get-Date
+    $continue = $true
+    
+    while ($continue -and ((Get-Date) - $startTime).TotalSeconds -lt $TimeoutSeconds) {
+        try {
+            if (Test-Path -Path $Path) {
+                # Intenta obtener acceso exclusivo al archivo
+                $handle = [System.IO.File]::Open($Path, 'Open', 'Read', 'None')
+                $handle.Close()
+                $handle.Dispose()
+                
+                # Si llegamos aquí, el archivo no está en uso
+                if (Test-Path -Path $Path -PathType Container) {
+                    Remove-Item -Path $Path -Recurse -Force -ErrorAction Stop
+                } else {
+                    Remove-Item -Path $Path -Force -ErrorAction Stop
+                }
+                $continue = $false
+            } else {
+                $continue = $false
+            }
+        }
+        catch {
+            Start-Sleep -Milliseconds 500
+        }
+    }
+    
+    if ((Test-Path -Path $Path) -and $continue) {
+        Write-ErrorMessage "Could not delete $Path after $TimeoutSeconds seconds"
+        return $false
+    }
+    return $true
 }
 
 # Function to download steamui.dll
@@ -72,16 +122,21 @@ try {
         Write-Info "Steam installation directory not found. Proceeding with fresh installation."
     }
 
-    # Stop Steam Process
-    $steamProcess = Get-Process "steam" -ErrorAction SilentlyContinue
-    if ($steamProcess) {
-        $steamProcess | Stop-Process -Force
-        Write-Info "Stopped Steam process"
+    # Stop Steam Process and sus procesos relacionados
+    $processesToKill = @("steam", "steamwebhelper", "steamservice", "steamerrorreporter")
+    foreach ($processName in $processesToKill) {
+        Get-Process $processName -ErrorAction SilentlyContinue | ForEach-Object {
+            $_ | Stop-Process -Force
+            Write-Info "Stopped $processName process"
+        }
     }
+    
+    # Esperar un momento para asegurar que los procesos se detengan
+    Start-Sleep -Seconds 2
 
     # Prepare Backup Directory
     if (Test-Path $BackupPath) {
-        Remove-Item $BackupPath -Recurse -Force
+        Remove-ForcefullyWithTimeout -Path $BackupPath
     }
     New-Item -ItemType Directory -Path $BackupPath | Out-Null
     Write-Info "Created temporary backup directory"
@@ -126,7 +181,9 @@ try {
     if (Test-Path $SteamPath) {
         Get-ChildItem -Path $SteamPath -Recurse | 
         Where-Object { $_.FullName -notin $excludeItems } | 
-        Remove-Item -Recurse -Force
+        ForEach-Object {
+            Remove-ForcefullyWithTimeout -Path $_.FullName
+        }
         Write-Success "Removed existing Steam installation (preserved user data)"
     }
 
@@ -210,7 +267,7 @@ try {
 
     # Clean up installer
     try {
-        Remove-Item -Path $DownloadPath -Force
+        Remove-ForcefullyWithTimeout -Path $DownloadPath
         Write-Info "Removed Steam installer from temporary location"
     }
     catch {
@@ -218,7 +275,7 @@ try {
     }
 
     # Clean Up Backup Directory
-    Remove-Item -Path $BackupPath -Recurse -Force
+    Remove-ForcefullyWithTimeout -Path $BackupPath
     Write-Success "Completed Steam reinstallation process"
 }
 catch {
