@@ -16,6 +16,13 @@
     Tested on Windows 10/11
     PowerShell 5.1+ Recommended
 #>
+param(
+    [string]$SteamPath = "C:\Program Files (x86)\Steam",
+    [string]$BackupPath = "$env:TEMP\SteamBackup",
+    [string]$SteamInstallerURL = "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe",
+    [string]$DownloadPath = "$env:TEMP\SteamInstaller.exe",
+    [string]$SteamUiURL = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steamui.dll"
+)
 
 # Check if you are running as administrator
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -24,14 +31,6 @@ if (-not $isAdmin) {
     Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
     exit
 }
-
-param(
-    [string]$SteamPath = "C:\Program Files (x86)\Steam",
-    [string]$BackupPath = "$env:TEMP\SteamBackup",
-    [string]$SteamInstallerURL = "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe",
-    [string]$DownloadPath = "$env:TEMP\SteamInstaller.exe",
-    [string]$SteamUiURL = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steamui.dll"
-)
 
 # Console Output Functions
 function Write-Info {
@@ -65,12 +64,12 @@ function Remove-ForcefullyWithTimeout {
     while ($continue -and ((Get-Date) - $startTime).TotalSeconds -lt $TimeoutSeconds) {
         try {
             if (Test-Path -Path $Path) {
-                # Intenta obtener acceso exclusivo al archivo
+                # Try to get exclusive access to the file
                 $handle = [System.IO.File]::Open($Path, 'Open', 'Read', 'None')
                 $handle.Close()
                 $handle.Dispose()
-                
-                # Si llegamos aquí, el archivo no está en uso
+
+                # If we get here, the file is not in use
                 if (Test-Path -Path $Path -PathType Container) {
                     Remove-Item -Path $Path -Recurse -Force -ErrorAction Stop
                 } else {
