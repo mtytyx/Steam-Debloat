@@ -35,9 +35,9 @@ Currently supported versions of Steam Debloat with security updates and maintena
 
 ### VirusTotal Results
 Current security scan results:
-- [Steam Legacy Version (.zip)](https://www.virustotal.com/gui/file/52a2e6e670abc01f5375873f61ad7b80f0a6d892d4d81a144f145977bab07c7d)
-- [Steam Legacy Version (archive.org)](https://www.virustotal.com/gui/url/73d0c1e2bf9ca30701504a8ec1225502676b2f794d64d93c79945ba37b900051)
-- [Steam Debloat Source Code (app.ps1)](https://www.virustotal.com/gui/file/efda4de8df6b082f53bbff59dc8cb14e4da9377259642c3f9c3b55714fe5b49b)
+- [🔍 Steam Debloat on VirusTotal](https://www.virustotal.com/gui/file/dc17c9ec9510b9e0d741d9dd0ebb8af5ba80412cae14fd38545f44fe9ce10add)
+- [🛡️ Reinstall Script on VirusTotal](https://www.virustotal.com/gui/file/1fd1e16a6cc9540b4ba05f54cb9d455ba43b16ea4cdacc25eaac6e410c8479a8)
+- [🛠️ Security](https://github.com/mtytyx/Steam-Debloat/blob/main/SECURITY.md)
 
 ## Reporting a Vulnerability
 
