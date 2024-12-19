@@ -152,14 +152,14 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 ## 🔒 Security Verified
 
 All components are regularly scanned and verified:
-- [🔍 Steam Debloat on VirusTotal]()
-- [🛡️ Reinstall Script]()
+- [🔍 Steam Debloat on VirusTotal](https://www.virustotal.com/gui/file/dc17c9ec9510b9e0d741d9dd0ebb8af5ba80412cae14fd38545f44fe9ce10add)
+- [🛡️ Reinstall Script on VirusTotal](https://www.virustotal.com/gui/file/1fd1e16a6cc9540b4ba05f54cb9d455ba43b16ea4cdacc25eaac6e410c8479a8)
 - [🛠️ Security](https://github.com/mtytyx/Steam-Debloat/blob/main/SECURITY.md)
 
 
 ---
 
 <p align="center">
-<b>Made with 💖 by the community, for the community</b><br>
+<b>Made with 💖 by me, for the community</b><br>
 <i>Give us a ⭐ if Steam Debloat enhanced your gaming experience!</i>
 </p>
