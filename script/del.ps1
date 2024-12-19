@@ -32,6 +32,38 @@ if (-not $isAdmin) {
     exit
 }
 
+function Test-MaintenanceStatus {
+    try {
+        # Fetch the JSON response from the URL
+        $response = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/maintenancedel.json" -UseBasicParsing
+
+        # Check if the system is under maintenance
+        if ($response.maintenance -eq $true) {
+            Clear-Host
+            Write-Host @"
+  ____  _                        ____       _     _             _
+ / ___|| |_ ___  __ _ _ __ ___  |  _ \  ___| |__ | | ___   __ _| |_
+ \___ \| __/ _ \/ _` | '_ ` _ \ | | | |/ _ \ '_ \| |/ _ \ / _` | __|
+  ___) | ||  __/ (_| | | | | | || |_| |  __/ |_) | | (_) | (_| | |_
+ |____/ \__\___|\__,_|_| |_| |_||____/ \___|_.__/|_|\___/ \__,_|\__|
+
+                     MAINTENANCE IN PROGRESS
+"@ -ForegroundColor Red
+
+            Write-Host "`nReason for maintenance:" -ForegroundColor Cyan
+            Write-Host "$($response.message)" -ForegroundColor Yellow
+            Write-Host "`nPress Enter to exit..." -ForegroundColor Cyan
+            Read-Host
+            exit
+        }
+    }
+    catch {
+        # If the maintenance check fails, allow the script to continue
+        Write-Warning "Unable to check maintenance status. Continuing..."
+        return
+    }
+}
+
 # Console Output Functions
 function Write-Info {
     param([string]$Message)
