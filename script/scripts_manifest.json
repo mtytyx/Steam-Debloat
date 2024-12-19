@@ -1,0 +1,34 @@
+{
+  "scripts": [
+    {
+      "name": "Steam Lite Launcher",
+      "description": "Launches Steam with optimized parameters, stripping unnecessary features for a lighter experience.",
+      "file": "Steam-Lite.bat"
+    },
+    {
+      "name": "Steam Optimized Launcher",
+      "description": "Launches Steam with parameters optimized for performance without disabling core features.",
+      "file": "Steam.bat"
+    },
+    {
+      "name": "Main Script",
+      "description": "The primary script responsible for executing core cleanup and optimization tasks.",
+      "file": "app.ps1"
+    },
+    {
+      "name": "Reinstaller",
+      "description": "Reinstalls or resets specific Steam files to their default state.",
+      "file": "del.ps1"
+    },
+    {
+      "name": "Settings Configuration",
+      "description": "Modifies or manages Steam's configuration settings.",
+      "file": "settings.ps1"
+    },
+    {
+      "name": "Steam Configuration",
+      "description": "Configuration file that controls update settings and preferences for Steam.",
+      "file": "steam.cfg"
+    }
+  ]
+}
