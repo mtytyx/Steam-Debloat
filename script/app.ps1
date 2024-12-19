@@ -295,7 +295,7 @@ function Start-SteamDebloat {
         Stop-SteamProcesses
         $files = Get-RequiredFiles -SelectedMode $SelectedMode
 
-        if (-not $NoInteraction -and (Read-Host "Do you want to downgrade Steam? (Y/N)").ToUpper() -eq 'Y') {
+        if (-not $NoInteraction -and (Read-Host "Do you want to downgrade Steam? (Y/N) (Press N method obsolote)").ToUpper() -eq 'Y') {
             Invoke-SteamUpdate -Url $script:config.DefaultDowngradeUrl
         }
 
