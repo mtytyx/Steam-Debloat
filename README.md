@@ -90,11 +90,11 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 
 <table>
 <tr>
-<td width="50%" align="center">
+<td width="60%" align="center">
 <h3>👥 Friends List Fix</h3>
 <a href="https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases">Download Fix</a>
 </td>
-<td width="50%" align="center">
+<td width="60%" align="center">
 <h3>🔬 Reinstaller</h3>
 <a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.045/Reinstaller.bat">Download Reinstaller</a>
 </td>
@@ -138,7 +138,7 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 - 🛠️ **100+** Contributors
 
 </td>
-<td width="40%">
+<td width="80%">
 
 ### Quick Links
 - [📚 Documentation](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/wiki.md)
