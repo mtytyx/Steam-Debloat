@@ -1,43 +1,30 @@
-<#
-.SYNOPSIS
-    Comprehensive Steam Backup, Reinstall, and Update Script
-.DESCRIPTION
-    Performs a complete Steam installation reset while preserving user data
-    - Moves Steam user data and games to temporary location
-    - Downloads latest Steam installer
-    - Removes existing Steam installation (except backed up data)
-    - Reinstalls Steam silently
-    - Forces Steam update
-    - Restores previous data
-    - Verifies and downloads steamui.dll if needed
-    - Starts Steam automatically after installation
-.NOTES
-    Requires Administrator Privileges
-    Tested on Windows 10/11
-    PowerShell 5.1+ Recommended
-#>
-param(
-    [string]$SteamPath = "C:\Program Files (x86)\Steam",
-    [string]$BackupPath = "$env:TEMP\SteamBackup",
-    [string]$SteamInstallerURL = "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe",
-    [string]$DownloadPath = "$env:TEMP\SteamInstaller.exe",
-    [string]$SteamUiURL = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steamui.dll"
-)
-
-# Check if you are running as administrator
-$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-if (-not $isAdmin) {
-    Write-Host "This script requires administrator privileges. Rebooting with elevated privileges..." -ForegroundColor Yellow
-    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
-    exit
+# Logging functions
+function Write-Info {
+    param([string]$Message)
+    Write-Host "[INFO] " -NoNewline -ForegroundColor Cyan
+    Write-Host $Message
+}
+function Write-Success {
+    param([string]$Message)
+    Write-Host "[SUCCESS] " -NoNewline -ForegroundColor Green
+    Write-Host $Message
+}
+function Write-ErrorMessage {
+    param([string]$Message)
+    Write-Host "[ERROR] " -NoNewline -ForegroundColor Red
+    Write-Host $Message
 }
 
-function Test-MaintenanceStatus {
-    try {
-        # Fetch the JSON response from the URL
-        $response = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/maintenancedel.json" -UseBasicParsing
+# Define paths
+$steamPath = "${env:ProgramFiles(x86)}\Steam"
+$backupPath = "$env:TEMP\SteamBackup"
+$steamInstaller = "$env:TEMP\SteamSetup.exe"
 
-        # Check if the system is under maintenance
+# Check maintenance status
+function Check-Maintenance {
+    try {
+        Write-Info "Checking maintenance status..."
+        $response = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/maintenancedel.json"
         if ($response.maintenance -eq $true) {
             Clear-Host
             Write-Host @"
@@ -49,7 +36,6 @@ function Test-MaintenanceStatus {
 
                      MAINTENANCE IN PROGRESS
 "@ -ForegroundColor Red
-
             Write-Host "`nReason for maintenance:" -ForegroundColor Cyan
             Write-Host "$($response.message)" -ForegroundColor Yellow
             Write-Host "`nPress Enter to exit..." -ForegroundColor Cyan
@@ -58,258 +44,146 @@ function Test-MaintenanceStatus {
         }
     }
     catch {
-        # If the maintenance check fails, allow the script to continue
         Write-Warning "Unable to check maintenance status. Continuing..."
         return
     }
 }
 
-# Console Output Functions
-function Write-Info {
-    param([string]$Message)
-    Write-Host "[INFO] " -NoNewline -ForegroundColor Cyan
-    Write-Host $Message
+# Function to check if Steam is running
+function Test-SteamRunning {
+    $steamProcess = Get-Process -Name "steam" -ErrorAction SilentlyContinue
+    return $null -ne $steamProcess
 }
 
-function Write-Success {
-    param([string]$Message)
-    Write-Host "[SUCCESS] " -NoNewline -ForegroundColor Green
-    Write-Host $Message
-}
-
-function Write-ErrorMessage {
-    param([string]$Message)
-    Write-Host "[ERROR] " -NoNewline -ForegroundColor Red
-    Write-Host $Message
-}
-
-# Feature to force delete files and folders
-function Remove-ForcefullyWithTimeout {
-    param (
+# Function to wait for path existence
+function Wait-ForPath {
+    param(
         [string]$Path,
-        [int]$TimeoutSeconds = 30
+        [int]$TimeoutSeconds = 300
     )
-    
-    $startTime = Get-Date
-    $continue = $true
-    
-    while ($continue -and ((Get-Date) - $startTime).TotalSeconds -lt $TimeoutSeconds) {
-        try {
-            if (Test-Path -Path $Path) {
-                # Try to get exclusive access to the file
-                $handle = [System.IO.File]::Open($Path, 'Open', 'Read', 'None')
-                $handle.Close()
-                $handle.Dispose()
-
-                # If we get here, the file is not in use
-                if (Test-Path -Path $Path -PathType Container) {
-                    Remove-Item -Path $Path -Recurse -Force -ErrorAction Stop
-                } else {
-                    Remove-Item -Path $Path -Force -ErrorAction Stop
-                }
-                $continue = $false
-            } else {
-                $continue = $false
-            }
+    $timer = [System.Diagnostics.Stopwatch]::StartNew()
+    while (-not (Test-Path $Path)) {
+        if ($timer.Elapsed.TotalSeconds -gt $TimeoutSeconds) {
+            Write-ErrorMessage "Timeout waiting for: $Path"
+            return $false
         }
-        catch {
-            Start-Sleep -Milliseconds 500
-        }
-    }
-    
-    if ((Test-Path -Path $Path) -and $continue) {
-        Write-ErrorMessage "Could not delete $Path after $TimeoutSeconds seconds"
-        return $false
+        Start-Sleep -Seconds 1
     }
     return $true
 }
 
 # Function to download steamui.dll
-function Download-SteamUI {
-    param(
-        [string]$DestinationPath
-    )
+function Get-SteamUIDll {
+    param([string]$destinationPath)
     try {
         Write-Info "Downloading steamui.dll..."
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -Uri $SteamUiURL -OutFile $DestinationPath -UseBasicParsing
-
-        if (Test-Path $DestinationPath) {
-            Write-Success "steamui.dll downloaded successfully"
-            return $true
-        }
-        return $false
-    }
-    catch {
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steamui.dll" -OutFile $destinationPath
+        Write-Success "steamui.dll downloaded successfully"
+        return $true
+    } catch {
         Write-ErrorMessage "Failed to download steamui.dll: $_"
         return $false
     }
 }
 
-# Main Script Execution
-try {
-    # Validate Steam Path
-    if (!(Test-Path $SteamPath)) {
-        Write-Info "Steam installation directory not found. Proceeding with fresh installation."
-    }
+# Check maintenance status
+Check-Maintenance
 
-    # Stop Steam Process and sus procesos relacionados
-    $processesToKill = @("steam", "steamwebhelper", "steamservice", "steamerrorreporter")
-    foreach ($processName in $processesToKill) {
-        Get-Process $processName -ErrorAction SilentlyContinue | ForEach-Object {
-            $_ | Stop-Process -Force
-            Write-Info "Stopped $processName process"
-        }
-    }
-    
-    # Esperar un momento para asegurar que los procesos se detengan
+# Close Steam if running
+if (Test-SteamRunning) {
+    Write-Info "Closing Steam..."
+    Stop-Process -Name "steam" -Force
     Start-Sleep -Seconds 2
+}
 
-    # Prepare Backup Directory
-    if (Test-Path $BackupPath) {
-        Remove-ForcefullyWithTimeout -Path $BackupPath
-    }
-    New-Item -ItemType Directory -Path $BackupPath | Out-Null
-    Write-Info "Created temporary backup directory"
+# Create backup directory if it doesn't exist
+if (-not (Test-Path $backupPath)) {
+    New-Item -Path $backupPath -ItemType Directory | Out-Null
+    Write-Success "Backup directory created at: $backupPath"
 
-    # Backup Steam Data
-    $steamAppsPath = Join-Path $SteamPath "steamapps"
-    $userDataPath = Join-Path $SteamPath "userdata"
-    $steamUiPath = Join-Path $SteamPath "steamui.dll"
-
-    # Check and backup steamui.dll
-    $hasSteamUi = $false
-    if (Test-Path $steamUiPath) {
-        Write-Info "Found existing steamui.dll"
-        Move-Item -Path $steamUiPath -Destination $BackupPath -Force
-        $hasSteamUi = $true
-        Write-Success "Moved steamui.dll to temporary location"
-    }
-    else {
-        Write-Info "steamui.dll not found in Steam directory"
-    }
-
-    # Backup steamapps (games)
-    if (Test-Path $steamAppsPath) {
-        Move-Item -Path $steamAppsPath -Destination $BackupPath -Force
-        Write-Success "Moved steamapps to temporary location"
-    }
-
-    # Backup userdata (account data)
-    if (Test-Path $userDataPath) {
-        Move-Item -Path $userDataPath -Destination $BackupPath -Force
-        Write-Success "Moved userdata to temporary location"
-    }
-
-    # Create list of items to exclude from deletion
-    $excludeItems = @(
-        (Join-Path $BackupPath "steamapps"),
-        (Join-Path $BackupPath "userdata"),
-        (Join-Path $BackupPath "steamui.dll")
+    # Check and move important files
+    $filesToBackup = @(
+        @{Path = "steamapps"; Type = "Directory"},
+        @{Path = "config"; Type = "Directory"},
+        @{Path = "steamui.dll"; Type = "File"}
     )
 
-    # Remove Steam Directory (except backed up items)
-    if (Test-Path $SteamPath) {
-        Get-ChildItem -Path $SteamPath -Recurse | 
-        Where-Object { $_.FullName -notin $excludeItems } | 
-        ForEach-Object {
-            Remove-ForcefullyWithTimeout -Path $_.FullName
-        }
-        Write-Success "Removed existing Steam installation (preserved user data)"
-    }
+    foreach ($item in $filesToBackup) {
+        $sourcePath = Join-Path $steamPath $item.Path
+        $destPath = Join-Path $backupPath $item.Path
 
-    # Download Steam Installer
-    Write-Info "Downloading Steam Installer..."
-    try {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -Uri $SteamInstallerURL -OutFile $DownloadPath -UseBasicParsing
-
-        if (Test-Path $DownloadPath) {
-            Write-Success "Steam Installer downloaded successfully"
-        }
-        else {
-            throw "Download failed"
+        if (Test-Path $sourcePath) {
+            Write-Info "Moving $($item.Path) to backup..."
+            # Ensure destination directory exists
+            $parentPath = Split-Path $destPath -Parent
+            if (-not (Test-Path $parentPath)) {
+                New-Item -Path $parentPath -ItemType Directory -Force | Out-Null
+            }
+            Move-Item -Path $sourcePath -Destination $destPath -Force
+            Write-Success "Successfully moved $($item.Path)"
+        } else {
+            Write-ErrorMessage "$($item.Path) not found in Steam installation"
+            if ($item.Path -eq "steamui.dll") {
+                Get-SteamUIDll -destinationPath $destPath
+            }
         }
     }
-    catch {
-        Write-ErrorMessage "Failed to download Steam Installer: $_"
-        exit 1
-    }
-
-    # Perform Silent Installation
-    Write-Info "Starting Silent Steam Installation..."
-    try {
-        Start-Process -FilePath $DownloadPath -ArgumentList "/S" -Wait -PassThru
-        Write-Success "Steam installed silently"
-        
-        # Start Steam after installation
-        $steamExePath = "${env:ProgramFiles(x86)}\Steam\steam.exe"
-        if (Test-Path $steamExePath) {
-            Write-Info "Starting Steam..."
-            Start-Process -FilePath $steamExePath
-            Write-Success "Steam has been started"
-        }
-    }
-    catch {
-        Write-ErrorMessage "Silent installation failed: $_"
-        exit 1
-    }
-
-    # Verify Steam Installation
-    if (Test-Path $steamExePath) {
-        Write-Success "Steam installation verified"
-    }
-    else {
-        Write-ErrorMessage "Steam installation path not found"
-        exit 1
-    }
-
-    # Restore or Download steamui.dll
-    $restoredUiPath = Join-Path $SteamPath "steamui.dll"
-    if ($hasSteamUi) {
-        Move-Item -Path (Join-Path $BackupPath "steamui.dll") -Destination $SteamPath -Force
-        Write-Success "Restored original steamui.dll"
-    }
-    else {
-        # Download new steamui.dll
-        if (Download-SteamUI -DestinationPath $restoredUiPath) {
-            Write-Success "Downloaded and installed new steamui.dll"
-        }
-        else {
-            Write-ErrorMessage "Failed to acquire steamui.dll"
-        }
-    }
-
-    # Restore steamapps (games)
-    if (Test-Path (Join-Path $BackupPath "steamapps")) {
-        Move-Item -Path (Join-Path $BackupPath "steamapps") -Destination $SteamPath -Force
-        Write-Success "Restored steamapps (games)"
-    }
-
-    # Restore userdata (account data)
-    if (Test-Path (Join-Path $BackupPath "userdata")) {
-        Move-Item -Path (Join-Path $BackupPath "userdata") -Destination $SteamPath -Force
-        Write-Success "Restored userdata (account data)"
-    }
-
-    # Force Steam Update
-    Start-Process -FilePath $steamExePath -ArgumentList "-forcesteamupdate -forcepackagedownload -overridepackageurl -exitsteam"
-    Write-Info "Initiated forced Steam update"
-
-    # Clean up installer
-    try {
-        Remove-ForcefullyWithTimeout -Path $DownloadPath
-        Write-Info "Removed Steam installer from temporary location"
-    }
-    catch {
-        Write-ErrorMessage "Could not remove installer: $_"
-    }
-
-    # Clean Up Backup Directory
-    Remove-ForcefullyWithTimeout -Path $BackupPath
-    Write-Success "Completed Steam reinstallation process"
 }
-catch {
-    Write-ErrorMessage "An unexpected error occurred: $_"
-    exit 1
+
+# Delete Steam directory
+if (Test-Path $steamPath) {
+    Write-Info "Removing current Steam installation..."
+    Remove-Item -Path $steamPath -Recurse -Force
+    Write-Success "Steam installation removed successfully"
 }
+
+# Download Steam installer
+Write-Info "Downloading Steam installer..."
+try {
+    Invoke-WebRequest -Uri "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe" -OutFile $steamInstaller
+    Write-Success "Steam installer downloaded successfully"
+} catch {
+    Write-ErrorMessage "Error downloading Steam: $_"
+    exit
+}
+
+# Install Steam
+Write-Info "Installing Steam..."
+Start-Process -FilePath $steamInstaller -ArgumentList "/S" -Wait
+
+# Wait for Steam directory to exist
+Write-Info "Waiting for installation to complete..."
+if (-not (Wait-ForPath -Path $steamPath -TimeoutSeconds 300)) {
+    Write-ErrorMessage "Steam installation did not complete in the expected time"
+    exit
+}
+
+# Restore backup files
+if (Test-Path $backupPath) {
+    Write-Info "Restoring backup files..."
+    
+    foreach ($item in $filesToBackup) {
+        $sourcePath = Join-Path $backupPath $item.Path
+        $destPath = Join-Path $steamPath $item.Path
+
+        if (Test-Path $sourcePath) {
+            # Ensure destination directory exists
+            $parentPath = Split-Path $destPath -Parent
+            if (-not (Test-Path $parentPath)) {
+                New-Item -Path $parentPath -ItemType Directory -Force | Out-Null
+            }
+            
+            Write-Info "Restoring $($item.Path)..."
+            Move-Item -Path $sourcePath -Destination $destPath -Force
+            Write-Success "Successfully restored $($item.Path)"
+        }
+    }
+
+    # Remove backup directory
+    Remove-Item -Path $backupPath -Recurse -Force
+    Write-Success "Backup removed successfully"
+}
+
+# Start Steam
+Write-Info "Starting Steam..."
+Start-Process "$steamPath\steam.exe"
