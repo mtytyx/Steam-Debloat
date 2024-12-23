@@ -1,23 +1,35 @@
 
-# Configuration
 $script:config = @{
     Title               = "Steam Debloat"
     GitHub              = "Github.com/mtytyx/Steam-Debloat"
-    Version             = "v1.0.045"
+    Version             = "v1.0.050"
     Color               = @{Info = "Green"; Success = "Green"; Warning = "Yellow"; Error = "Red"; Debug = "Green" }
     ErrorPage           = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls                = @{
-        "Normal"           = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam.bat"
-        "Lite"             = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/Steam-Lite.bat"
-        "TEST"             = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/test/Steam-TEST.bat"
-        "SteamCfg"         = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steam.cfg"
         "SteamSetup"       = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
         "MaintenanceCheck" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/maintenanceapp.json"
+        "SteamScript"      = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/script/steam.ps1"
     }
     DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
     SteamInstallDir     = "C:\Program Files (x86)\Steam"
     RetryAttempts       = 3
     RetryDelay          = 5
+    LogFile             = Join-Path $env:TEMP "Steam-Debloat.log"
+    SteamScriptPath     = Join-Path $env:TEMP "steam.ps1"
+}
+
+# Download steam.ps1 script
+function Get-SteamScript {
+    try {
+        Write-DebugLog "Downloading steam.ps1 script..." -Level Info
+        Invoke-SafeWebRequest -Uri $script:config.Urls.SteamScript -OutFile $script:config.SteamScriptPath
+        Write-DebugLog "Steam script downloaded successfully" -Level Success
+        return $true
+    }
+    catch {
+        Write-DebugLog "Failed to download steam.ps1: $_" -Level Error
+        return $false
+    }
 }
 
 # Debug logging function
@@ -92,6 +104,10 @@ function Invoke-SafeWebRequest {
     } while ($true)
 }
 
+# Check for admin privileges
+function Test-AdminPrivileges {
+    return ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
 
 # Start process as admin
 function Start-ProcessAsAdmin {
@@ -124,14 +140,19 @@ function Get-RequiredFiles {
     param (
         [string]$SelectedMode
     )
+
+    Write-DebugLog "Generating Steam batch file for $SelectedMode mode..." -Level Info
+
+    # Call steam.ps1 to generate the batch file
     $steamBatPath = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
+    & $script:config.SteamScriptPath -SelectedMode $SelectedMode
+
+    # Create basic steam.cfg content
     $steamCfgPath = Join-Path $env:TEMP "steam.cfg"
-
-    Write-DebugLog "Downloading Steam-$SelectedMode.bat..." -Level Info
-    Invoke-SafeWebRequest -Uri $script:config.Urls[$SelectedMode] -OutFile $steamBatPath
-
-    Write-DebugLog "Downloading steam.cfg..." -Level Info
-    Invoke-SafeWebRequest -Uri $script:config.Urls.SteamCfg -OutFile $steamCfgPath
+    @"
+BootStrapperInhibitAll=enable
+BootStrapperForceSelfUpdate=disable
+"@ | Out-File -FilePath $steamCfgPath -Encoding ASCII -Force
 
     return @{ SteamBat = $steamBatPath; SteamCfg = $steamCfgPath }
 }
@@ -265,4 +286,18 @@ function Start-SteamDebloat {
         Write-DebugLog "An error occurred: $_" -Level Error
         Write-DebugLog "For troubleshooting, visit: $($script:config.ErrorPage)" -Level Info
     }
+}
+
+# Initialize log file if debug is enabled
+if ($Debug -eq "on") {
+    if (Test-Path $script:config.LogFile) {
+        Clear-Content $script:config.LogFile
+    }
+    Write-DebugLog "Debug logging enabled - Log file: $($script:config.LogFile)" -Level Info
+}
+
+# Download steam.ps1 at startup
+if (-not (Get-SteamScript)) {
+    Write-DebugLog "Cannot proceed without steam.ps1 script." -Level Error
+    exit
 }
