@@ -83,7 +83,7 @@
 iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/app.ps1') }"
 ```
 
-#### Option 2: [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.050/Installer.bat)
+#### Option 2: [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.052/Installer.bat)
 
 ### 2️⃣ Additional Tools
 
@@ -95,7 +95,7 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 </td>
 <td width="60%" align="center">
 <h3>🔬 Reinstaller</h3>
-<a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.050/Reinstaller.bat">Download Reinstaller</a>
+<a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.052/Reinstaller.bat">Download Reinstaller</a>
 </td>
 </tr>
 </table>
