@@ -1,14 +1,9 @@
 {
   "scripts": [
     {
-      "name": "Steam Lite Launcher",
-      "description": "Launches Steam with optimized parameters, stripping unnecessary features for a lighter experience.",
-      "file": "Steam-Lite.bat"
-    },
-    {
       "name": "Steam Optimized Launcher",
       "description": "Launches Steam with parameters optimized for performance without disabling core features.",
-      "file": "Steam.bat"
+      "file": "steam.ps1"
     },
     {
       "name": "Main Script",
@@ -21,14 +16,9 @@
       "file": "del.ps1"
     },
     {
-      "name": "Settings Configuration",
+      "name": "Settings Configuration (Coming soon)",
       "description": "Modifies or manages Steam's configuration settings.",
       "file": "settings.ps1"
-    },
-    {
-      "name": "Steam Configuration",
-      "description": "Configuration file that controls update settings and preferences for Steam.",
-      "file": "steam.cfg"
     }
   ]
 }
