@@ -266,6 +266,7 @@ function Move-SteamBatToDesktop {
 function Remove-TempFiles {
     Remove-Item -Path (Join-Path $env:TEMP "Steam-*.bat") -Force -ErrorAction SilentlyContinue
     Remove-Item -Path (Join-Path $env:TEMP "steam.cfg") -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $env:TEMP "steam.ps1") -Force -ErrorAction SilentlyContinue
     Write-DebugLog "Removed temporary files" -Level Info
 }
 
