@@ -33,13 +33,12 @@
 ---
 
 > [!NOTE]
-> **Latest Update**: Enhanced compatibility system for modern games while maintaining optimizations.
+> **Latest Update**: Many games need the latest version of Steam to run (is the end coming?) A method of bypassing compatibility is being worked on for dec2022.
 >
 > If a game doesn't work, use `Reinstaller.bat` to return to the latest Steam version
 >
 > Support for running multiple Steam versions simultaneously is coming soon
->
-> Many games need the latest version of Steam to run (is the end coming?) A method of bypassing compatibility is being worked on for dec2022.
+
 
 ## 🌟 Why Steam Debloat?
 
