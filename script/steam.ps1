@@ -30,8 +30,6 @@ set MODE_$($Mode.ToUpper())=$($MODES[$Mode.ToLower()])
     # Write content to batch file
     try {
         $batchContent | Out-File -FilePath $batchPath -Encoding ASCII -Force
-        Write-Host "Steam batch file created successfully at: $batchPath"
-        Write-Host "Selected mode: $Mode"
     }
     catch {
         Write-Error "Failed to create batch file: $_"
@@ -43,5 +41,5 @@ if ($MODES.ContainsKey($SelectedMode.ToLower())) {
     Create-SteamBatch -Mode $SelectedMode
 }
 else {
-    Write-Error "Invalid mode selected. Available modes: normal, lite, test"
+    Write-Error "Invalid mode selected. Available modes: Normal, Lite, Test"
 }
