@@ -98,7 +98,7 @@ In case of security issues:
 | Date | Version | Security Update |
 |------|---------|----------------|
 | 2024-11-13 | 1.0.021 | Initial security policy |
-| 2024-12-18 | 1.0.035 | VirusTotal results update |
+| 2024-12-22 | 1.0.052 | VirusTotal results update |
 
 ---
 
