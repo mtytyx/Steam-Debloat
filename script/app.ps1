@@ -27,7 +27,7 @@ $script:config = @{
         "MaintenanceCheck" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/maintenanceapp.json"
         "SteamScript"      = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/script/steam.ps1"
     }
-    DefaultDowngradeUrl = "https://archive.org/download/dec2022steam"
+    DefaultDowngradeUrl = "http://web.archive.org/web/20230531113527if_/media.steampowered.com/client"
     SteamInstallDir     = "C:\Program Files (x86)\Steam"
     RetryAttempts       = 3
     RetryDelay          = 5
