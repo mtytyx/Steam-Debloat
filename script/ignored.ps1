@@ -1,9 +1,10 @@
 
+# Configuration
 $script:config = @{
     Title               = "Steam Debloat"
     GitHub              = "Github.com/mtytyx/Steam-Debloat"
-    Version             = "v1.0.050"
-    Color               = @{Info = "Green"; Success = "Green"; Warning = "Yellow"; Error = "Red"; Debug = "Green" }
+    Version             = "v1.0.052"
+    Color               = @{Info = "Cyan"; Success = "Magenta"; Warning = "DarkYellow"; Error = "DarkRed"; Debug = "Blue" }
     ErrorPage           = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls                = @{
         "SteamSetup"       = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
@@ -21,30 +22,11 @@ $script:config = @{
 # Download steam.ps1 script
 function Get-SteamScript {
     try {
-        Write-DebugLog "Downloading steam.ps1 script..." -Level Info
         Invoke-SafeWebRequest -Uri $script:config.Urls.SteamScript -OutFile $script:config.SteamScriptPath
-        Write-DebugLog "Steam script downloaded successfully" -Level Success
         return $true
     }
     catch {
-        Write-DebugLog "Failed to download steam.ps1: $_" -Level Error
         return $false
-    }
-}
-
-# Debug logging function
-function Write-DebugLog {
-    param (
-        [string]$Message,
-        [string]$Level = "Info"
-    )
-
-    Write-Host "[$Level] $Message" -ForegroundColor $script:config.Color[$Level]
-
-    if ($Debug -eq "on") {
-        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        $logMessage = "[$timestamp] [$Level] $Message"
-        Add-Content -Path $script:config.LogFile -Value $logMessage
     }
 }
 
@@ -102,20 +84,6 @@ function Invoke-SafeWebRequest {
             Start-Sleep -Seconds $script:config.RetryDelay
         }
     } while ($true)
-}
-
-# Check for admin privileges
-function Test-AdminPrivileges {
-    return ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
-
-# Start process as admin
-function Start-ProcessAsAdmin {
-    param (
-        [string]$FilePath,
-        [string]$ArgumentList
-    )
-    Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -Verb RunAs -Wait
 }
 
 # Stop Steam processes
@@ -220,6 +188,7 @@ function Move-SteamBatToDesktop {
 function Remove-TempFiles {
     Remove-Item -Path (Join-Path $env:TEMP "Steam-*.bat") -Force -ErrorAction SilentlyContinue
     Remove-Item -Path (Join-Path $env:TEMP "steam.cfg") -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $env:TEMP "steam.ps1") -Force -ErrorAction SilentlyContinue
     Write-DebugLog "Removed temporary files" -Level Info
 }
 
@@ -287,15 +256,6 @@ function Start-SteamDebloat {
         Write-DebugLog "For troubleshooting, visit: $($script:config.ErrorPage)" -Level Info
     }
 }
-
-# Initialize log file if debug is enabled
-if ($Debug -eq "on") {
-    if (Test-Path $script:config.LogFile) {
-        Clear-Content $script:config.LogFile
-    }
-    Write-DebugLog "Debug logging enabled - Log file: $($script:config.LogFile)" -Level Info
-}
-
 # Download steam.ps1 at startup
 if (-not (Get-SteamScript)) {
     Write-DebugLog "Cannot proceed without steam.ps1 script." -Level Error
