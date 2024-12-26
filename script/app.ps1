@@ -11,6 +11,8 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 # Debug Configuration - Set to "on" to enable logging | Set to "off" to disable logging(default)
+# Try this function if the script gives you an error
+# This generates a log in %temp%
 $Debug = "off"
 
 # Configuration
