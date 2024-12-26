@@ -38,13 +38,10 @@ $script:config = @{
 # Download steam.ps1 script
 function Get-SteamScript {
     try {
-        Write-DebugLog "Downloading steam.ps1 script..." -Level Info
         Invoke-SafeWebRequest -Uri $script:config.Urls.SteamScript -OutFile $script:config.SteamScriptPath
-        Write-DebugLog "Steam script downloaded successfully" -Level Success
         return $true
     }
     catch {
-        Write-DebugLog "Failed to download steam.ps1: $_" -Level Error
         return $false
     }
 }
