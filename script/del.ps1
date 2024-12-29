@@ -77,20 +77,6 @@ function Wait-ForPath {
     return $true
 }
 
-# Function to download steamui.dll
-function Get-SteamUIDll {
-    param([string]$destinationPath)
-    try {
-        Write-Info "Downloading steamui.dll..."
-        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/steamui.dll" -OutFile $destinationPath
-        Write-Success "steamui.dll downloaded successfully"
-        return $true
-    } catch {
-        Write-ErrorMessage "Failed to download steamui.dll: $_"
-        return $false
-    }
-}
-
 # Check maintenance status
 Check-Maintenance
 
@@ -109,8 +95,7 @@ if (-not (Test-Path $backupPath)) {
     # Check and move important files
     $filesToBackup = @(
         @{Path = "steamapps"; Type = "Directory"},
-        @{Path = "config"; Type = "Directory"},
-        @{Path = "steamui.dll"; Type = "File"}
+        @{Path = "config"; Type = "Directory"}
     )
 
     foreach ($item in $filesToBackup) {
@@ -128,9 +113,6 @@ if (-not (Test-Path $backupPath)) {
             Write-Success "Successfully moved $($item.Path)"
         } else {
             Write-ErrorMessage "$($item.Path) not found in Steam installation"
-            if ($item.Path -eq "steamui.dll") {
-                Get-SteamUIDll -destinationPath $destPath
-            }
         }
     }
 }
@@ -191,4 +173,5 @@ if (Test-Path $backupPath) {
 
 # Start Steam
 Write-Info "Starting Steam..."
+Start-Process "$steamPath\steam.exe -forcesteamupdate -forcepackagedownload -overridepackageurl -exitsteam"
 Start-Process "$steamPath\steam.exe"
