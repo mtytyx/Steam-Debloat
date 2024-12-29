@@ -89,10 +89,6 @@ In case of security issues:
 2. Contact support team
 3. Follow recovery guidelines
 
-## Contact Information
-
-- GitHub: Create an issue with [SECURITY] prefix
-
 ## Security Updates Log
 
 | Date | Version | Security Update |
