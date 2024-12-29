@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/mtytyx/Steam-Debloat/releases/latest">
-    <img src="https://img.shields.io/github/v/release/mtytyx/Steam-Debloat?style=flat-square&logo=github&logoColor=white&labelColor=000000&color=4CAF50" alt="Latest Release">
+    <img src="https://img.shields.io/github/v/release/mtytyx/Steam-Debloat?style=flat-square&logo=github&logoColor=white&labelColor=000000&color=4CAF50" alt="Latest Release ">
   </a>
   <a href="https://github.com/mtytyx/Steam-Debloat/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/mtytyx/Steam-Debloat?style=flat-square&logo=opensourceinitiative&logoColor=white&labelColor=000000&color=2196F3" alt="License">
