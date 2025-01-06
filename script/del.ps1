@@ -15,6 +15,11 @@ function Write-ErrorMessage {
     Write-Host $Message
 }
 
+$desktopBatPath = "$env:USERPROFILE\Desktop\steam.bat"
+if (Test-Path $desktopBatPath) {
+    Remove-Item -Path $desktopBatPath -Force
+}
+
 # Define paths
 $steamPath = "${env:ProgramFiles(x86)}\Steam"
 $backupPath = "$env:TEMP\SteamBackup"
