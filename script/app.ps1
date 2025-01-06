@@ -19,19 +19,89 @@ $Debug = "off"
 $script:config = @{
     Title               = "Steam Debloat"
     GitHub              = "Github.com/mtytyx/Steam-Debloat"
-    Version             = "v1.0.067"
-    Color               = @{Info = "Cyan"; Success = "Magenta"; Warning = "DarkYellow"; Error = "DarkRed"; Debug = "Blue" }
-    ErrorPage           = "https://github.com/mtytyx/Steam-Debloat/issues"
-    Urls                = @{
+    Version            = "v1.0.091"
+    Color              = @{Info = "Cyan"; Success = "Magenta"; Warning = "DarkYellow"; Error = "DarkRed"; Debug = "Blue" }
+    ErrorPage          = "https://github.com/mtytyx/Steam-Debloat/issues"
+    Urls               = @{
         "SteamSetup"       = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
         "MaintenanceCheck" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/maintenanceapp.json"
         "SteamScript"      = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/script/steam.ps1"
     }
-    SteamInstallDir     = "C:\Program Files (x86)\Steam"
-    RetryAttempts       = 3
-    RetryDelay          = 5
-    LogFile             = Join-Path $env:TEMP "Steam-Debloat.log"
-    SteamScriptPath     = Join-Path $env:TEMP "steam.ps1"
+    SteamInstallDir    = "C:\Program Files (x86)\Steam"
+    RetryAttempts      = 3
+    RetryDelay         = 5
+    LogFile            = Join-Path $env:TEMP "Steam-Debloat.log"
+    SteamScriptPath    = Join-Path $env:TEMP "steam.ps1"
+}
+
+# Check for admin privileges
+function Test-AdminPrivileges {
+    return ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+# Start process as admin
+function Start-ProcessAsAdmin {
+    param (
+        [string]$FilePath,
+        [string]$ArgumentList
+    )
+    Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -Verb RunAs -Wait
+}
+
+# Debug logging function
+function Write-DebugLog {
+    param (
+        [string]$Message,
+        [string]$Level = "Info"
+    )
+
+    Write-Host "[$Level] $Message" -ForegroundColor $script:config.Color[$Level]
+
+    if ($Debug -eq "on") {
+        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        $logMessage = "[$timestamp] [$Level] $Message"
+        Add-Content -Path $script:config.LogFile -Value $logMessage
+    }
+}
+
+# Check maintenance status
+function Test-MaintenanceStatus {
+    try {
+        $response = Invoke-RestMethod -Uri $script:config.Urls.MaintenanceCheck -UseBasicParsing
+        if ($response.maintenance -eq $true) {
+            Clear-Host
+            Write-Host @"
+ ______     ______   ______     ______     __    __                                                                                    
+/\  ___\   /\__  _\ /\  ___\   /\  __ \   /\ "-./  \                                                                                   
+\ \___  \  \/_/\ \/ \ \  __\   \ \  __ \  \ \ \-./\ \                                                                                  
+ \/\_____\    \ \_\  \ \_____\  \ \_\ \_\  \ \_\ \ \_\                                                                                 
+  \/_____/     \/_/   \/_____/   \/_/\/_/   \/_/  \/_/                                                                                 
+                                                                                                                                       
+                __    __     ______     __     __   __     ______   ______     __   __     ______     __   __     ______     ______    
+               /\ "-./  \   /\  __ \   /\ \   /\ "-.\ \   /\__  _\ /\  ___\   /\ "-.\ \   /\  __ \   /\ "-.\ \   /\  ___\   /\  ___\   
+               \ \ \-./\ \  \ \  __ \  \ \ \  \ \ \-.  \  \/_/\ \/ \ \  __\   \ \ \-.  \  \ \  __ \  \ \ \-.  \  \ \ \____  \ \  __\   
+                \ \_\ \ \_\  \ \_\ \_\  \ \_\  \ \_\\"\_\    \ \_\  \ \_____\  \ \_\\"\_\  \ \_\ \_\  \ \_\\"\_\  \ \_____\  \ \_____\ 
+                 \/_/  \/_/   \/_/\/_/   \/_/   \/_/ \/_/     \/_/   \/_____/   \/_/ \/_/   \/_/\/_/   \/_/ \/_/   \/_____/   \/_____/ 
+                                                                                                                                       
+"@ -ForegroundColor Red
+
+            Write-Host "`nReason for maintenance:" -ForegroundColor Cyan
+            Write-Host "$($response.message)" -ForegroundColor Yellow
+            Write-Host "`nPress Enter to exit..." -ForegroundColor Cyan
+            Read-Host
+            exit
+        }
+    }
+    catch {
+        # If maintenance check fails, continue with the script
+        return
+    }
+}
+
+# Check if Steam is installed
+function Test-SteamInstallation {
+    $steamExePath = Join-Path $script:config.SteamInstallDir "steam.exe"
+    return Test-Path $steamExePath
 }
 
 # Download steam.ps1 script
@@ -55,65 +125,6 @@ function Get-SteamScript {
     return $false
 }
 
-# Debug logging function
-function Write-DebugLog {
-    param (
-        [string]$Message,
-        [string]$Level = "Info"
-    )
-
-    Write-Host "[$Level] $Message" -ForegroundColor $script:config.Color[$Level]
-
-    if ($Debug -eq "on") {
-        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        $logMessage = "[$timestamp] [$Level] $Message"
-        Add-Content -Path $script:config.LogFile -Value $logMessage
-    }
-}
-
-# Check maintenance status
-function Test-MaintenanceStatus {
-    try {
-        # Fetch the JSON response from the URL
-        $response = Invoke-RestMethod -Uri $script:config.Urls.MaintenanceCheck -UseBasicParsing
-        # Check if the system is under maintenance
-        if ($response.maintenance -eq $true) {
-            Clear-Host
-            Write-Host @"
- ______     ______   ______     ______     __    __                                                                                    
-/\  ___\   /\__  _\ /\  ___\   /\  __ \   /\ "-./  \                                                                                   
-\ \___  \  \/_/\ \/ \ \  __\   \ \  __ \  \ \ \-./\ \                                                                                  
- \/\_____\    \ \_\  \ \_____\  \ \_\ \_\  \ \_\ \ \_\                                                                                 
-  \/_____/     \/_/   \/_____/   \/_/\/_/   \/_/  \/_/                                                                                 
-                                                                                                                                       
-                __    __     ______     __     __   __     ______   ______     __   __     ______     __   __     ______     ______    
-               /\ "-./  \   /\  __ \   /\ \   /\ "-.\ \   /\__  _\ /\  ___\   /\ "-.\ \   /\  __ \   /\ "-.\ \   /\  ___\   /\  ___\   
-               \ \ \-./\ \  \ \  __ \  \ \ \  \ \ \-.  \  \/_/\ \/ \ \  __\   \ \ \-.  \  \ \  __ \  \ \ \-.  \  \ \ \____  \ \  __\   
-                \ \_\ \ \_\  \ \_\ \_\  \ \_\  \ \_\\"\_\    \ \_\  \ \_____\  \ \_\\"\_\  \ \_\ \_\  \ \_\\"\_\  \ \_____\  \ \_____\ 
-                 \/_/  \/_/   \/_/\/_/   \/_/   \/_/ \/_/     \/_/   \/_____/   \/_/ \/_/   \/_/\/_/   \/_/ \/_/   \/_____/   \/_____/ 
-                                                                                                                                       
-                
-"@ -ForegroundColor Red
-
-            Write-Host "`nReason for maintenance:" -ForegroundColor Cyan
-            Write-Host "$($response.message)" -ForegroundColor Yellow
-            Write-Host "`nPress Enter to exit..." -ForegroundColor Cyan
-            Read-Host
-            exit
-        }
-    }
-    catch {
-        # If maintenance check fails, continue with the script
-        return
-    }
-}
-
-# Check if Steam is installed
-function Test-SteamInstallation {
-    $steamExePath = Join-Path $script:config.SteamInstallDir "steam.exe"
-    return Test-Path $steamExePath
-}
-
 # Function to wait for path existence
 function Wait-ForPath {
     param(
@@ -131,50 +142,28 @@ function Wait-ForPath {
     return $true
 }
 
-# Install Steam
-function Install-Steam {
-    Write-DebugLog "Downloading Steam installer..." -Level Info
+# Steam Installation function
+function Install-SteamApplication {
+    Write-DebugLog "Starting Steam installation process..." -Level Info
     $setupPath = Join-Path $env:TEMP "SteamSetup.exe"
 
     try {
-        # Download Steam installer
+        Write-DebugLog "Downloading Steam installer..." -Level Info
         Invoke-SafeWebRequest -Uri $script:config.Urls.SteamSetup -OutFile $setupPath
-        Write-DebugLog "Running Steam installer..." -Level Info
         
-        # Install Steam
+        Write-DebugLog "Running Steam installer..." -Level Info
         Start-Process -FilePath $setupPath -ArgumentList "/S" -Wait
 
-        # Wait for Steam directory to exist
         Write-DebugLog "Waiting for installation to complete..." -Level Info
         if (-not (Wait-ForPath -Path $script:config.SteamInstallDir -TimeoutSeconds 300)) {
             Write-DebugLog "Steam installation did not complete in the expected time" -Level Error
             return $false
         }
 
-        # Verify installation and start Steam with parameters
         $steamExePath = Join-Path $script:config.SteamInstallDir "steam.exe"
         if (Test-Path $steamExePath) {
             Write-DebugLog "Steam installed successfully!" -Level Success
             Remove-Item $setupPath -Force -ErrorAction SilentlyContinue
-            
-            # Start Steam with parameters
-            Write-DebugLog "Starting Steam with update parameters..." -Level Info
-            $arguments = "-forcesteamupdate -forcepackagedownload -overridepackageurl -exitsteam"
-            Start-Process -FilePath $steamExePath -ArgumentList $arguments
-            
-            # Wait for Steam to finish updating
-            $timeout = 300
-            $timer = [Diagnostics.Stopwatch]::StartNew()
-            while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
-                if ($timer.Elapsed.TotalSeconds -gt $timeout) {
-                    Write-DebugLog "Steam update process timed out after $timeout seconds." -Level Warning
-                    break
-                }
-                Start-Sleep -Seconds 5
-            }
-            $timer.Stop()
-            Write-DebugLog "Steam update process completed in $($timer.Elapsed.TotalSeconds) seconds." -Level Info
-            
             return $true
         }
         else {
@@ -184,6 +173,75 @@ function Install-Steam {
     }
     catch {
         Write-DebugLog "Failed to install Steam: $_" -Level Error
+        return $false
+    }
+}
+
+# Main Steam function
+function Install-Steam {
+    try {
+        $steamExePath = Join-Path $script:config.SteamInstallDir "steam.exe"
+        $needsInstallation = -not (Test-Path $steamExePath)
+
+        if ($needsInstallation) {
+            $installSuccess = Install-SteamApplication
+            if (-not $installSuccess) {
+                return $false
+            }
+        }
+
+        $startSuccess = Start-SteamWithParameters -Mode $Mode
+        if (-not $startSuccess) {
+            Write-DebugLog "Failed to start Steam with parameters" -Level Error
+            return $false
+        }
+
+        return $true
+    }
+    catch {
+        Write-DebugLog "An error occurred in Install-Steam: $_" -Level Error
+        return $false
+    }
+}
+
+# Start Steam with parameters
+function Start-SteamWithParameters {
+    param (
+        [string]$Mode
+    )
+    
+    try {
+        $steamExePath = Join-Path $script:config.SteamInstallDir "steam.exe"
+        if (-not (Test-Path $steamExePath)) {
+            Write-DebugLog "Steam executable not found at: $steamExePath" -Level Error
+            return $false
+        }
+
+        $arguments = if ($Mode -in "Lite", "TEST") {
+            "-forcesteamupdate -forcepackagedownload -overridepackageurl https://archive.org/download/dec2022steam -exitsteam"
+        }
+        else {
+            "-forcesteamupdate -forcepackagedownload -overridepackageurl -exitsteam"
+        }
+
+        Start-Process -FilePath $steamExePath -ArgumentList $arguments
+
+        $timeout = 300
+        $timer = [Diagnostics.Stopwatch]::StartNew()
+        while (Get-Process -Name "steam" -ErrorAction SilentlyContinue) {
+            if ($timer.Elapsed.TotalSeconds -gt $timeout) {
+                Write-DebugLog "Steam update process timed out after $timeout seconds." -Level Warning
+                break
+            }
+            Start-Sleep -Seconds 5
+        }
+        $timer.Stop()
+        Write-DebugLog "Steam update process completed in $($timer.Elapsed.TotalSeconds) seconds." -Level Info
+        
+        return $true
+    }
+    catch {
+        Write-DebugLog "Failed to start Steam: $_" -Level Error
         return $false
     }
 }
@@ -211,20 +269,6 @@ function Invoke-SafeWebRequest {
     } while ($true)
 }
 
-# Check for admin privileges
-function Test-AdminPrivileges {
-    return ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
-
-# Start process as admin
-function Start-ProcessAsAdmin {
-    param (
-        [string]$FilePath,
-        [string]$ArgumentList
-    )
-    Start-Process -FilePath $FilePath -ArgumentList $ArgumentList -Verb RunAs -Wait
-}
-
 # Stop Steam processes
 function Stop-SteamProcesses {
     $steamProcesses = Get-Process -Name "*steam*" -ErrorAction SilentlyContinue
@@ -250,11 +294,9 @@ function Get-RequiredFiles {
 
     Write-DebugLog "Generating Steam batch file for $SelectedMode mode..." -Level Info
 
-    # Call steam.ps1 to generate the batch file
     $steamBatPath = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
     & $script:config.SteamScriptPath -SelectedMode $SelectedMode
 
-    # Create basic steam.cfg content
     $steamCfgPath = Join-Path $env:TEMP "steam.cfg"
     @"
 BootStrapperInhibitAll=enable
@@ -274,17 +316,6 @@ function Move-ConfigFile {
     Write-DebugLog "Moved steam.cfg to $destinationPath" -Level Info
 }
 
-# Move Steam bat to Startup folder
-function Move-SteamBatToStartup {
-    param (
-        [string]$SourcePath
-    )
-    $startupPath = [Environment]::GetFolderPath('Startup')
-    $destinationPath = Join-Path $startupPath "steam.bat"
-    Copy-Item -Path $SourcePath -Destination $destinationPath -Force
-    Write-DebugLog "Moved steam.bat to Startup folder" -Level Info
-}
-
 # Move Steam bat to desktop
 function Move-SteamBatToDesktop {
     param (
@@ -300,6 +331,17 @@ function Move-SteamBatToDesktop {
             Move-SteamBatToStartup -SourcePath $destinationPath
         }
     }
+}
+
+# Move Steam bat to Startup folder
+function Move-SteamBatToStartup {
+    param (
+        [string]$SourcePath
+    )
+    $startupPath = [Environment]::GetFolderPath('Startup')
+    $destinationPath = Join-Path $startupPath "steam.bat"
+    Copy-Item -Path $SourcePath -Destination $destinationPath -Force
+    Write-DebugLog "Moved steam.bat to Startup folder" -Level Info
 }
 
 # Remove temporary files
@@ -333,8 +375,14 @@ function Start-SteamDebloat {
         }
 
         Write-DebugLog "Starting $($script:config.Title) Optimization in $SelectedMode mode" -Level Info
+        
+        # Execute Start-SteamWithParameters immediately after the optimization message
+        Write-DebugLog "Initializing Steam with optimized parameters..." -Level Info
+        $steamResult = Start-SteamWithParameters -Mode $SelectedMode
+        if (-not $steamResult) {
+            Write-DebugLog "Failed to start Steam with optimized parameters" -Level Warning
+        }
 
-        # Check if Steam is installed
         if (-not (Test-SteamInstallation)) {
             Write-DebugLog "Steam is not installed on this system." -Level Warning
             $choice = Read-Host "Would you like to install Steam? (Y/N)"
