@@ -85,20 +85,19 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 
 #### Option 2: [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.091/Installer.bat)
 
-### 2️⃣ Additional Tools
+### 2️⃣ Additional installation
 
 <table>
 <tr>
 <td width="60%" align="center">
 <h3>👥 Friends List Fix</h3>
 <a href="https://github.com/TiberiumFusion/FixedSteamFriendsUI/releases">Download Fix</a>
-</td>
-<td width="60%" align="center">
-<h3>🔬 Reinstaller</h3>
-<a href="https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.091/Reinstaller.bat">Download Reinstaller</a>
-</td>
 </tr>
 </table>
+
+### 3️⃣ If you had problems uninstall
+
+####  Uninstall Steam Debloat: [Reinstaller.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.091/Reinstaller.bat)
 
 ## 💎 Features
 
