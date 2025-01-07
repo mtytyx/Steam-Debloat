@@ -35,7 +35,7 @@
 > [!NOTE]
 > **Latest Update**: Many games need the latest version of Steam to run (is the end coming?) A method of bypassing compatibility is being worked on for dec2022.
 >
-> If a game doesn't work, use `Reinstaller.bat` to return to the latest Steam version
+> If a game doesn't work, use `Uninstall.bat` to return to the latest Steam version
 >
 > Support for running multiple Steam versions simultaneously is coming soon
 
@@ -97,7 +97,7 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 
 ### 3️⃣ If you had problems uninstall
 
-####  Uninstall Steam Debloat: [Reinstaller.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.091/Reinstaller.bat)
+####  Uninstall Steam Debloat: [Uninstall.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.091/Uninstall.bat)
 
 ## 💎 Features
 
