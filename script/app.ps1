@@ -192,7 +192,6 @@ function Install-Steam {
 
         $startSuccess = Start-SteamWithParameters -Mode $Mode
         if (-not $startSuccess) {
-            Write-DebugLog "Failed to start Steam with parameters" -Level Error
             return $false
         }
 
