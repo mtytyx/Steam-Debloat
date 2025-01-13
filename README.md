@@ -126,26 +126,10 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 
 ## 🤝 Community & Support
 
-<table>
-<tr>
-<td width="60%">
-
-### Join Our Community
-- 🌟 **1,000+** GitHub Stars
-- 👥 **5,000+** Active Users
-- 🛠️ **100+** Contributors
-
-</td>
-<td width="80%">
-
-### Quick Links
+ Quick Links
 - [📚 Documentation](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/wiki.md)
 - [🔧 Contributing](https://github.com/mtytyx/Steam-Debloat/assets/CONTRIBUTING.md)
 - [💖 Support on Ko-fi](https://ko-fi.com/l1lkid)
-
-</td>
-</tr>
-</table>
 
 ## 🔒 Security Verified
 
