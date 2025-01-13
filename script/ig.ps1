@@ -1,8 +1,3 @@
-
-
-Set-StrictMode -Version Latest
-$ErrorActionPreference = "Stop"
-
 # Configuration
 $script:config = @{
     Title               = "Steam Debloat"
