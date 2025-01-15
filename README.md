@@ -127,8 +127,8 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 ## 🤝 Community & Support
 
  Quick Links
-- [📚 Documentation](https://github.com/mtytyx/Steam-Debloat/blob/main/assets/wiki.md)
-- [🔧 Contributing](https://github.com/mtytyx/Steam-Debloat/assets/CONTRIBUTING.md)
+- [📚 Documentation](https://github.com/mtytyx/Steam-Debloat/blob/main/wiki.md)
+- [🔧 Contributing](https://github.com/mtytyx/Steam-Debloat/CONTRIBUTING.md)
 - [💖 Support on Ko-fi](https://ko-fi.com/l1lkid)
 
 ## 🔒 Security Verified
