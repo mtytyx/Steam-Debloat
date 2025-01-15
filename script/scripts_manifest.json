@@ -14,11 +14,6 @@
       "name": "Reinstaller",
       "description": "Reinstalls or resets specific Steam files to their default state.",
       "file": "del.ps1"
-    },
-    {
-      "name": "Settings Configuration (Coming soon)",
-      "description": "Modifies or manages Steam's configuration settings.",
-      "file": "settings.ps1"
     }
   ]
 }

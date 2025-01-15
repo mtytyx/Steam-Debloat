@@ -15,6 +15,8 @@ function Write-ErrorMessage {
     Write-Host $Message
 }
 
+$host.UI.RawUI.BackgroundColor = "Black"
+
 $desktopBatPath = "$env:USERPROFILE\Desktop\steam.bat"
 if (Test-Path $desktopBatPath) {
     Remove-Item -Path $desktopBatPath -Force
@@ -24,40 +26,6 @@ if (Test-Path $desktopBatPath) {
 $steamPath = "${env:ProgramFiles(x86)}\Steam"
 $backupPath = "$env:TEMP\SteamBackup"
 $steamInstaller = "$env:TEMP\SteamSetup.exe"
-
-# Check maintenance status
-function Check-Maintenance {
-    try {
-        Write-Info "Checking maintenance status..."
-        $response = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/maintenancedel.json"
-        if ($response.maintenance -eq $true) {
-            Clear-Host
-            Write-Host @"
- ______     ______   ______     ______     __    __                                                                                    
-/\  ___\   /\__  _\ /\  ___\   /\  __ \   /\ "-./  \                                                                                   
-\ \___  \  \/_/\ \/ \ \  __\   \ \  __ \  \ \ \-./\ \                                                                                  
- \/\_____\    \ \_\  \ \_____\  \ \_\ \_\  \ \_\ \ \_\                                                                                 
-  \/_____/     \/_/   \/_____/   \/_/\/_/   \/_/  \/_/                                                                                 
-                                                                                                                                       
-                __    __     ______     __     __   __     ______   ______     __   __     ______     __   __     ______     ______    
-               /\ "-./  \   /\  __ \   /\ \   /\ "-.\ \   /\__  _\ /\  ___\   /\ "-.\ \   /\  __ \   /\ "-.\ \   /\  ___\   /\  ___\   
-               \ \ \-./\ \  \ \  __ \  \ \ \  \ \ \-.  \  \/_/\ \/ \ \  __\   \ \ \-.  \  \ \  __ \  \ \ \-.  \  \ \ \____  \ \  __\   
-                \ \_\ \ \_\  \ \_\ \_\  \ \_\  \ \_\\"\_\    \ \_\  \ \_____\  \ \_\\"\_\  \ \_\ \_\  \ \_\\"\_\  \ \_____\  \ \_____\ 
-                 \/_/  \/_/   \/_/\/_/   \/_/   \/_/ \/_/     \/_/   \/_____/   \/_/ \/_/   \/_/\/_/   \/_/ \/_/   \/_____/   \/_____/ 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-"@ -ForegroundColor Red
-            Write-Host "`nReason for maintenance:" -ForegroundColor Cyan
-            Write-Host "$($response.message)" -ForegroundColor Yellow
-            Write-Host "`nPress Enter to exit..." -ForegroundColor Cyan
-            Read-Host
-            exit
-        }
-    }
-    catch {
-        Write-Warning "Unable to check maintenance status. Continuing..."
-        return
-    }
-}
 
 # Function to check if Steam is running
 function Test-SteamRunning {
@@ -81,9 +49,6 @@ function Wait-ForPath {
     }
     return $true
 }
-
-# Check maintenance status
-Check-Maintenance
 
 # Close Steam if running
 if (Test-SteamRunning) {

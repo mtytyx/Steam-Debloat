@@ -6,9 +6,7 @@ param (
     [switch]$SkipIntro,
     [switch]$NoInteraction
 )
-
-Set-StrictMode -Version Latest
-$ErrorActionPreference = "Stop"
+$host.UI.RawUI.BackgroundColor = "Black"
 
 # Debug Configuration - Set to "on" to enable logging | Set to "off" to disable logging(default)
 # Try this function if the script gives you an error
@@ -19,7 +17,7 @@ $Debug = "off"
 $script:config = @{
     Title               = "Steam Debloat"
     GitHub              = "Github.com/mtytyx/Steam-Debloat"
-    Version            = "v1.0.091"
+    Version            = "v1.0.101"
     Color              = @{Info = "Cyan"; Success = "Magenta"; Warning = "DarkYellow"; Error = "DarkRed"; Debug = "Blue" }
     ErrorPage          = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls               = @{
@@ -61,40 +59,6 @@ function Write-DebugLog {
         $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
         $logMessage = "[$timestamp] [$Level] $Message"
         Add-Content -Path $script:config.LogFile -Value $logMessage
-    }
-}
-
-# Check maintenance status
-function Test-MaintenanceStatus {
-    try {
-        $response = Invoke-RestMethod -Uri $script:config.Urls.MaintenanceCheck -UseBasicParsing
-        if ($response.maintenance -eq $true) {
-            Clear-Host
-            Write-Host @"
- ______     ______   ______     ______     __    __                                                                                    
-/\  ___\   /\__  _\ /\  ___\   /\  __ \   /\ "-./  \                                                                                   
-\ \___  \  \/_/\ \/ \ \  __\   \ \  __ \  \ \ \-./\ \                                                                                  
- \/\_____\    \ \_\  \ \_____\  \ \_\ \_\  \ \_\ \ \_\                                                                                 
-  \/_____/     \/_/   \/_____/   \/_/\/_/   \/_/  \/_/                                                                                 
-                                                                                                                                       
-                __    __     ______     __     __   __     ______   ______     __   __     ______     __   __     ______     ______    
-               /\ "-./  \   /\  __ \   /\ \   /\ "-.\ \   /\__  _\ /\  ___\   /\ "-.\ \   /\  __ \   /\ "-.\ \   /\  ___\   /\  ___\   
-               \ \ \-./\ \  \ \  __ \  \ \ \  \ \ \-.  \  \/_/\ \/ \ \  __\   \ \ \-.  \  \ \  __ \  \ \ \-.  \  \ \ \____  \ \  __\   
-                \ \_\ \ \_\  \ \_\ \_\  \ \_\  \ \_\\"\_\    \ \_\  \ \_____\  \ \_\\"\_\  \ \_\ \_\  \ \_\\"\_\  \ \_____\  \ \_____\ 
-                 \/_/  \/_/   \/_/\/_/   \/_/   \/_/ \/_/     \/_/   \/_____/   \/_/ \/_/   \/_/\/_/   \/_/ \/_/   \/_____/   \/_____/ 
-                                                                                                                                       
-"@ -ForegroundColor Red
-
-            Write-Host "`nReason for maintenance:" -ForegroundColor Cyan
-            Write-Host "$($response.message)" -ForegroundColor Yellow
-            Write-Host "`nPress Enter to exit..." -ForegroundColor Cyan
-            Read-Host
-            exit
-        }
-    }
-    catch {
-        # If maintenance check fails, continue with the script
-        return
     }
 }
 
@@ -424,7 +388,6 @@ if ($Debug -eq "on") {
 }
 
 # Main execution
-Test-MaintenanceStatus
 $host.UI.RawUI.WindowTitle = "$($script:config.GitHub)"
 
 # Download steam.ps1 at startup
