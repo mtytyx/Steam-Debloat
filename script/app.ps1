@@ -18,7 +18,7 @@ $script:config = @{
     Title               = "Steam Debloat"
     GitHub              = "Github.com/mtytyx/Steam-Debloat"
     Version            = "v1.0.101"
-    Color              = @{Info = "Cyan"; Success = "Magenta"; Warning = "DarkYellow"; Error = "DarkRed"; Debug = "Blue" }
+    Color              = @{Info = "White"; Success = "Magenta"; Warning = "DarkYellow"; Error = "DarkRed"; Debug = "Blue" }
     ErrorPage          = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls               = @{
         "SteamSetup"       = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
@@ -50,17 +50,30 @@ function Start-ProcessAsAdmin {
 function Write-DebugLog {
     param (
         [string]$Message,
-        [string]$Level = "Info"
+        [string]$Level = "Info",
+        [switch]$IsPath
     )
 
-    Write-Host "[$Level] $Message" -ForegroundColor $script:config.Color[$Level]
+    # Always show prefix in yellow
+    Write-Host "== " -NoNewline -ForegroundColor Yellow
+    Write-Host "[$Level] " -NoNewline -ForegroundColor Yellow
+
+    # Determine if message contains a path
+    if ($IsPath -or $Message -match '^[A-Za-z]:\\|\\\\|/|%\w+%|~|\.\\|\.\.\\') {
+        # Path messages in pink (Magenta)
+        Write-Host "$Message" -ForegroundColor Magenta
+    } else {
+        # Regular messages in cyan
+        Write-Host "$Message" -ForegroundColor Cyan
+    }
 
     if ($Debug -eq "on") {
         $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        $logMessage = "[$timestamp] [$Level] $Message"
+        $logMessage = "== [$timestamp] [$Level] $Message"
         Add-Content -Path $script:config.LogFile -Value $logMessage
     }
 }
+
 
 # Check if Steam is installed
 function Test-SteamInstallation {
@@ -108,11 +121,9 @@ function Wait-ForPath {
 
 # Steam Installation function
 function Install-SteamApplication {
-    Write-DebugLog "Starting Steam installation process..." -Level Info
     $setupPath = Join-Path $env:TEMP "SteamSetup.exe"
 
     try {
-        Write-DebugLog "Downloading Steam installer..." -Level Info
         Invoke-SafeWebRequest -Uri $script:config.Urls.SteamSetup -OutFile $setupPath
         
         Write-DebugLog "Running Steam installer..." -Level Info
@@ -176,7 +187,6 @@ function Start-SteamWithParameters {
     try {
         $steamExePath = Join-Path $script:config.SteamInstallDir "steam.exe"
         if (-not (Test-Path $steamExePath)) {
-            Write-DebugLog "Steam executable not found at: $steamExePath" -Level Error
             return $false
         }
 
@@ -254,9 +264,6 @@ function Get-RequiredFiles {
     param (
         [string]$SelectedMode
     )
-
-    Write-DebugLog "Generating Steam batch file for $SelectedMode mode..." -Level Info
-
     $steamBatPath = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
     & $script:config.SteamScriptPath -SelectedMode $SelectedMode
 
@@ -302,6 +309,10 @@ function Move-SteamBatToStartup {
         [string]$SourcePath
     )
     $startupPath = [Environment]::GetFolderPath('Startup')
+    $officialSteamStartup = Join-Path $startupPath "Steam.lnk"
+    if (Test-Path $officialSteamStartup) {
+        Remove-Item -Path $officialSteamStartup -Force
+    }
     $destinationPath = Join-Path $startupPath "steam.bat"
     Copy-Item -Path $SourcePath -Destination $destinationPath -Force
     Write-DebugLog "Moved steam.bat to Startup folder" -Level Info
@@ -343,7 +354,6 @@ function Start-SteamDebloat {
         Write-DebugLog "Initializing Steam with optimized parameters..." -Level Info
         $steamResult = Start-SteamWithParameters -Mode $SelectedMode
         if (-not $steamResult) {
-            Write-DebugLog "Failed to start Steam with optimized parameters" -Level Warning
         }
 
         if (-not (Test-SteamInstallation)) {
@@ -411,9 +421,10 @@ if (-not $SkipIntro -and -not $NoInteraction) {
                 \ \_\ \ \_\  \ \_____\  \ \_\\"\_\  \ \_____\ 
                  \/_/  \/_/   \/_____/   \/_/ \/_/   \/_____/ 
                                                               
-"@ -ForegroundColor Cyan
+"@ -ForegroundColor Green
     Write-DebugLog "$($script:config.Version)" -Level Info
-    $Mode = Read-Host "Choose mode (Normal/Lite/TEST)"
+    Write-DebugLog "Choose mode (Normal/Lite/TEST)" -Level Info
+    $Mode = Read-Host
 }
 
 Start-SteamDebloat -SelectedMode $Mode
