@@ -22,7 +22,6 @@ $script:config = @{
     ErrorPage          = "https://github.com/mtytyx/Steam-Debloat/issues"
     Urls               = @{
         "SteamSetup"       = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
-        "MaintenanceCheck" = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/maintenanceapp.json"
         "SteamScript"      = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/script/steam.ps1"
     }
     SteamInstallDir    = "C:\Program Files (x86)\Steam"
