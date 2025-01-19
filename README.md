@@ -2,29 +2,15 @@
   <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.png" alt="Steam Debloat Logo" width="300"/>
 </p>
 
-<h1 align="center">Steam Debloat</h1>
+<div align="center">
+  
+[![Release](https://img.shields.io/github/v/release/mtytyx/Steam-Debloat?style=for-the-badge&logo=github&logoColor=black&labelColor=f8f9fa&color=40c463)](https://github.com/mtytyx/Steam-Debloat/releases/latest)
+[![License](https://img.shields.io/github/license/mtytyx/Steam-Debloat?style=for-the-badge&logo=opensourceinitiative&logoColor=black&labelColor=f8f9fa&color=0366d6)](https://github.com/mtytyx/Steam-Debloat/blob/main/LICENSE)
+[![Stars](https://img.shields.io/github/stars/mtytyx/Steam-Debloat?style=for-the-badge&logo=starship&logoColor=black&labelColor=f8f9fa&color=daaa3f)](https://github.com/mtytyx/Steam-Debloat/stargazers)  
+[![Forks](https://img.shields.io/github/forks/mtytyx/Steam-Debloat?style=for-the-badge&logo=git&logoColor=black&labelColor=f8f9fa&color=8957e5)](https://github.com/mtytyx/Steam-Debloat/network/members)
+[![Issues](https://img.shields.io/github/issues/mtytyx/Steam-Debloat?style=for-the-badge&logo=githubactions&logoColor=black&labelColor=f8f9fa&color=d73a49)](https://github.com/mtytyx/Steam-Debloat/issues)
 
-<p align="center">
-  <a href="https://github.com/mtytyx/Steam-Debloat/releases/latest">
-    <img src="https://img.shields.io/github/v/release/mtytyx/Steam-Debloat?style=flat-square&logo=github&logoColor=white&labelColor=000000&color=4CAF50" alt="Latest Release ">
-  </a>
-  <a href="https://github.com/mtytyx/Steam-Debloat/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/mtytyx/Steam-Debloat?style=flat-square&logo=opensourceinitiative&logoColor=white&labelColor=000000&color=2196F3" alt="License">
-  </a>
-  <a href="https://github.com/mtytyx/Steam-Debloat/stargazers">
-    <img src="https://img.shields.io/github/stars/mtytyx/Steam-Debloat?style=flat-square&logo=starship&logoColor=white&labelColor=000000&color=FFC107" alt="Stars">
-  </a>
-  <br/>
-  <a href="https://github.com/mtytyx/Steam-Debloat/network/members">
-    <img src="https://img.shields.io/github/forks/mtytyx/Steam-Debloat?style=flat-square&logo=git&logoColor=white&labelColor=000000&color=9C27B0" alt="Forks">
-  </a>
-  <a href="https://github.com/mtytyx/Steam-Debloat/issues">
-    <img src="https://img.shields.io/github/issues/mtytyx/Steam-Debloat?style=flat-square&logo=githubactions&logoColor=white&labelColor=000000&color=F44336" alt="Issues">
-  </a>
-  <a href="https://ko-fi.com/l1lkid">
-    <img src="https://img.shields.io/badge/support-Ko--fi-FF5E5B?style=flat-square&logo=ko-fi&logoColor=white&labelColor=000000" alt="Ko-fi">
-  </a>
-</p>
+</div>
 
 <p align="center">
   <b>🚀 Boost Performance</b> • <b>💾 Reduce Memory</b> • <b>⚡ Instant Load</b> • <b>🎮 Enhanced Gaming</b>
