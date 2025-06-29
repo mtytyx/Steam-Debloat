@@ -59,7 +59,7 @@
 iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/app.ps1') }"
 ```
 
-#### Option 2: [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.101/Installer.bat)
+#### Option 2: [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.07/Installer.bat)
 
 ### 2️⃣ Additional installation
 
@@ -73,7 +73,7 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 
 ### 3️⃣ If you had problems uninstall
 
-####  Uninstall Steam Debloat: [Uninstall.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v1.0.101/Uninstall.bat)
+####  Uninstall Steam Debloat: [Uninstall.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.07/Uninstall.bat)
 
 ## 💎 Features
 
