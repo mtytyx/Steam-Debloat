@@ -9,12 +9,7 @@
 ---
 
 > [!NOTE]
-> **Latest Update**: Many games need the latest version of Steam to run (is the end coming?) A method of bypassing compatibility is being worked on for dec2022.
->
 > If a game doesn't work, use `Uninstall.bat` to return to the latest Steam version
->
-> Support for running multiple Steam versions simultaneously is coming soon
-
 
 ## 🌟 Why Steam Debloat?
 
