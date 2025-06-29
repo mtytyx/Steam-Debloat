@@ -25,7 +25,6 @@ function Create-SteamBatch {
     
     try {
         if ($modeKey -eq "normalboth2022-2025") {
-
             $batchPath2025 = Join-Path $tempPath "Steam2025.bat"
             $batchContent2025 = @"
 @echo off
@@ -34,7 +33,6 @@ cd /d "$STEAM_DIR"
 start Steam.exe $($MODES[$modeKey]["steam2025"])
 "@
             $batchContent2025 | Out-File -FilePath $batchPath2025 -Encoding ASCII -Force
-            Write-Host "Created Steam 2025 batch file: $batchPath2025" -ForegroundColor Green
             
             $batchPath2022 = Join-Path $tempPath "Steam2022.bat"
             $batchContent2022 = @"
@@ -44,25 +42,7 @@ cd /d "$STEAM_DIR_V2"
 start Steam.exe $($MODES[$modeKey]["steam2022"])
 "@
             $batchContent2022 | Out-File -FilePath $batchPath2022 -Encoding ASCII -Force
-            Write-Host "Created Steam 2022 batch file: $batchPath2022" -ForegroundColor Green
-            
-            $batchPath = Join-Path $tempPath "Steam-$Mode.bat"
-            $batchContent = @"
-@echo off
-echo Steam Debloat - Dual Version Available
-echo.
-echo Two Steam versions have been installed:
-echo - Steam2025.bat (Latest Steam version)
-echo - Steam2022.bat (December 2022 version)
-echo.
-echo Both batch files are available on your desktop.
-echo Choose the version you prefer to launch.
-pause
-"@
-            $batchContent | Out-File -FilePath $batchPath -Encoding ASCII -Force
-            
         } else {
-
             $batchPath = Join-Path $tempPath "Steam-$Mode.bat"
             $steamDir = if ($modeKey -eq "normal2022dec" -or $modeKey -eq "lite2022dec") { $STEAM_DIR } else { $STEAM_DIR }
             
@@ -73,7 +53,6 @@ cd /d "$steamDir"
 start Steam.exe $($MODES[$modeKey])
 "@
             $batchContent | Out-File -FilePath $batchPath -Encoding ASCII -Force
-            Write-Host "Created batch file: $batchPath" -ForegroundColor Green
         }
     }
     catch {
@@ -81,18 +60,8 @@ start Steam.exe $($MODES[$modeKey])
     }
 }
 
-
 if ($MODES.ContainsKey($SelectedMode.ToLower())) {
     Create-SteamBatch -Mode $SelectedMode
-    
-    if ($SelectedMode.ToLower() -eq "normalboth2022-2025") {
-        Write-Host "Steam batch files created successfully for experimental mode:" -ForegroundColor Cyan
-        Write-Host "- Steam2025.bat (Latest Steam version)" -ForegroundColor White
-        Write-Host "- Steam2022.bat (December 2022 version)" -ForegroundColor White
-        Write-Host "Both files will be available on your desktop." -ForegroundColor Yellow
-    } else {
-        Write-Host "Steam batch file created successfully for mode: $SelectedMode" -ForegroundColor Cyan
-    }
 } else {
     Write-Error "Invalid mode selected: $SelectedMode"
     Write-Host "Available modes:" -ForegroundColor Yellow
