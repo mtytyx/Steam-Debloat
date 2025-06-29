@@ -127,7 +127,6 @@ function Install-SteamApplication {
                 New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
             }
             Copy-Item -Path "$($script:config.SteamInstallDir)\*" -Destination $InstallDir -Recurse -Force
-            Write-DebugLog "Copied Steam installation to $InstallDir" -Level Info
         } else {
             Start-Process -FilePath $setupPath -ArgumentList "/S" -Wait
             Write-DebugLog "Waiting for installation to complete..." -Level Info
@@ -167,11 +166,6 @@ function Install-Steam {
                 return $false
             }
         }
-        $startSuccess = Start-SteamWithParameters -Mode $Mode -InstallDir $InstallDir
-        if (-not $startSuccess) {
-            return $false
-        }
-
         return $true
     }
     catch {
@@ -261,7 +255,6 @@ function Get-RequiredFiles {
     param (
         [string]$SelectedMode
     )
-    $steamBatPath = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
     & $script:config.SteamScriptPath -SelectedMode $SelectedMode
 
     $steamCfgPath = Join-Path $env:TEMP "steam.cfg"
@@ -270,7 +263,18 @@ BootStrapperInhibitAll=enable
 BootStrapperForceSelfUpdate=disable
 "@ | Out-File -FilePath $steamCfgPath -Encoding ASCII -Force
 
-    return @{ SteamBat = $steamBatPath; SteamCfg = $steamCfgPath }
+    if ($SelectedMode.ToLower() -eq "normalboth2022-2025") {
+        return @{ 
+            SteamBat2025 = Join-Path $env:TEMP "Steam2025.bat"
+            SteamBat2022 = Join-Path $env:TEMP "Steam2022.bat"
+            SteamCfg = $steamCfgPath 
+        }
+    } else {
+        return @{ 
+            SteamBat = Join-Path $env:TEMP "Steam-$SelectedMode.bat"
+            SteamCfg = $steamCfgPath 
+        }
+    }
 }
 
 function Move-ConfigFile {
@@ -285,35 +289,18 @@ function Move-ConfigFile {
 
 function Move-SteamBatToDesktop {
     param (
-        [string]$SourcePath
+        [string]$SourcePath,
+        [string]$FileName = "steam.bat"
     )
-    $destinationPath = Join-Path ([Environment]::GetFolderPath("Desktop")) "steam.bat"
+    $destinationPath = Join-Path ([Environment]::GetFolderPath("Desktop")) $FileName
     Copy-Item -Path $SourcePath -Destination $destinationPath -Force
-    Write-DebugLog "Moved steam.bat to desktop" -Level Info
-    if (-not $NoInteraction) {
-        $startupChoice = Read-Host "Do you want to start your PC with optimized Steam? (Y/N)"
-        if ($startupChoice.ToUpper() -eq 'Y') {
-            Move-SteamBatToStartup -SourcePath $destinationPath
-        }
-    }
-}
-
-function Move-SteamBatToStartup {
-    param (
-        [string]$SourcePath
-    )
-    $startupPath = [Environment]::GetFolderPath('Startup')
-    $officialSteamStartup = Join-Path $startupPath "Steam.lnk"
-    if (Test-Path $officialSteamStartup) {
-        Remove-Item -Path $officialSteamStartup -Force
-    }
-    $destinationPath = Join-Path $startupPath "steam.bat"
-    Copy-Item -Path $SourcePath -Destination $destinationPath -Force
-    Write-DebugLog "Moved steam.bat to Startup folder" -Level Info
+    Write-DebugLog "Moved $FileName to desktop" -Level Info
 }
 
 function Remove-TempFiles {
     Remove-Item -Path (Join-Path $env:TEMP "Steam-*.bat") -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $env:TEMP "Steam2025.bat") -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $env:TEMP "Steam2022.bat") -Force -ErrorAction SilentlyContinue
     Remove-Item -Path (Join-Path $env:TEMP "steam.cfg") -Force -ErrorAction SilentlyContinue
     Remove-Item -Path (Join-Path $env:TEMP "steam.ps1") -Force -ErrorAction SilentlyContinue
     Write-DebugLog "Removed temporary files" -Level Info
@@ -344,6 +331,8 @@ function Start-SteamDebloat {
 
         if ($SelectedMode -eq "NormalBoth2022-2025") {
             Write-DebugLog "Installing both Steam versions (2022 and 2025)..." -Level Info
+            
+            # Install Steam 2025 version
             Write-DebugLog "Installing Steam 2025 version..." -Level Info
             if (-not (Test-SteamInstallation -InstallDir $script:config.SteamInstallDir)) {
                 $installSuccess2025 = Install-Steam -InstallDir $script:config.SteamInstallDir
@@ -353,6 +342,8 @@ function Start-SteamDebloat {
                 }
             }
             Start-SteamWithParameters -Mode "Normal2025July" -InstallDir $script:config.SteamInstallDir
+            
+            # Install Steam 2022 version
             Write-DebugLog "Installing Steam 2022 version..." -Level Info
             if (-not (Test-SteamInstallation -InstallDir $script:config.SteamInstallDirV2)) {
                 $installSuccess2022 = Install-Steam -InstallDir $script:config.SteamInstallDirV2
@@ -362,23 +353,18 @@ function Start-SteamDebloat {
                 }
             }
             Start-SteamWithParameters -Mode "Normal2022dec" -InstallDir $script:config.SteamInstallDirV2
+            
             Stop-SteamProcesses
             
             $files = Get-RequiredFiles -SelectedMode $SelectedMode
             Move-ConfigFile -SourcePath $files.SteamCfg -InstallDir $script:config.SteamInstallDir
             Move-ConfigFile -SourcePath $files.SteamCfg -InstallDir $script:config.SteamInstallDirV2
-            Move-SteamBatToDesktop -SourcePath $files.SteamBat
+            Move-SteamBatToDesktop -SourcePath $files.SteamBat2025 -FileName "Steam2025.bat"
+            Move-SteamBatToDesktop -SourcePath $files.SteamBat2022 -FileName "Steam2022.bat"
             Remove-TempFiles
-            
-            Write-DebugLog "Both Steam versions installed successfully!" -Level Success
-            Write-DebugLog "Steam 2025: $($script:config.SteamInstallDir)" -Level Success
-            Write-DebugLog "Steam 2022: $($script:config.SteamInstallDirV2)" -Level Success
         }
         else {
             Write-DebugLog "Initializing Steam with optimized parameters..." -Level Info
-            $steamResult = Start-SteamWithParameters -Mode $SelectedMode
-            if (-not $steamResult) {
-            }
             
             if (-not (Test-SteamInstallation)) {
                 Write-DebugLog "Steam is not installed on this system." -Level Warning
@@ -394,6 +380,11 @@ function Start-SteamDebloat {
                     Write-DebugLog "Cannot proceed without Steam installation." -Level Error
                     return
                 }
+            }
+            
+            $steamResult = Start-SteamWithParameters -Mode $SelectedMode
+            if (-not $steamResult) {
+                Write-DebugLog "Failed to start Steam with parameters" -Level Warning
             }
             
             Stop-SteamProcesses
@@ -445,11 +436,11 @@ if (-not $SkipIntro -and -not $NoInteraction) {
 "@ -ForegroundColor Green
     Write-DebugLog "$($script:config.Version)" -Level Info
     Write-Host ""
-    Write-Host "Select Steam optimization mode:" -ForegroundColor Cyan
-    Write-Host "1. Normal2025July (Latest Steam version)" -ForegroundColor White
-    Write-Host "2. Normal2022dec (December 2022 Steam version)" -ForegroundColor White
-    Write-Host "3. Lite2022dec (Lite December 2022 version)" -ForegroundColor White
-    Write-Host "4. NormalBoth2022-2025 (Experimental - Install both versions)" -ForegroundColor Yellow
+    Write-DebugLog "Select Steam optimization mode:" -Level Info
+    Write-DebugLog "1. Normal2025July (Latest Steam version)" -Level Info
+    Write-DebugLog "2. Normal2022dec (December 2022 Steam version)" -Level Info
+    Write-DebugLog "3. Lite2022dec (Lite December 2022 version)" -Level Info
+    Write-DebugLog "4. NormalBoth2022-2025 (Experimental - Install both versions)" -Level Info
     Write-Host ""
     
     do {
