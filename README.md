@@ -56,7 +56,8 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 
 #### Option 2: [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.07/Installer.bat)
 
-### 2️⃣ Additional installation
+### 2️⃣ 🔧 Optional Friends Fix (Steam 2022 Dec)
+#### Steam 2022 breaks friends/chat. This tool may help restore some functionality.
 
 <table>
 <tr>
