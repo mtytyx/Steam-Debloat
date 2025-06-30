@@ -69,7 +69,7 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 
 ### 3️⃣ If you had problems uninstall
 
-####  Uninstall Steam Debloat: [Uninstall.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.07/Uninstall.bat)
+####  Uninstall Steam Downgrade: [Uninstall.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.07/Uninstall.bat)
 
 ## 💎 Features
 
@@ -106,7 +106,7 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 ## 🔒 Security Verified
 
 All components are regularly scanned and verified:
-- [🔍 Steam Debloat on VirusTotal](https://www.virustotal.com/gui/file/099ab1fd3ee39acc48975d8e44d8b3f2a634fe3bf86ca7108a9e655dfa4334c8?nocache=1)
+- [🔍 Steam Downgrade on VirusTotal](https://www.virustotal.com/gui/file/099ab1fd3ee39acc48975d8e44d8b3f2a634fe3bf86ca7108a9e655dfa4334c8?nocache=1)
 - [🛡️ Uninstall Script on VirusTotal](https://www.virustotal.com/gui/file/6964ca6b5f1b10d540c078bee7979dd61228c09b995e8c0f5f8ac336d912ce52?nocache=1)
 - [🛠️ Security](https://github.com/mtytyx/Steam-Debloat/blob/main/SECURITY.md)
 
@@ -115,5 +115,5 @@ All components are regularly scanned and verified:
 
 <p align="center">
 <b>Made with 💖 by me, for the community</b><br>
-<i>Give us a ⭐ if Steam Debloat enhanced your gaming experience!</i>
+<i>Give us a ⭐ if Steam Downgrade enhanced your gaming experience!</i>
 </p>
