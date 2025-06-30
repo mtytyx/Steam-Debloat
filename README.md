@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.png" alt="Steam Debloat Logo" width="300"/>
+  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.png" alt="Steam Downgrade Logo" width="300"/>
 </p>
 
 <p align="center">
@@ -11,7 +11,7 @@
 > [!NOTE]
 > If a game doesn't work, use `Uninstall.bat` to return to the latest Steam version
 
-## 🌟 Why Steam Debloat?
+## 🌟 Why Steam Downgrade?
 
 <table>
 <tr>
@@ -106,8 +106,8 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 ## 🔒 Security Verified
 
 All components are regularly scanned and verified:
-- [🔍 Steam Debloat on VirusTotal](https://www.virustotal.com/gui/file/dc17c9ec9510b9e0d741d9dd0ebb8af5ba80412cae14fd38545f44fe9ce10add)
-- [🛡️ Reinstall Script on VirusTotal](https://www.virustotal.com/gui/file/1fd1e16a6cc9540b4ba05f54cb9d455ba43b16ea4cdacc25eaac6e410c8479a8)
+- [🔍 Steam Debloat on VirusTotal](https://www.virustotal.com/gui/file/099ab1fd3ee39acc48975d8e44d8b3f2a634fe3bf86ca7108a9e655dfa4334c8?nocache=1)
+- [🛡️ Uninstall Script on VirusTotal](https://www.virustotal.com/gui/file/6964ca6b5f1b10d540c078bee7979dd61228c09b995e8c0f5f8ac336d912ce52?nocache=1)
 - [🛠️ Security](https://github.com/mtytyx/Steam-Debloat/blob/main/SECURITY.md)
 
 
