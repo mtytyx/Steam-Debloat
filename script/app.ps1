@@ -10,20 +10,20 @@ $host.UI.RawUI.BackgroundColor = "Black"
 $Debug = "off"
 
 $script:config = @{
-    Title               = "Steam Debloat"
-    GitHub              = "Github.com/mtytyx/Steam-Debloat"
+    Title               = "Steam Downgrade"
+    GitHub              = "Github.com/mtytyx/Steam-Downgrade"
     Version            = "v2.07"
     Color              = @{Info = "White"; Success = "Magenta"; Warning = "DarkYellow"; Error = "DarkRed"; Debug = "Blue" }
-    ErrorPage          = "https://github.com/mtytyx/Steam-Debloat/issues"
+    ErrorPage          = "https://github.com/mtytyx/Steam-Downgrade/issues"
     Urls               = @{
         "SteamSetup"       = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
-        "SteamScript"      = "https://raw.githubusercontent.com/mtytyx/Steam-Debloat/refs/heads/main/script/steam.ps1"
+        "SteamScript"      = "https://raw.githubusercontent.com/mtytyx/Steam-Downgrade/refs/heads/main/script/steam.ps1"
     }
     SteamInstallDir    = "C:\Program Files (x86)\Steam"
     SteamInstallDirV2  = "C:\Program Files (x86)\Steamv2"
     RetryAttempts      = 3
     RetryDelay         = 5
-    LogFile            = Join-Path $env:TEMP "Steam-Debloat.log"
+    LogFile            = Join-Path $env:TEMP "Steam-Downgrade.log"
     SteamScriptPath    = Join-Path $env:TEMP "steam.ps1"
 }
 
@@ -306,7 +306,7 @@ function Remove-TempFiles {
     Write-DebugLog "Removed temporary files" -Level Info
 }
 
-function Start-SteamDebloat {
+function Start-SteamDowngrade {
     param (
         [string]$SelectedMode
     )
@@ -461,4 +461,4 @@ if (-not $SkipIntro -and -not $NoInteraction) {
     Write-DebugLog "Selected mode: $Mode" -Level Info
 }
 
-Start-SteamDebloat -SelectedMode $Mode
+Start-SteamDowngrade -SelectedMode $Mode
