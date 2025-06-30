@@ -52,7 +52,7 @@ Write-Host @"
                                                                                               
 "@ -ForegroundColor Red
 
-Write-Info "Steam Debloat Uninstaller"
+Write-Info "Steam Downgrade Uninstaller"
 Write-Host ""
 
 if ($isExperimentalMode) {
@@ -70,7 +70,7 @@ if ($isExperimentalMode) {
 }
 
 Write-Host ""
-$confirmation = Read-Host "Do you want to proceed with uninstalling Steam Debloat? (Y/N)"
+$confirmation = Read-Host "Do you want to proceed with uninstalling Steam Downgrade? (Y/N)"
 if ($confirmation.ToUpper() -ne 'Y') {
     Write-Info "Uninstall cancelled by user."
     exit
@@ -264,7 +264,7 @@ Start-Sleep -Seconds 5
 Start-Process "$steamPath\steam.exe"
 
 Write-Host ""
-Write-Success "Steam Debloat uninstallation completed successfully!"
+Write-Success "Steam Downgrade uninstallation completed successfully!"
 Write-Success "Steam has been restored to its original state."
 Write-Info "Your games and configurations have been preserved."
 Write-Host ""
