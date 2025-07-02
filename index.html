@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Downgrade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'anime-blue': '#4A90E2',
+                        'soft-purple': '#8B7CF6',
+                        'glass-white': 'rgba(255, 255, 255, 0.1)',
+                        'backdrop-dark': '#0F1419',
+                        'card-bg': 'rgba(255, 255, 255, 0.08)',
+                    },
+                    fontFamily: {
+                        'rounded': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @font-face {
+            font-family: 'SanFrancisco';
+            src: url('./fonts/SF-Pro.ttf') format('truetype');
+        }
+
+        body {
+        font-family: 'SanFrancisco', 'Inter', system-ui, sans-serif;
+        background: #fff;
+        }
+        
+        .anime-overlay {
+            background: linear-gradient(135deg, 
+                rgba(102, 126, 234, 0.9) 0%, 
+                rgba(118, 75, 162, 0.9) 50%,
+                rgba(74, 144, 226, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        .anime-character-silhouette {
+            position: absolute;
+            right: 5%;
+            top: 15%;
+            width: 280px;
+            height: 350px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            overflow: hidden;
+        }
+        
+        .anime-character-silhouette img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+        
+        .mode-selector {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mode-selector::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .mode-selector:hover::before {
+            left: 100%;
+        }
+        
+        .mode-selector.selected {
+            background: linear-gradient(135deg, 
+                rgba(139, 124, 246, 0.3) 0%, 
+                rgba(74, 144, 226, 0.3) 100%);
+            border-color: rgba(139, 124, 246, 0.6);
+            transform: scale(1.02);
+        }
+        
+        .blur-bg {
+            backdrop-filter: blur(15px);
+        }
+        
+        .text-shadow-soft {
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-item {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4A90E2, #8B7CF6);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-item:hover::after {
+            width: 100%;
+        }
+        
+        .download-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(139, 124, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(139, 124, 246, 0); }
+        }
+    </style>
+</head>
+<body class="text-white relative">
+    <div class="anime-overlay"></div>
+    
+    <!-- Floating Elements -->
+    <div class="floating-elements">
+        <div class="floating-shape top-20 left-10 text-6xl" style="animation-delay: 0s;">🎮</div>
+        <div class="floating-shape top-40 right-20 text-5xl" style="animation-delay: 2s;">⚙️</div>
+        <div class="floating-shape bottom-40 left-20 text-4xl" style="animation-delay: 4s;">💻</div>
+        <div class="floating-shape top-60 left-1/3 text-3xl" style="animation-delay: 1s;">🔧</div>
+        <div class="floating-shape bottom-20 right-1/3 text-5xl" style="animation-delay: 3s;">⭐</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-50 glass-morphism">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+<div class="w-12 h-12 rounded-xl shadow-lg overflow-hidden">
+  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Downgrade/main/assets/logo.png" alt="Logo" class="w-full h-full object-cover" />
+</div>
+                    <div>
+                        <h1 class="text-xl font-bold gradient-text">Steam Downgrade</h1>
+                        <p class="text-xs text-white/60">Optimiza tu Steam</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#inicio" class="nav-item text-sm font-medium hover:text-white/90">Inicio</a>
+                    <a href="#descargas" class="nav-item text-sm font-medium hover:text-white/90">Descargas</a>
+                    <a href="#docs" class="nav-item text-sm font-medium hover:text-white/90">Docs</a>
+                    <a href="https://github.com/mtytyx/Steam-Downgrade" class="nav-item text-sm font-medium hover:text-white/90 flex items-center gap-1">
+                        GitHub <span class="text-xs">↗</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative z-10 px-6 py-20">
+        <div class="anime-character-silhouette hidden lg:block">
+            <img src="https://avatars.githubusercontent.com/u/168254237?v=4" alt="Profile Image" />
+        </div>
+        
+        <div class="max-w-6xl mx-auto">
+            <div class="max-w-2xl">
+                <div class="mb-6">
+                    <span class="inline-block px-4 py-2 rounded-full glass-morphism text-sm font-medium mb-6">
+                        ✨ v2.07 Disponible
+                    </span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 text-shadow-soft leading-tight">
+                    Optimiza tu
+                    <span class="gradient-text block">Steam</span>
+                </h1>
+                <p class="text-lg md:text-xl mb-8 text-white/80 leading-relaxed max-w-lg">
+                    Utiliza versiones específicas del cliente Steam para obtener mejor rendimiento, 
+                    compatibilidad y una experiencia gaming optimizada.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4">
+  <!-- Botón Descargar -->
+  <button onclick="scrollToDownloads()"
+    class="inline-block px-5 py-2.5 rounded-full glass-morphism text-sm font-medium backdrop-blur-md border border-white/10 transition-all duration-300 ease-out hover:bg-white/10 hover:shadow-[0_0_0_2px_rgba(255,255,255,0.1)] hover:scale-[1.03] active:scale-100">
+    ⬇️ Descargar Gratis
+  </button>
+
+  <!-- Botón GitHub -->
+  <a href="https://github.com/mtytyx/Steam-Downgrade" target="_blank" rel="noopener noreferrer"
+    class="inline-block px-5 py-2.5 rounded-full glass-morphism text-sm font-medium text-center backdrop-blur-md border border-white/10 transition-all duration-300 ease-out hover:bg-white/10 hover:shadow-[0_0_0_2px_rgba(255,255,255,0.1)] hover:scale-[1.03] active:scale-100">
+    📚 Ver Código
+  </a>
+</div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="descargas" class="relative z-10 px-6 py-20">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-4xl font-bold mb-4 gradient-text">
+                    Elige tu Versión
+                </h2>
+                <p class="text-white/70 max-w-2xl mx-auto">
+                    Selecciona la configuración que mejor se adapte a tus necesidades de gaming
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <!-- Steam 2025 July -->
+                <div class="glass-morphism mode-selector p-6 rounded-2xl" onclick="selectMode(this, 'Normal2025July')">
+                    <div class="text-4xl mb-4">🚀</div>
+                    <h3 class="text-lg font-bold mb-3">Steam 2025</h3>
+                    <p class="text-sm text-white/70 mb-4">Última versión con todas las características modernas y mejoras de rendimiento.</p>
+                    <div class="space-y-1 text-xs text-white/60">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                            <span>Última versión</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                            <span>Máximo rendimiento</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Steam 2022 Dec -->
+                <div class="glass-morphism mode-selector p-6 rounded-2xl" onclick="selectMode(this, 'Normal2022dec')">
+                    <div class="text-4xl mb-4">⚡</div>
+                    <h3 class="text-lg font-bold mb-3">Steam 2022</h3>
+                    <p class="text-sm text-white/70 mb-4">Versión estable de diciembre 2022, perfecta para compatibilidad extendida.</p>
+                    <div class="space-y-1 text-xs text-white/60">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full"></span>
+                            <span>Muy estable</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full"></span>
+                            <span>Amplia compatibilidad</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Steam Lite -->
+                <div class="glass-morphism mode-selector p-6 rounded-2xl" onclick="selectMode(this, 'Lite2022dec')">
+                    <div class="text-4xl mb-4">🌟</div>
+                    <h3 class="text-lg font-bold mb-3">Steam Lite</h3>
+                    <p class="text-sm text-white/70 mb-4">Versión optimizada con lo esencial para máxima velocidad y mínimo consumo.</p>
+                    <div class="space-y-1 text-xs text-white/60">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                            <span>Ultra ligero</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                            <span>Carga instantánea</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dual Version -->
+                <div class="glass-morphism mode-selector p-6 rounded-2xl" onclick="selectMode(this, 'NormalBoth2022-2025')">
+                    <div class="text-4xl mb-4">🔄</div>
+                    <h3 class="text-lg font-bold mb-3">Steam 2025 and 2022</h3>
+                    <p class="text-sm text-white/70 mb-4">Instala ambas versiones para cambiar entre ellas según tus necesidades.</p>
+                    <div class="space-y-1 text-xs text-white/60">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+                            <span>Máxima flexibilidad</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+                            <span>Experimental</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!-- Download Button -->
+<div class="text-center">
+  <button
+    id="downloadBtn"
+    onclick="downloadSelected()"
+    class="inline-block px-8 py-3 rounded-full glass-morphism text-sm font-medium backdrop-blur-md border border-white/10 
+           transition-all duration-300 ease-out hover:bg-white/10 hover:shadow-[0_0_0_2px_rgba(255,255,255,0.1)] hover:scale-[1.03] active:scale-100 
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+    disabled
+  >
+    Selecciona una versión
+  </button>
+
+  <p class="text-white/50 text-sm mt-4">
+    Versión <span class="font-semibold text-white/70">v2.07</span> • Requiere permisos de administrador
+  </p>
+</div>
+
+    </section>
+
+    <!-- Features Cards -->
+    <section class="relative z-10 px-6 py-20">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">¿Por qué Steam Downgrade?</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-morphism card-hover p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center text-2xl">
+                        🔧
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Optimización Automática</h3>
+                    <p class="text-white/70">Configuración inteligente que optimiza Steam automáticamente para tu sistema.</p>
+                </div>
+                
+                <div class="glass-morphism card-hover p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center text-2xl">
+                        ⚡
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Instalación Express</h3>
+                    <p class="text-white/70">Proceso automatizado que detecta tu sistema y aplica la mejor configuración.</p>
+                </div>
+                
+                <div class="glass-morphism card-hover p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center text-2xl">
+                        🛡️
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">100% Seguro</h3>
+                    <p class="text-white/70">Código abierto verificado por la comunidad. Sin modificaciones maliciosas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation -->
+    <section id="docs" class="relative z-10 px-6 py-20">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 gradient-text">Documentación</h2>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="glass-morphism p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                        <span class="text-2xl">📋</span> Requisitos del Sistema
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-green-400/20 flex items-center justify-center">
+                                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                            </span>
+                            <span class="text-white/80">Windows 10/11</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-green-400/20 flex items-center justify-center">
+                                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                            </span>
+                            <span class="text-white/80">PowerShell 5.0+</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-green-400/20 flex items-center justify-center">
+                                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                            </span>
+                            <span class="text-white/80">Permisos de administrador</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-green-400/20 flex items-center justify-center">
+                                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                            </span>
+                            <span class="text-white/80">2GB espacio libre</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-morphism p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                        <span class="text-2xl">🚀</span> Guía de Instalación
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <span class="w-8 h-8 rounded-full bg-anime-blue flex items-center justify-center text-sm font-bold mt-1">1</span>
+                            <div>
+                                <p class="font-medium">Descarga el script</p>
+                                <p class="text-sm text-white/60">Selecciona tu versión preferida arriba</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="w-8 h-8 rounded-full bg-anime-blue flex items-center justify-center text-sm font-bold mt-1">2</span>
+                            <div>
+                                <p class="font-medium">Ejecuta como administrador</p>
+                                <p class="text-sm text-white/60">Pega en PowerShell con permisos elevados</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="w-8 h-8 rounded-full bg-anime-blue flex items-center justify-center text-sm font-bold mt-1">3</span>
+                            <div>
+                                <p class="font-medium">Proceso automático</p>
+                                <p class="text-sm text-white/60">El script optimiza Steam automáticamente</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <span class="w-8 h-8 rounded-full bg-anime-blue flex items-center justify-center text-sm font-bold mt-1">4</span>
+                            <div>
+                                <p class="font-medium">¡Listo para usar!</p>
+                                <p class="text-sm text-white/60">Disfruta de tu Steam optimizado</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 px-6 py-16">
+        <div class="max-w-6xl mx-auto">
+            <div class="glass-morphism p-8 rounded-2xl">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center gap-3 mb-6 md:mb-0">
+<div class="w-12 h-12 rounded-xl shadow-lg overflow-hidden">
+  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Downgrade/main/assets/logo.png" alt="Logo" class="w-full h-full object-cover" />
+</div>
+
+                        <div>
+                            <h3 class="font-bold gradient-text">Steam Downgrade</h3>
+                            <p class="text-xs text-white/60">Proyecto de código abierto</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6">
+                        <a href="https://github.com/mtytyx/Steam-Downgrade" class="text-white/70 hover:text-white transition-colors">GitHub</a>
+                        <a href="https://github.com/mtytyx/Steam-Downgrade/issues" class="text-white/70 hover:text-white transition-colors">Issues</a>
+                        <a href="https://github.com/mtytyx/Steam-Downgrade/releases" class="text-white/70 hover:text-white transition-colors">Releases</a>
+                    </div>
+                </div>
+                <div class="border-t border-white/10 mt-8 pt-6 text-center">
+                    <p class="text-white/50 text-sm">
+                        © 2024-2025 Steam Downgrade • No afiliado con Valve Corporation
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let selectedMode = null;
+        
+        function selectMode(element, mode) {
+            document.querySelectorAll('.mode-selector').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+            selectedMode = mode;
+            
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.disabled = false;
+            downloadBtn.textContent = `Descargar ${getModeDisplayName(mode)}`;
+            downloadBtn.classList.add('download-pulse');
+        }
+        
+        function getModeDisplayName(mode) {
+            const names = {
+                'Normal2025July': 'Steam 2025',
+                'Normal2022dec': 'Steam 2022',
+                'Lite2022dec': 'Steam Lite',
+                'NormalBoth2022-2025': 'Steam Double'
+            };
+            return names[mode] || mode;
+        }
+        
+        function downloadSelected() {
+            if (!selectedMode) {
+                showNotification('Por favor, selecciona una versión primero', 'warning');
+                return;
+            }
+            
+            const downloadUrl = 'https://github.com/mtytyx/Steam-Debloat/releases/download/v2.07/Installer.bat';
+            
+            // Crear link de descarga y hacer clic automáticamente
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = 'Installer.bat';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('¡Descarga iniciada! Ejecuta el archivo como administrador.', 'success');
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500/20 border-green-400/30' : 
+                           type === 'warning' ? 'bg-yellow-500/20 border-yellow-400/30' : 
+                           'bg-blue-500/20 border-blue-400/30';
+            
+            notification.className = `fixed top-6 right-6 glass-morphism ${bgColor} p-4 rounded-xl text-white z-50 max-w-sm transform transition-all duration-300 translate-x-full`;
+            notification.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="text-lg">${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+                    <p class="text-sm font-medium">${message}</p>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Trigger animation
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+        
+        function scrollToDownloads() {
+            document.getElementById('descargas').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+        
+        // Parallax effect for floating elements
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelectorAll('.floating-shape');
+            const speed = 0.5;
+            
+            parallax.forEach(element => {
+                const yPos = -(scrolled * speed);
+                element.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
