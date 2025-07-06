@@ -1,11 +1,11 @@
-# Contributing to Steam-Downgrade
+# Contributing to Steam-Debloat
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Downgrade/main/assets/logo.png" alt="Steam Debloat Logo" width="200"/>
+  <img src="https://raw.githubusercontent.com/AltRossell/Steam-Debloat/main/assets/logo.png" alt="Steam Debloat Logo" width="200"/>
 </p>
 
 <p align="center">
-  We greatly appreciate your interest in contributing to Steam-Downgrade! This guide will help you get started with contributing to our project and ensure a smooth collaboration process.
+  We greatly appreciate your interest in contributing to Steam-Debloat! This guide will help you get started with contributing to our project and ensure a smooth collaboration process.
 </p>
 
 ## Table of Contents
@@ -37,11 +37,11 @@ By participating in this project, you are expected to uphold our [Code of Conduc
 1. Fork the repository on GitHub
 2. Clone your fork locally
    ```
-   git clone https://github.com/mtytyx/Steam-Downgrade.git
+   git clone https://github.com/AltRossell/Steam-Debloat.git
    ```
 3. Add the original repository as a remote named "upstream"
    ```
-   git remote add upstream https://github.com/mtytyx/Steam-Downgrade.git
+   git remote add upstream https://github.com/AltRossell/Steam-Debloat.git
    ```
 4. Create a new branch for your feature or bug fix
    ```
@@ -50,7 +50,7 @@ By participating in this project, you are expected to uphold our [Code of Conduc
 
 ### Finding an Issue to Work On
 
-- Check our [Issues](https://github.com/mtytyx/Steam-Downgrade/issues) page for open tasks
+- Check our [Issues](https://github.com/AltRossell/Steam-Debloat/issues) page for open tasks
 - Look for issues tagged with "good first issue" or "help wanted"
 - If you have a new idea, please open an issue to discuss it before starting work
 
@@ -86,7 +86,7 @@ By participating in this project, you are expected to uphold our [Code of Conduc
 
 ## Reporting Bugs
 
-We use GitHub issues to track bugs. Report a bug by [opening a new issue](https://github.com/mtytyx/Steam-Downgrade/issues/new); it's that easy!
+We use GitHub issues to track bugs. Report a bug by [opening a new issue](https://github.com/AltRossell/Steam-Debloat/issues/new); it's that easy!
 
 When filing an issue, please include:
 
@@ -95,7 +95,7 @@ When filing an issue, please include:
 - Steps to reproduce the behavior
 - Expected behavior
 - Screenshots (if applicable)
-- Your operating system and Steam-Downgrade version
+- Your operating system and Steam-Debloat version
 
 ## Suggesting Enhancements
 
@@ -127,10 +127,10 @@ We welcome suggestions for enhancements. Please create an issue and include:
 
 ## License
 
-By contributing to Steam-Downgrade, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+By contributing to Steam-Debloat, you agree that your contributions will be licensed under the [MIT License](LICENSE).
 
 ---
 
 <p align="center">
-  Thank you for contributing to Steam-Downgrade! Your efforts help make Steam better for everyone. 🎮✨
+  Thank you for contributing to Steam-Debloat! Your efforts help make Steam better for everyone. 🎮✨
 </p>
