@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/assets/logo.png" alt="Steam Downgrade Logo" width="300"/>
+  <img src="https://raw.githubusercontent.com/AltRossell/Steam-Debloat/main/assets/logo.png" alt="Steam Debloat Logo" width="300"/>
 </p>
 
 <p align="center">
@@ -11,7 +11,7 @@
 > [!NOTE]
 > If a game doesn't work, use `Uninstall.bat` to return to the latest Steam version
 
-## 🌟 Why Steam Downgrade?
+## 🌟 Why Steam Debloat?
 
 <table>
 <tr>
@@ -51,10 +51,10 @@
 
 #### Option 1: PowerShell
 ```powershell
-iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/main/script/app.ps1') }"
+iex "& { $(iwr -useb 'https://raw.githubusercontent.com/AltRossell/Steam-Debloat/main/script/app.ps1') }"
 ```
 
-#### Option 2: [Installer.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.07/Installer.bat)
+#### Option 2: [Installer.bat](https://github.com/AltRossell/Steam-Debloat/releases/download/v2.07/Installer.bat)
 
 ### 2️⃣ 🔧 Optional Friends Fix (Steam 2022 Dec)
 #### Steam 2022 breaks friends/chat. This tool may help restore some functionality.
@@ -69,7 +69,7 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 
 ### 3️⃣ If you had problems uninstall
 
-####  Uninstall Steam Downgrade: [Uninstall.bat](https://github.com/mtytyx/Steam-Debloat/releases/download/v2.07/Uninstall.bat)
+####  Uninstall Steam Debloat: [Uninstall.bat](https://github.com/AltRossell/Steam-Debloat/releases/download/v2.07/Uninstall.bat)
 
 ## 💎 Features
 
@@ -99,21 +99,21 @@ iex "& { $(iwr -useb 'https://raw.githubusercontent.com/mtytyx/Steam-Debloat/mai
 ## 🤝 Community & Support
 
  Quick Links
-- [📚 Documentation](https://github.com/mtytyx/Steam-Debloat/blob/main/wiki.md)
-- [🔧 Contributing](https://github.com/mtytyx/Steam-Debloat/CONTRIBUTING.md)
+- [📚 Documentation](https://github.com/AltRossell/Steam-Debloat/blob/main/wiki.md)
+- [🔧 Contributing](https://github.com/AltRossell/Steam-Debloat/CONTRIBUTING.md)
 - [💖 Support on Ko-fi](https://ko-fi.com/l1lkid)
 
 ## 🔒 Security Verified
 
 All components are regularly scanned and verified:
-- [🔍 Steam Downgrade on VirusTotal](https://www.virustotal.com/gui/file/099ab1fd3ee39acc48975d8e44d8b3f2a634fe3bf86ca7108a9e655dfa4334c8?nocache=1)
+- [🔍 Steam Debloat on VirusTotal](https://www.virustotal.com/gui/file/099ab1fd3ee39acc48975d8e44d8b3f2a634fe3bf86ca7108a9e655dfa4334c8?nocache=1)
 - [🛡️ Uninstall Script on VirusTotal](https://www.virustotal.com/gui/file/6964ca6b5f1b10d540c078bee7979dd61228c09b995e8c0f5f8ac336d912ce52?nocache=1)
-- [🛠️ Security](https://github.com/mtytyx/Steam-Debloat/blob/main/SECURITY.md)
+- [🛠️ Security](https://github.com/AltRossell/Steam-Debloat/blob/main/SECURITY.md)
 
 
 ---
 
 <p align="center">
 <b>Made with 💖 by me, for the community</b><br>
-<i>Give us a ⭐ if Steam Downgrade enhanced your gaming experience!</i>
+<i>Give us a ⭐ if Steam Debloat enhanced your gaming experience!</i>
 </p>
