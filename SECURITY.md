@@ -6,7 +6,7 @@
 
 ## Supported Versions
 
-Currently supported versions of Steam Downgrade with security updates and maintenance:
+Currently supported versions of  with security updates and maintenance:
 
 | Version | Supported | Update Frequency |
 | ------- | --------- | ---------------- | 
@@ -28,7 +28,7 @@ Currently supported versions of Steam Downgrade with security updates and mainte
 
 ### VirusTotal Results
 Current security scan results:
-- [🔍 Steam Downgrade on VirusTotal](https://www.virustotal.com/gui/file/dc17c9ec9510b9e0d741d9dd0ebb8af5ba80412cae14fd38545f44fe9ce10add)
+- [🔍 Steam Debloat on VirusTotal](https://www.virustotal.com/gui/file/dc17c9ec9510b9e0d741d9dd0ebb8af5ba80412cae14fd38545f44fe9ce10add)
 - [🛡️ Uninstall Script on VirusTotal](https://www.virustotal.com/gui/file/1fd1e16a6cc9540b4ba05f54cb9d455ba43b16ea4cdacc25eaac6e410c8479a8)
 
 ## Reporting a Vulnerability
@@ -40,7 +40,7 @@ Current security scan results:
 
 ### What to Include in Your Report
 
-- Steam Downgrade version affected
+- Steam Debloat version affected
 - Steam client version(generally dec2022)
 - Operating system details
 - Screenshots/logs (if applicable) (the log is in %temp%/steam_downgrade.log)
