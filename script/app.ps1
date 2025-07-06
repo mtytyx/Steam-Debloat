@@ -11,19 +11,19 @@ $Debug = "off"
 
 $script:config = @{
     Title               = "Steam Downgrade"
-    GitHub              = "Github.com/mtytyx/Steam-Downgrade"
+    GitHub              = "Github.com/AltRossell/Steam-Debloat"
     Version            = "v2.07"
     Color              = @{Info = "White"; Success = "Magenta"; Warning = "DarkYellow"; Error = "DarkRed"; Debug = "Blue" }
-    ErrorPage          = "https://github.com/mtytyx/Steam-Downgrade/issues"
+    ErrorPage          = "https://github.com/AltRossell/Steam-Debloat/issues"
     Urls               = @{
         "SteamSetup"       = "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
-        "SteamScript"      = "https://raw.githubusercontent.com/mtytyx/Steam-Downgrade/refs/heads/main/script/steam.ps1"
+        "SteamScript"      = "https://raw.githubusercontent.com/AltRossell/Steam-Debloat/refs/heads/main/script/steam.ps1"
     }
     SteamInstallDir    = "C:\Program Files (x86)\Steam"
     SteamInstallDirV2  = "C:\Program Files (x86)\Steamv2"
     RetryAttempts      = 3
     RetryDelay         = 5
-    LogFile            = Join-Path $env:TEMP "Steam-Downgrade.log"
+    LogFile            = Join-Path $env:TEMP "Steam-Debloat.log"
     SteamScriptPath    = Join-Path $env:TEMP "steam.ps1"
 }
 
